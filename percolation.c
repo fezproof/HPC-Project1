@@ -41,8 +41,16 @@ void destroyArray(bool** arr)
 
 int main(int argc, char *argv[])
 {
-    int size = atoi(argv[1]);
-    double chance = atof(argv[2]);
+    int size;
+    double chance;
+    if (argc != 3) {
+        size = 256;
+        chance = 0.5;
+    } else {
+        size = atoi(argv[1]);
+        chance = atof(argv[2]);
+    }
+
     srand(time(NULL));
     bool** lattice = createLattice(size, chance);
 
