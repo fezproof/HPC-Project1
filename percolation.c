@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
@@ -9,17 +9,17 @@ double rand_01(void) {
     return (double)rand() / (double)RAND_MAX;
 }
 
-bool** createLattice(int size, double chance)
+int** createLattice(int size, double chance)
 {
-    bool* values;
-    bool** rows = malloc(size*sizeof(bool*));
+    int* values;
+    int** rows = malloc(size*sizeof(int*));
     for (int i = 0; i < size; i++) {
-        values = calloc(size*size, sizeof(bool));
+        values = calloc(size*size, sizeof(int));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
-                values[j] = true;
+                values[j] = 1;
             } else {
-                values[j] = false;
+                values[j] = 0;
             }
         }
         rows[i] = values;
@@ -27,16 +27,26 @@ bool** createLattice(int size, double chance)
     return rows;
 }
 
-bool percolate(bool** arr) {
+int percolate(int** arr) {
 
 
-    return true;
+    return 0;
 }
 
-void destroyArray(bool** arr)
+void destroyArray(int** arr)
 {
     free(*arr);
     free(arr);
+}
+
+void printLattice(int** lattice, int size)
+{
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            printf("%s ", lattice[i][j] ? "X" : "O");
+        }
+        printf("\n");
+    }
 }
 
 int main(int argc, char *argv[])
@@ -52,16 +62,11 @@ int main(int argc, char *argv[])
     }
 
     srand(time(NULL));
-    bool** lattice = createLattice(size, chance);
+    int** lattice = createLattice(size, chance);
 
-    // for (int i = 0; i < size; i++) {
-    //     for (int j = 0; j < size; j++) {
-    //         printf("%s ", lattice[i][j] ? "X" : "O");
-    //     }
-    //     printf("\n");
-    // }
+    printLattice(lattice, size);
 
-    bool test = percolate(lattice);
+    int test = percolate(lattice);
 
     printf("%s\n", test ? "true" : "false");
 
