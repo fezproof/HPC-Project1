@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <time.h>
+#include "percolation.h"
 
 double rand_01(void) {
 /*random number between 0 and 1*/
