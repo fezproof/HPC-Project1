@@ -23,10 +23,8 @@ int** createLattice(int size, double chance)
     return rows;
 }
 
-int percolate(int** arr) {
-
-
-    return 0;
+int percolate(int** arr, int size) {
+    return (dfsUpDown(arr, size) && dfsLeftRight(arr, size));
 }
 
 void destroyArray(int** arr)
@@ -39,7 +37,7 @@ void printLattice(int** lattice, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf("%s ", lattice[i][j] ? "X" : "O");
+            printf("%s ", lattice[i][j] ? "X" : ".");
         }
         printf("\n");
     }
@@ -50,8 +48,8 @@ int main(int argc, char *argv[])
     int size;
     double chance;
     if (argc != 3) {
-        size = 256;
-        chance = 0.5;
+        size = 50;
+        chance = 0.4;
     } else {
         size = atoi(argv[1]);
         chance = atof(argv[2]);
@@ -60,11 +58,13 @@ int main(int argc, char *argv[])
     srand(time(NULL));
     int** lattice = createLattice(size, chance);
 
-    printLattice(lattice, size);
+    if (size <= 50) {
+        // printLattice(lattice, size);
+    }
 
-    int test = percolate(lattice);
+    int test = percolate(lattice, size);
 
-    printf("%s\n", test ? "true" : "false");
+    printf("%s\n", test ? "Can percolate" : "Does not percolate");
 
     destroyArray(lattice);
 
