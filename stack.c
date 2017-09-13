@@ -54,5 +54,4 @@ void stack_initialise(STACK* stack, int size) {
 
 void stack_clear(STACK* stack) {
     free(stack->stack);
-    // free(stack);
 }
