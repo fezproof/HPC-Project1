@@ -80,7 +80,12 @@ int main(int argc, char *argv[])
         do {
             printf("Lattice size = %d x %d\n", size, size);
 
+            begin = clock();
             lattice = createLattice(size, chance);
+            end = clock();
+            elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
+            printf("Allocation:\n");
+            printf("\tTime taken: %f\n", elapsedTime);
 
             begin = clock();
             percResult = percolateSite(lattice, size, test);
