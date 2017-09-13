@@ -148,7 +148,7 @@ int dfsLeftRight(int** array, int size) {
     STACK stack;
 
     VERT v;
-    int* vertices = calloc(size*size, sizeof(int));
+    int* vertices = calloc(size * size, sizeof(int));
     for (int i = 0; i < size; i++) {
         if (array[i][0] == 1 && vertices[i * size] == 0) {
             stack_initialise(&stack, size * size);
