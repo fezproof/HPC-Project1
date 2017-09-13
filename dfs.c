@@ -10,7 +10,55 @@ int checkVert(int** array, int x, int y, int size) {
     return 0;
 }
 
+int checkVertUD(int** array, int x, int y, VERT * u, int size) {
+    if (x != -1 && x != size) {
+        if (y != -1 && y != size) {
+            if (array[x][y] == 1) {
+                u->x = x;
+                u->y = y;
+                return 1;
+            }
+        } else if (y == -1) {
+            if (array[size - 1][y] == 1) {
+                u->x = x;
+                u->y = size - 1;
+                return 1;
+            }
+        } else if (y == size) {
+            if (array[x][0] == 1) {
+                u->x = x;
+                u->y = 0;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
+int checkVertLR(int** array, int x, int y, VERT * u, int size) {
+    if (x != -1 && x != size) {
+        if (y != -1 && y != size) {
+            if (array[x][y] == 1) {
+                u->x = x;
+                u->y = y;
+                return 1;
+            }
+        } else if (y == -1) {
+            if (array[size - 1][y] == 1) {
+                u->x = x;
+                u->y = size - 1;
+                return 1;
+            }
+        } else if (y == size) {
+            if (array[x][0] == 1) {
+                u->x = x;
+                u->y = 0;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 void printArray(int dis[], int** array, int size) {
     for (int i = 0; i < size; i++) {
@@ -27,30 +75,22 @@ void printArray(int dis[], int** array, int size) {
 }
 
 int findAdjUD(int** array, STACK* stack, VERT v, int size) {
-    if (v.x + 1 == size - 1 && checkVert(array, v.x + 1, v.y, size)) {
+    VERT u;
+
+    if (v.x + 1 == size - 1 && checkVertUD(array, v.x + 1, v.y, &u, size)) {
         return 1;
     }
 
-    VERT u;
-
-    if (checkVert(array, v.x, v.y + 1, size)) {
-        u.x = v.x;
-        u.y = v.y + 1;
+    if (checkVertUD(array, v.x, v.y + 1, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVert(array, v.x, v.y - 1, size)) {
-        u.x = v.x;
-        u.y = v.y - 1;
+    if (checkVertUD(array, v.x, v.y - 1, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVert(array, v.x - 1, v.y, size)) {
-        u.x = v.x - 1;
-        u.y = v.y;
+    if (checkVertUD(array, v.x - 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVert(array, v.x + 1, v.y, size)) {
-        u.x = v.x + 1;
-        u.y = v.y;
+    if (checkVertUD(array, v.x + 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
     return 0;
@@ -131,7 +171,6 @@ int dfsLeftRight(int** array, int size) {
             stack_initialise(&stack, size * size);
             v.x = i;
             v.y = 0;
-            // printf("x:%d y:%d\n", v.x, v.y);
             stack_push(&stack, v);
 
             while (!stack_isempty(&stack)) {
