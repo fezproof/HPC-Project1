@@ -2,7 +2,7 @@
 
 #include "stack.h"
 
-int isempty(STACK* stack) {
+int stack_isempty(STACK* stack) {
 
    if(stack->top == -1)
       return 1;
@@ -10,7 +10,7 @@ int isempty(STACK* stack) {
       return 0;
 }
 
-int isfull(STACK* stack) {
+int stack_isfull(STACK* stack) {
 
    if(stack->top == stack->maxsize)
       return 1;
@@ -18,13 +18,13 @@ int isfull(STACK* stack) {
       return 0;
 }
 
-VERT peek(STACK* stack) {
+VERT stack_peek(STACK* stack) {
    return stack->stack[stack->top];
 }
 
-VERT pop(STACK* stack) {
+VERT stack_pop(STACK* stack) {
 
-   if(!isempty(stack)) {
+   if(!stack_isempty(stack)) {
       VERT data = stack->stack[stack->top];
       stack->top = stack->top - 1;
       return data;
@@ -34,9 +34,9 @@ VERT pop(STACK* stack) {
    }
 }
 
-int push(STACK* stack, VERT data) {
+int stack_push(STACK* stack, VERT data) {
 
-   if(!isfull(stack)) {
+   if(!stack_isfull(stack)) {
       stack->top = stack->top + 1;
       stack->stack[stack->top] = data;
       return 1;
@@ -46,13 +46,13 @@ int push(STACK* stack, VERT data) {
    }
 }
 
-void initialise(STACK* stack, int size) {
+void stack_initialise(STACK* stack, int size) {
     stack->stack = calloc(size, sizeof(VERT));
     stack->maxsize = size;
     stack->top = -1;
 }
 
-void clear(STACK* stack) {
+void stack_clear(STACK* stack) {
     free(stack->stack);
-    // free(&stack);
+    // free(stack);
 }

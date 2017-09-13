@@ -3,7 +3,7 @@
 
 int checkVert(int** array, int x, int y, int size) {
     if (x != -1 && x != size && y != -1 && y != size) {
-        if (array[x][y] == 0) {
+        if (array[x][y] == 1) {
             return 1;
         }
     }
@@ -36,22 +36,22 @@ int findAdjUD(int** array, STACK* stack, VERT v, int size) {
     if (checkVert(array, v.x, v.y + 1, size)) {
         u.x = v.x;
         u.y = v.y + 1;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x, v.y - 1, size)) {
         u.x = v.x;
         u.y = v.y - 1;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x - 1, v.y, size)) {
         u.x = v.x - 1;
         u.y = v.y;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x + 1, v.y, size)) {
         u.x = v.x + 1;
         u.y = v.y;
-        push(stack, u);
+        stack_push(stack, u);
     }
     return 0;
 }
@@ -62,19 +62,20 @@ int dfsUpDown(int** array, int size) {
     VERT v;
     int* vertices = calloc(size*size, sizeof(int));
     for (int i = 0; i < size; i++) {
-        if (array[0][i] == 0 && vertices[i] == 0) {
-            initialise(&stack, size * size);
+        if (array[0][i] == 1 && vertices[i] == 0) {
+            stack_initialise(&stack, size * size);
             v.x = 0;
             v.y = i;
             // printf("x:%d y:%d\n", v.x, v.y);
-            push(&stack, v);
+            stack_push(&stack, v);
 
-            while (!isempty(&stack)) {
-                v = pop(&stack);
+            while (!stack_isempty(&stack)) {
+                v = stack_pop(&stack);
                 if (vertices[v.x * size + v.y] != 1) {
                     vertices[v.x * size + v.y] = 1;
                     if(findAdjUD(array, &stack, v, size)) {
-                        if (size <= 50) {
+                        stack_clear(&stack);
+                        if (size <= 64) {
                             printf("SUCCEEDED! - Up to Down search\n\n");
                             printArray(vertices, array, size);
                         }
@@ -84,7 +85,8 @@ int dfsUpDown(int** array, int size) {
             }
         }
     }
-    if (size <= 50) {
+    stack_clear(&stack);
+    if (size <= 64) {
         printf("FAILED! - Up to Down search\n\n");
         printArray(vertices, array, size);
     }
@@ -99,22 +101,22 @@ int findAdjLR(int** array, STACK* stack, VERT v, int size) {
     if (checkVert(array, v.x - 1, v.y, size)) {
         u.x = v.x - 1;
         u.y = v.y;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x + 1, v.y, size)) {
         u.x = v.x + 1;
         u.y = v.y;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x, v.y - 1, size)) {
         u.x = v.x;
         u.y = v.y - 1;
-        push(stack, u);
+        stack_push(stack, u);
     }
     if (checkVert(array, v.x, v.y + 1, size)) {
         u.x = v.x;
         u.y = v.y + 1;
-        push(stack, u);
+        stack_push(stack, u);
     }
     return 0;
 }
@@ -125,19 +127,20 @@ int dfsLeftRight(int** array, int size) {
     VERT v;
     int* vertices = calloc(size*size, sizeof(int));
     for (int i = 0; i < size; i++) {
-        if (array[i][0] == 0 && vertices[i * size] == 0) {
-            initialise(&stack, size * size);
+        if (array[i][0] == 1 && vertices[i * size] == 0) {
+            stack_initialise(&stack, size * size);
             v.x = i;
             v.y = 0;
             // printf("x:%d y:%d\n", v.x, v.y);
-            push(&stack, v);
+            stack_push(&stack, v);
 
-            while (!isempty(&stack)) {
-                v = pop(&stack);
+            while (!stack_isempty(&stack)) {
+                v = stack_pop(&stack);
                 if (vertices[v.x * size + v.y] != 1) {
                     vertices[v.x * size + v.y] = 1;
                     if(findAdjLR(array, &stack, v, size)) {
-                        if (size <= 50) {
+                        stack_clear(&stack);
+                        if (size <= 64) {
                             printf("SUCCEEDED! - Left to Right search\n\n");
                             printArray(vertices, array, size);
                         }
@@ -147,8 +150,8 @@ int dfsLeftRight(int** array, int size) {
             }
         }
     }
-    // clear(&stack);
-    if (size <= 50) {
+    stack_clear(&stack);
+    if (size <= 64) {
         printf("FAILED! - Left to Right search\n\n");
         printArray(vertices, array, size);
     }

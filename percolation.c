@@ -23,8 +23,15 @@ int** createLattice(int size, double chance)
     return rows;
 }
 
-int percolate(int** arr, int size) {
-    return (dfsUpDown(arr, size) && dfsLeftRight(arr, size));
+int percolateSite(int** arr, int size, int type) {
+    if (type == 0) {
+        return dfsUpDown(arr, size);
+    } else if (type == 1) {
+        return dfsLeftRight(arr, size);
+    } else if (type == 3) {
+        return (dfsUpDown(arr, size) && dfsLeftRight(arr, size));
+    }
+    return 0;
 }
 
 void destroyArray(int** arr)
@@ -45,27 +52,38 @@ void printLattice(int** lattice, int size)
 
 int main(int argc, char *argv[])
 {
+    char latticeType;
     int size;
     double chance;
-    if (argc != 3) {
-        size = 50;
+    int test;
+    if (argc != 4) {
+        latticeType = 's';
         chance = 0.4;
+        test = 3;
     } else {
-        size = atoi(argv[1]);
+        latticeType = argv[1][0];
         chance = atof(argv[2]);
+        test = atoi(argv[3]);
     }
-
+    size = 64;
     srand(time(NULL));
-    int** lattice = createLattice(size, chance);
+    if (latticeType == 's') {
+        int** lattice = createLattice(size, chance);
 
-    if (size <= 50) {
-        // printLattice(lattice, size);
+        while (!percolateSite(lattice, size, test)) {
+            destroyArray(lattice);
+            size = size * 2;
+            if (size > 30000) {
+                size = size / 2;
+                printf("Hit threshold limit (%d)\n", size);
+                exit(0);
+            }
+            printf("%d\n", size);
+            lattice = createLattice(size, chance);
+        }
+
+        printf("min size was %d\n", size);
+
     }
-
-    int test = percolate(lattice, size);
-
-    printf("%s\n", test ? "Can percolate" : "Does not percolate");
-
-    destroyArray(lattice);
 
 }
