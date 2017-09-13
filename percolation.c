@@ -8,9 +8,9 @@ double rand_01(void) {
 int** createLattice(int size, double chance)
 {
     int* values;
-    int** rows = malloc(size*sizeof(int*));
+    int** rows = malloc(size * sizeof(int*));
     for (int i = 0; i < size; i++) {
-        values = calloc(size*size, sizeof(int));
+        values = calloc(size, sizeof(int));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
                 values[j] = 1; //occupied
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
             destroyArray(lattice);
             size = size * 2;
-        } while (size < 30000);
+        } while (size * sizeof(int) < 140730606792704);
 
 
         // while (!percolateSite(lattice, size, test)) {
