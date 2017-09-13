@@ -1,6 +1,6 @@
 PROJECT =   percolation
 HEADERS =   $(PROJECT).h
-OBJ     =   percolation.o stack.o dfs.o
+OBJ     =   percolation.o stack.o dfs.o queue.o floodfill.o
 
 C99     =   cc -std=c99
 CFLAGS  =   -Wall -pedantic -Werror -g

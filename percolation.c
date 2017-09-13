@@ -13,9 +13,9 @@ int** createLattice(int size, double chance)
         values = calloc(size*size, sizeof(int));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
-                values[j] = 1;
+                values[j] = 1; //occupied
             } else {
-                values[j] = 0;
+                values[j] = 0; //not occupied
             }
         }
         rows[i] = values;
@@ -37,7 +37,9 @@ void printLattice(int** lattice, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf("%s ", lattice[i][j] ? "X" : ".");
+            if(lattice[i][j] == 0) printf(".");
+            else if(lattice[i][j] == 1) printf("X");
+            else printf("%d", lattice[i][j]);
         }
         printf("\n");
     }
@@ -63,8 +65,30 @@ int main(int argc, char *argv[])
     }
 
     int test = percolate(lattice, size);
-
     printf("%s\n", test ? "Can percolate" : "Does not percolate");
+
+    // printf("\n\n");
+    // printLattice(lattice, size);
+    // printf("\n\n");
+
+    clock_t begin = clock();
+
+    int largestClusterSize = findLargestCluster(lattice, size);
+    printf("Largest cluster contains %d sites\n", largestClusterSize);
+
+    clock_t end = clock();
+    double elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
+    printf("Time taken: %f\n", elapsedTime);
+
+    // printf("\n\n");
+    // printLattice(lattice, size);
+    // printf("\n\n");
+
+    // printf("Size of int: %lu\n", sizeof(int));
+    // printf("Size of int array element: %lu\n\n", sizeof(lattice[0][0]));
+    //
+    // printf("Size of int array element pointer: %lu\n", sizeof(&lattice[0][0]));
+    // printf("Size of VERT struct: %lu\n", sizeof(QUEUE_VERT));
 
     destroyArray(lattice);
 
