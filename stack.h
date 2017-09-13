@@ -12,16 +12,16 @@ typedef struct {
     int maxsize;
 } STACK;
 
-extern int isempty(STACK* stack);
+extern int stack_isempty(STACK* stack);
 
-extern int isfull(STACK* stack);
+extern int stack_isfull(STACK* stack);
 
-extern VERT peek(STACK* stack);
+extern VERT stack_peek(STACK* stack);
 
-extern VERT pop(STACK* stack);
+extern VERT stack_pop(STACK* stack);
 
-extern int push(STACK* stack, VERT data);
+extern int stack_push(STACK* stack, VERT data);
 
-extern void initialise(STACK* stack, int size);
+extern void stack_initialise(STACK* stack, int size);
 
-extern void clear(STACK* stack);
+extern void stack_clear(STACK* stack);
