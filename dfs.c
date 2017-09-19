@@ -80,6 +80,7 @@ int dfsUpDown(int** array, int size) {
                     vertices[v.x * size + v.y] = 1;
                     if(findAdjUD(array, &stack, v, size)) {
                         stack_clear(&stack);
+                        free(vertices);
                         // if (size <= 64) {
                         //     printf("SUCCEEDED! - Up to Down search\n\n");
                         //     printArray(vertices, array, size);
@@ -91,6 +92,7 @@ int dfsUpDown(int** array, int size) {
         }
     }
     stack_clear(&stack);
+    free(vertices);
     // if (size <= 64) {
     //     printf("FAILED! - Up to Down search\n\n");
     //     printArray(vertices, array, size);
@@ -162,6 +164,7 @@ int dfsLeftRight(int** array, int size) {
                     vertices[v.x * size + v.y] = 1;
                     if(findAdjLR(array, &stack, v, size)) {
                         stack_clear(&stack);
+                        free(vertices);
                         // if (size <= 64) {
                         //     printf("SUCCEEDED! - Left to Right search\n\n");
                         //     printArray(vertices, array, size);
@@ -173,6 +176,7 @@ int dfsLeftRight(int** array, int size) {
         }
     }
     stack_clear(&stack);
+    free(vertices);
     // if (size <= 64) {
     //     printf("FAILED! - Left to Right search\n\n");
     //     printArray(vertices, array, size);

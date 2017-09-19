@@ -29,3 +29,5 @@ extern int enqueue(QUEUE* queue, QUEUE_VERT data);
 extern void queue_initialise(QUEUE* queue, int size);
 
 extern void queue_clear(QUEUE* queue);
+
+void queue_free(QUEUE* queue);

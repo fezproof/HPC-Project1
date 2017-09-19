@@ -11,30 +11,32 @@ int floodfill(int** array, int size, QUEUE queue)
     int westVert = 0;
     int eastVert = 0;
 
+    int southVert = 0;
+    int northVert = 0;
+
+    QUEUE_VERT newV;
+
     while(!queue_isempty(&queue))
     {
         v = dequeue(&queue);
         westVert = v.y;
         eastVert = v.y + 1; //+1 so avoid double-checking
 
-
         //move west and check
         while(array[v.x][westVert] == 1)
         {
             array[v.x][westVert] = 2;
             //check south and add to queue
-            int southVert = (v.x+1 + size) % size;
+            southVert = (v.x+1 + size) % size;
             if(array[southVert][westVert] == 1) {
-                QUEUE_VERT newV;
                 newV.y = westVert;
                 newV.x = southVert;
                 enqueue(&queue, newV);
             }
 
             //check north and add to queue
-            int northVert = (v.x-1 + size) % size;
+            northVert = (v.x-1 + size) % size;
             if(array[northVert][westVert] == 1) {
-                QUEUE_VERT newV;
                 newV.y = westVert;
                 newV.x = northVert;
                 enqueue(&queue, newV);
@@ -48,17 +50,15 @@ int floodfill(int** array, int size, QUEUE queue)
         {
             array[v.x][eastVert] = 2;
             //check south and add to queue
-            int southVert = (v.x+1 + size) % size;
+            southVert = (v.x+1 + size) % size;
             if(array[southVert][eastVert] == 1) {
-                QUEUE_VERT newV;
                 newV.y = eastVert;
                 newV.x = southVert;
                 enqueue(&queue, newV);
             }
             //check north and add to queue
-            int northVert = (v.x-1 + size) % size;
+            northVert = (v.x-1 + size) % size;
             if(array[northVert][eastVert] == 1) {
-                QUEUE_VERT newV;
                 newV.y = eastVert;
                 newV.x = northVert;
                 enqueue(&queue, newV);
@@ -83,6 +83,7 @@ int findLargestCluster(int** array, int size)
 
     QUEUE queue;
     queue_initialise(&queue, size*size);
+    QUEUE_VERT v;
 
     for(int i = 0; i < size; i++)
     {
@@ -91,11 +92,10 @@ int findLargestCluster(int** array, int size)
             if(array[i][j] == 1) {
 
                 queue_clear(&queue);
+
                 //vertice from which a cluster is checked
-                QUEUE_VERT v;
                 v.x = i;
                 v.y = j;
-
                 enqueue(&queue, v);
 
                 currentSize = floodfill(array, size, queue);
@@ -106,5 +106,6 @@ int findLargestCluster(int** array, int size)
         }
     }
 
+    queue_free(&queue);
     return largestSize;
 }

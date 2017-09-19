@@ -44,9 +44,9 @@ void printLattice(int** lattice, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if(lattice[i][j] == 0) printf(".");
-            else if(lattice[i][j] == 1) printf("X");
-            else printf("%d", lattice[i][j]);
+            if(lattice[i][j] == 0) printf(". ");
+            else if(lattice[i][j] == 1) printf("X ");
+            else printf("%d ", lattice[i][j]);
         }
         printf("\n");
     }
@@ -67,10 +67,10 @@ int main(int argc, char *argv[])
         chance = atof(argv[2]);
         test = atoi(argv[3]);
     }
-    size = 32;
+    size = 64;
     srand(time(NULL));
     if (latticeType == 's') {
-        int** lattice = createLattice(size, chance);
+        int** lattice;
         clock_t begin;
         clock_t end;
         double elapsedTime;
@@ -102,38 +102,14 @@ int main(int argc, char *argv[])
             printf("Cluster:\n");
             printf("\tTime taken: %f\n", elapsedTime);
             printf("\tLargest cluster = %d sites\n\n", largestClusterSize);
+            if (size < 128) {
+                printLattice(lattice, size);
+            }
 
             destroyArray(lattice);
             size = size * 2;
-        } while (size * sizeof(int) < 140730606792704);
+        } while (size < 30000);
 
-
-        // while (!percolateSite(lattice, size, test)) {
-        //     end = clock();
-        //     elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
-        //     printf("Percolation - Time taken: %f\n", elapsedTime);
-        //
-        //     begin = clock();
-        //
-        //     largestClusterSize = findLargestCluster(lattice, size);
-        //
-        //     end = clock();
-        //     elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
-        //     printf("Largest cluster contains %d sites\n", largestClusterSize);
-        //     printf("Cluster - Time taken: %f\n", elapsedTime);
-        //
-        //     destroyArray(lattice);
-        //     size = size * 2;
-        //     if (size > 30000) {
-        //         size = size / 2;
-        //         printf("Hit threshold limit (%d)\n", size);
-        //         exit(0);
-        //     }
-        //     printf("%d\n", size);
-        //     lattice = createLattice(size, chance);
-        //     begin = clock();
-        // }
-        // printf("min size was %d\n", size);
-
+        return 0;
     }
 }
