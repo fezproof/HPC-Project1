@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "dfs.h"
 
-int checkVertUD(int** array, int x, int y, VERT * u, int size) {
+int checkVertUD(short** array, int x, int y, VERT * u, int size) {
     if (x != -1 && x != size) {
         if (y != -1 && y != size) {
             if (array[x][y] == 1) {
@@ -26,7 +26,7 @@ int checkVertUD(int** array, int x, int y, VERT * u, int size) {
     return 0;
 }
 
-void printArray(int dis[], int** array, int size) {
+void printArray(int dis[], short** array, int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             if (dis[i * size + j] == 1) {
@@ -40,7 +40,7 @@ void printArray(int dis[], int** array, int size) {
     printf("\n");
 }
 
-int findAdjUD(int** array, STACK* stack, VERT v, int size) {
+int findAdjUD(short** array, STACK* stack, VERT v, int size) {
     if (v.x + 1 == size - 1 && array[v.x + 1][v.y] == 1) {
         return 1;
     }
@@ -62,7 +62,7 @@ int findAdjUD(int** array, STACK* stack, VERT v, int size) {
     return 0;
 }
 
-int dfsUpDown(int** array, int size) {
+int dfsUpDown(short** array, int size) {
     STACK stack;
 
     VERT v;
@@ -100,7 +100,7 @@ int dfsUpDown(int** array, int size) {
     return 0;
 }
 
-int checkVertLR(int** array, int x, int y, VERT * u, int size) {
+int checkVertLR(short** array, int x, int y, VERT * u, int size) {
     if (y != -1 && y != size) {
         if (x != -1 && x != size) {
             if (array[x][y] == 1) {
@@ -125,7 +125,7 @@ int checkVertLR(int** array, int x, int y, VERT * u, int size) {
     return 0;
 }
 
-int findAdjLR(int** array, STACK* stack, VERT v, int size) {
+int findAdjLR(short** array, STACK* stack, VERT v, int size) {
     if (v.y + 1 == size - 1 && array[v.x][v.y + 1] == 1) {
         return 1;
     }
@@ -146,7 +146,7 @@ int findAdjLR(int** array, STACK* stack, VERT v, int size) {
     return 0;
 }
 
-int dfsLeftRight(int** array, int size) {
+int dfsLeftRight(short** array, int size) {
     STACK stack;
 
     VERT v;

@@ -2,7 +2,7 @@
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-int floodfill(int** array, int size, QUEUE queue)
+int floodfill(short** array, int size, QUEUE queue)
 {
     QUEUE_VERT v;
 
@@ -10,7 +10,6 @@ int floodfill(int** array, int size, QUEUE queue)
 
     int westVert = 0;
     int eastVert = 0;
-
     int southVert = 0;
     int northVert = 0;
 
@@ -46,8 +45,10 @@ int floodfill(int** array, int size, QUEUE queue)
         }
 
         //move east and check
+        // perror("did we get here");
         while(array[v.x][eastVert] == 1)
         {
+            // perror("or here");
             array[v.x][eastVert] = 2;
             //check south and add to queue
             southVert = (v.x+1 + size) % size;
@@ -76,7 +77,7 @@ int floodfill(int** array, int size, QUEUE queue)
     //1 - occupied
     //2 - occupied and seen
 //returns the size of the largest cluster
-int findLargestCluster(int** array, int size)
+int findLargestCluster(short** array, int size)
 {
     int largestSize = 0;
     int currentSize = 0;
