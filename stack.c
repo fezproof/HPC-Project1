@@ -31,7 +31,7 @@ VERT stack_pop(STACK* stack) {
    } else {
       printf("Could not retrieve data, Stack is empty.\n");
       exit(0);
-   }
+   } 
 }
 
 int stack_push(STACK* stack, VERT data) {

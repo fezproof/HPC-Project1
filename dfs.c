@@ -60,7 +60,7 @@ int findAdjUD(char** array, STACK* stack, VERT v, int size) {
         stack_push(stack, u);
     }
     return 0;
-}
+} 
 
 int dfsUpDown(char** array, int size) {
     STACK stack;

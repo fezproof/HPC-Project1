@@ -33,25 +33,32 @@ QUEUE_VERT dequeue(QUEUE* queue) {
    }
 }
 
+//returns 1 if failed to enqueue item
 int enqueue(QUEUE* queue, QUEUE_VERT data) {
 
    if(!queue_isfull(queue)) {
       queue->queue[queue->back] = data;
       queue->back = (queue->back - 1 + queue->maxsize) % queue->maxsize;
       queue->size++;
-      return 1;
+      return 0;
    } else {
       printf("Could not insert data, Queue is full.\n");
-      exit(0);
+      return 1;
   }
 }
 
-void queue_initialise(QUEUE* queue, int maxsize) {
+//return 1 if failed to allocate memory
+int queue_initialise(QUEUE* queue, unsigned long long maxsize) {
+    if(maxsize <= 0) {
+        printf("Failed to initialise queue\n");
+        return 1;
+    }
     queue->queue = calloc(maxsize, sizeof(QUEUE_VERT));
     queue->front = 0;
     queue->back = 0;
     queue->size = 0;
     queue->maxsize = maxsize;
+    return 0;
 }
 
 void queue_clear(QUEUE* queue) {

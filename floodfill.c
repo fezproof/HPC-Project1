@@ -2,11 +2,11 @@
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-int floodfill(char** array, int size, QUEUE queue)
+unsigned long long floodfill(char** array, int size, QUEUE queue)
 {
     QUEUE_VERT v;
 
-    int clusterSize = 0;
+    unsigned long long clusterSize = 0;
 
     int westVert = 0;
     int eastVert = 0;
@@ -17,25 +17,47 @@ int floodfill(char** array, int size, QUEUE queue)
 
     while(!queue_isempty(&queue))
     {
+        clusterSize++;
+
         v = dequeue(&queue);
-        westVert = v.y;
-        eastVert = v.y + 1; //+1 so avoid double-checking
+        westVert = (v.y - 1 + size) % size;
+        eastVert = (v.y + 1 + size) % size;
+
+        southVert = (v.x+1 + size) % size;
+        northVert = (v.x-1 + size) % size;
+
+        //check south of the dequeued site
+        if(array[southVert][v.y] == 1) {
+            array[southVert][v.y] = 2;
+            newV.y = v.y;
+            newV.x = southVert;
+            enqueue(&queue, newV);
+        }
+
+        //check north of the dequeued site
+        if(array[northVert][v.y] == 1) {
+            array[northVert][v.y] = 2;
+            newV.y = v.y;
+            newV.x = northVert;
+            enqueue(&queue, newV);
+        }
+
 
         //move west and check
         while(array[v.x][westVert] == 1)
         {
             array[v.x][westVert] = 2;
             //check south and add to queue
-            southVert = (v.x+1 + size) % size;
             if(array[southVert][westVert] == 1) {
+                array[southVert][westVert] = 2;
                 newV.y = westVert;
                 newV.x = southVert;
                 enqueue(&queue, newV);
             }
 
             //check north and add to queue
-            northVert = (v.x-1 + size) % size;
             if(array[northVert][westVert] == 1) {
+                array[northVert][westVert] = 2;
                 newV.y = westVert;
                 newV.x = northVert;
                 enqueue(&queue, newV);
@@ -49,15 +71,15 @@ int floodfill(char** array, int size, QUEUE queue)
         {
             array[v.x][eastVert] = 2;
             //check south and add to queue
-            southVert = (v.x+1 + size) % size;
             if(array[southVert][eastVert] == 1) {
+                array[southVert][eastVert] = 2;
                 newV.y = eastVert;
                 newV.x = southVert;
                 enqueue(&queue, newV);
             }
             //check north and add to queue
-            northVert = (v.x-1 + size) % size;
             if(array[northVert][eastVert] == 1) {
+                array[northVert][eastVert] = 2;
                 newV.y = eastVert;
                 newV.x = northVert;
                 enqueue(&queue, newV);
@@ -75,13 +97,22 @@ int floodfill(char** array, int size, QUEUE queue)
     //1 - occupied
     //2 - occupied and seen
 //returns the size of the largest cluster
-int findLargestCluster(char** array, int size)
+
+//returns 0 if failed
+unsigned long long findLargestCluster(char** array, int size)
 {
-    int largestSize = 0;
-    int currentSize = 0;
+    unsigned long long largestSize = 0;
+    unsigned long long currentSize = 0;
 
     QUEUE queue;
-    queue_initialise(&queue, size*size);
+    unsigned long long queueSize = (unsigned long long) size;
+
+    queueSize = queueSize * queueSize;
+
+    if(queue_initialise(&queue, queueSize)) {
+        return 0;
+    }
+
     QUEUE_VERT v;
 
     for(int i = 0; i < size; i++)
@@ -89,16 +120,20 @@ int findLargestCluster(char** array, int size)
         for(int j = 0; j < size; j++)
         {
             if(array[i][j] == 1) {
+                array[i][j] = 2; //mark as seen
 
                 queue_clear(&queue);
 
                 //vertice from which a cluster is checked
                 v.x = i;
                 v.y = j;
+
                 enqueue(&queue, v);
 
                 currentSize = floodfill(array, size, queue);
-                if(largestSize < currentSize) {
+                if(currentSize == 0) {
+                    return 0;
+                } else if(largestSize < currentSize) {
                     largestSize = currentSize;
                 }
             }

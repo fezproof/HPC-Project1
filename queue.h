@@ -8,10 +8,10 @@ typedef struct {
 
 typedef struct {
     QUEUE_VERT* queue;
-    int front;
-    int back;
-    int size;
-    int maxsize;
+    unsigned long long front;
+    unsigned long long back;
+    unsigned long long size;
+    unsigned long long maxsize;
 } QUEUE;
 
 extern void queue_print(QUEUE* queue, int size);
@@ -26,7 +26,7 @@ extern QUEUE_VERT dequeue(QUEUE* queue);
 
 extern int enqueue(QUEUE* queue, QUEUE_VERT data);
 
-extern void queue_initialise(QUEUE* queue, int size);
+extern int queue_initialise(QUEUE* queue, unsigned long long size);
 
 extern void queue_clear(QUEUE* queue);
 
