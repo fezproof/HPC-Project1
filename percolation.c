@@ -30,12 +30,6 @@ BONDSITE** createLatticeBond(int size, double chance)
     for (int i = 0; i < size; i++) {
         values = calloc(size, sizeof(BONDSITE));
         for (int j = 0; j < size; j++) {
-            // if (chance >= rand_01()) {
-            //     values[j].up = 1; //occupied
-            //     rows[(i - 1 + size) % size][j].down = 1;
-            // } else {
-            //     values[j].up = 0; //not occupied
-            // }
             if (chance >= rand_01()) {
                 values[j].left = 1; //occupied
                 values[(j - 1 + size) % size].right = 1;
@@ -45,16 +39,37 @@ BONDSITE** createLatticeBond(int size, double chance)
         }
         rows[i] = values;
     }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (chance >= rand_01()) {
+                rows[i][j].up = 1; //occupied
+                rows[(i - 1 + size) % size][j].down = 1;
+            } else {
+                rows[i][j].up = 0; //not occupied
+            }
+        }
+    }
     return rows;
 }
 
 int percolateSite(char** arr, int size, int type) {
     if (type == 0) {
-        return dfsUpDown(arr, size);
+        return dfsUpDownSite(arr, size);
     } else if (type == 1) {
-        return dfsLeftRight(arr, size);
-    } else if (type == 3) {
-        return (dfsUpDown(arr, size) && dfsLeftRight(arr, size));
+        return dfsLeftRightSite(arr, size);
+    } else if (type == 2) {
+        return (dfsUpDownSite(arr, size) && dfsLeftRightSite(arr, size));
+    }
+    return 0;
+}
+
+int percolateBond(BONDSITE** arr, int size, int type) {
+    if (type == 0) {
+        return dfsUpDownBond(arr, size);
+    } else if (type == 1) {
+        return dfsLeftRightBond(arr, size);
+    } else if (type == 2) {
+        return (dfsUpDownBond(arr, size) && dfsLeftRightBond(arr, size));
     }
     return 0;
 }
@@ -71,7 +86,7 @@ void destroyArrayBond(BONDSITE** arr)
     free(arr);
 }
 
-void printLattice(char** lattice, int size)
+void printLatticeSite(char** lattice, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -90,9 +105,9 @@ int main(int argc, char *argv[])
     double chance;
     int test;
     if (argc != 4) {
-        latticeType = 's';
+        latticeType = 'b';
         chance = 0.6;
-        test = 3;
+        test = 2;
     } else {
         latticeType = argv[1][0];
         chance = atof(argv[2]);
@@ -190,16 +205,15 @@ int main(int argc, char *argv[])
         BONDSITE** lattice;
         clock_t begin;
         clock_t end;
-        // double elapsedTime;
         // int largestClusterSize;
-        // int percResult;
+        int percResult;
 
         //Initialise a CSV file
         FILE *fp = fopen("site.csv","w+");
         fprintf(fp,"Size,Allocation,Percolation,Cluster,Total");
 
         double allocationTime;
-        // double percolationTime;
+        double percolationTime;
         // double clusterTime;
 
         do {
@@ -213,14 +227,14 @@ int main(int argc, char *argv[])
             printf("Allocation:\n");
             printf("\tTime taken: %f\n", allocationTime);
 
-            // begin = clock();
-            // percResult = percolateSite(lattice, size, test);
-            // end = clock();
-            // percolationTime = (double)(end-begin) / CLOCKS_PER_SEC;
-            // printf("Percolation:\n");
-            // printf("\tTime taken: %f\n", percolationTime);
-            // printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
-            //
+            begin = clock();
+            percResult = percolateBond(lattice, size, test);
+            end = clock();
+            percolationTime = (double)(end-begin) / CLOCKS_PER_SEC;
+            printf("Percolation:\n");
+            printf("\tTime taken: %f\n", percolationTime);
+            printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
+
             // begin = clock();
             // largestClusterSize = findLargestCluster(lattice, size);
             // end = clock();
