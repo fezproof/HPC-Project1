@@ -82,18 +82,28 @@ int dfsUpDownSite(char** array, int size) {
     STACK stack;
 
     VERT v;
-    int* vertices = calloc(size*size, sizeof(int));
+
+    unsigned long long index;
+    unsigned long long numSites = (unsigned long long) size;
+    numSites = numSites * numSites;
+
+    int* vertices = calloc(numSites, sizeof(int));
+
     for (int i = 0; i < size; i++) {
         if (array[0][i] == 1 && vertices[i] == 0) {
-            stack_initialise(&stack, size * size);
+            stack_initialise(&stack, numSites);
+
             v.x = 0;
             v.y = i;
             stack_push(&stack, v);
 
             while (!stack_isempty(&stack)) {
+
                 v = stack_pop(&stack);
-                if (vertices[v.x * size + v.y] != 1) {
-                    vertices[v.x * size + v.y] = 1;
+
+                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+                if (vertices[index] != 1) {
+                    vertices[index] = 1;
                     if(findAdjUDSite(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
@@ -104,9 +114,11 @@ int dfsUpDownSite(char** array, int size) {
                         return 1;
                     }
                 }
+
             }
         }
     }
+
     stack_clear(&stack);
     free(vertices);
 
@@ -149,18 +161,27 @@ int dfsLeftRightSite(char** array, int size) {
     STACK stack;
 
     VERT v;
-    int* vertices = calloc(size * size, sizeof(int));
+
+    unsigned long long index;
+    unsigned long long numSites = (unsigned long long) size;
+    numSites = numSites * numSites;
+
+    int* vertices = calloc(numSites, sizeof(int));
+
     for (int i = 0; i < size; i++) {
         if (array[i][0] == 1 && vertices[i * size] == 0) {
-            stack_initialise(&stack, size * size);
+            stack_initialise(&stack, numSites);
             v.x = i;
             v.y = 0;
             stack_push(&stack, v);
 
             while (!stack_isempty(&stack)) {
                 v = stack_pop(&stack);
-                if (vertices[v.x * size + v.y] != 1) {
-                    vertices[v.x * size + v.y] = 1;
+
+                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+
+                if (vertices[index] != 1) {
+                    vertices[index] = 1;
                     if(findAdjLRSite(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);

@@ -98,6 +98,27 @@ void printLatticeSite(char** lattice, int size)
     }
 }
 
+// int main(int argc, char *argv[])
+// {
+//     srand(time(NULL));
+//
+//     int size = 65536;
+//     int test = 1;
+//     float chance = 0.6;
+//
+//     printf("Working...\n");
+//
+//     char** lattice = createLattice(size, chance);
+//
+//     int percResult = percolateSite(lattice, size, test);
+//     printf("Percolation %s\n", percResult ? "SUCCEEDED" : "FAILED");
+//     printf("\n");
+//
+//     // unsigned long long largestClusterSize = findLargestCluster(lattice, size);
+//     // printf("\n\nLargest cluster: %llu", largestClusterSize);
+//     // printf("\n");
+// }
+
 int main(int argc, char *argv[])
 {
     char latticeType;
@@ -195,7 +216,7 @@ int main(int argc, char *argv[])
 
             size = size * 2;
 
-        } while (size < 1048576);
+        } while (size < 65536);
 
         fclose(fp);
 

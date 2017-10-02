@@ -105,8 +105,8 @@ unsigned long long findLargestCluster(char** array, int size)
     unsigned long long currentSize = 0;
 
     QUEUE queue;
-    unsigned long long queueSize = (unsigned long long) size;
 
+    unsigned long long queueSize = (unsigned long long) size;
     queueSize = queueSize * queueSize;
 
     if(queue_initialise(&queue, queueSize)) {

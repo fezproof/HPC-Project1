@@ -9,8 +9,8 @@ typedef struct {
 
 typedef struct {
     VERT* stack;
-    int top;
-    int maxsize;
+    unsigned long long top;
+    unsigned long long maxsize;
 } STACK;
 
 extern int stack_isempty(STACK* stack);
@@ -23,6 +23,6 @@ extern VERT stack_pop(STACK* stack);
 
 extern int stack_push(STACK* stack, VERT data);
 
-extern void stack_initialise(STACK* stack, int size);
+extern void stack_initialise(STACK* stack, unsigned long long size);
 
 extern void stack_clear(STACK* stack);

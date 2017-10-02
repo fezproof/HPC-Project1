@@ -46,7 +46,10 @@ int stack_push(STACK* stack, VERT data) {
    }
 }
 
-void stack_initialise(STACK* stack, int size) {
+void stack_initialise(STACK* stack, unsigned long long size) {
+    if(size <= 0) {
+        printf("Failed to initialise stack\n");
+    }
     stack->stack = calloc(size, sizeof(VERT));
     stack->maxsize = size;
     stack->top = -1;
