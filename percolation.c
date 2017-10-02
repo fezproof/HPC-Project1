@@ -106,14 +106,14 @@ int main(int argc, char *argv[])
     int test;
     if (argc != 4) {
         latticeType = 'b';
-        chance = 0.6;
+        chance = 0.5;
         test = 2;
     } else {
         latticeType = argv[1][0];
         chance = atof(argv[2]);
         test = atoi(argv[3]);
     }
-    size = 64;
+    size = 16;
     srand(time(NULL));
     if (latticeType == 's') {
         char** lattice;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 
             size = size * 2;
 
-        } while (size < 65536);
+        } while (size < 1048576);
 
         fclose(fp);
 
