@@ -5,12 +5,12 @@ double rand_01(void) {
     return (double)rand() / (double)RAND_MAX;
 }
 
-short** createLattice(int size, double chance)
+char** createLattice(int size, double chance)
 {
-    short* values;
-    short** rows = malloc(size * sizeof(short*));
+    char* values;
+    char** rows = malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
-        values = calloc(size, sizeof(short));
+        values = calloc(size, sizeof(char));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
                 values[j] = 1; //occupied
@@ -23,7 +23,7 @@ short** createLattice(int size, double chance)
     return rows;
 }
 
-int percolateSite(short** arr, int size, int type) {
+int percolateSite(char** arr, int size, int type) {
     if (type == 0) {
         return dfsUpDown(arr, size);
     } else if (type == 1) {
@@ -34,7 +34,7 @@ int percolateSite(short** arr, int size, int type) {
     return 0;
 }
 
-void destroyArray(short** arr)
+void destroyArray(char** arr)
 {
     free(*arr);
     free(arr);
@@ -70,7 +70,7 @@ void printLattice(int** lattice, int size)
 //     size = 40000;
 //     srand(time(NULL));
 //
-//     short** lattice;
+//     char** lattice;
 //     clock_t begin;
 //     clock_t end;
 //     double elapsedTime;
@@ -114,44 +114,58 @@ int main(int argc, char *argv[])
     size = 64;
     srand(time(NULL));
     if (latticeType == 's') {
-        short** lattice;
+        char** lattice;
         clock_t begin;
         clock_t end;
         double elapsedTime;
         int largestClusterSize;
         int percResult;
 
+        //Initialise a CSV file
+        FILE *fp = fopen("site.csv","w+");
+        fprintf(fp,"Size,Allocation,Percolation,Cluster,Total");
+
+        double allocationTime;
+        double percolationTime;
+        double clusterTime;
 
         do {
+            printf("\n------------------------------------------\n");
             printf("Lattice size = %d x %d\n", size, size);
 
             begin = clock();
             lattice = createLattice(size, chance);
             end = clock();
-            elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
+            allocationTime = (double)(end-begin) / CLOCKS_PER_SEC;
             printf("Allocation:\n");
-            printf("\tTime taken: %f\n", elapsedTime);
+            printf("\tTime taken: %f\n", allocationTime);
 
             begin = clock();
             percResult = percolateSite(lattice, size, test);
             end = clock();
-            elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
+            percolationTime = (double)(end-begin) / CLOCKS_PER_SEC;
             printf("Percolation:\n");
-            printf("\tTime taken: %f\n", elapsedTime);
+            printf("\tTime taken: %f\n", percolationTime);
             printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
 
             begin = clock();
             largestClusterSize = findLargestCluster(lattice, size);
             end = clock();
-            elapsedTime = (double)(end-begin) / CLOCKS_PER_SEC;
+            clusterTime = (double)(end-begin) / CLOCKS_PER_SEC;
             printf("Cluster:\n");
-            printf("\tTime taken: %f\n", elapsedTime);
-            printf("\tLargest cluster = %d sites\n\n", largestClusterSize);
+            printf("\tTime taken: %f\n", clusterTime);
+            printf("\tLargest cluster = %d sites", largestClusterSize);
 
             destroyArray(lattice);
+
+            //add to csv file
+            fprintf(fp,"%d,%f,%f,%f,%f", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime);
+
             size = size * 2;
+
         } while (size * sizeof(int) < 140730606792704);
 
+        fclose(fp);
 
         while (!percolateSite(lattice, size, test)) {
             end = clock();

@@ -42,7 +42,7 @@ int enqueue(QUEUE* queue, QUEUE_VERT data) {
       return 1;
    } else {
       printf("Could not insert data, Queue is full.\n");
-      return 0;
+      exit(0);
   }
 }
 
