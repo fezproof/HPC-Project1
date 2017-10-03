@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
         BONDSITE** lattice;
         clock_t begin;
         clock_t end;
-        int largestClusterSize;
+        unsigned long long largestClusterSize;
         int percResult;
 
         //Initialise a CSV file
@@ -278,16 +278,16 @@ int main(int argc, char *argv[])
 
             largestClusterSize = 0;
             clusterTime = 0;
-            printf("Ignore this line %f %d\n", clusterTime, largestClusterSize);
+            printf("Ignore this line %f %llu\n", clusterTime, largestClusterSize);
 
             destroyArrayBond(lattice);
             //
             // //add to csv file
-            fprintf(fp,"\n%d,%f,%f,%f,%f", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime);
+            fprintf(fp,"\n%d,%f,%f,%f,%f,,%s,%llu", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime, percResult ? "SUCCEEDED" : "FAILED", largestClusterSize);
 
             size = size * 2;
 
-        } while (size < 131072);
+        } while (size < 4000);
 
         fclose(fp);
 
