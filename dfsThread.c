@@ -1,6 +1,6 @@
 #include "dfs.h"
 
-void printLatticeBond(BONDSITE** lattice, int* vertices, int size)
+void printLatticeBondThread(BONDSITE** lattice, int* vertices, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -44,7 +44,7 @@ void printLatticeBond(BONDSITE** lattice, int* vertices, int size)
     }
 }
 
-int checkVertUDSite(char** array, int x, int y, VERT * u, int size) {
+int checkVertUDSiteThread(char** array, int x, int y, VERT * u, int size) {
     if (x != -1 && x != size) {
         if (array[x][(y + size) % size] == 1) {
             u->x = x;
@@ -55,29 +55,29 @@ int checkVertUDSite(char** array, int x, int y, VERT * u, int size) {
     return 0;
 }
 
-int findAdjUDSite(char** array, STACK* stack, VERT v, int size) {
+int findAdjUDSiteThread(char** array, STACK* stack, VERT v, int size) {
     if (v.x + 1 == size - 1 && array[v.x + 1][v.y] == 1) {
         return 1;
     }
 
     VERT u;
 
-    if (checkVertUDSite(array, v.x, v.y + 1, &u, size)) {
+    if (checkVertUDSiteThread(array, v.x, v.y + 1, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertUDSite(array, v.x, v.y - 1, &u, size)) {
+    if (checkVertUDSiteThread(array, v.x, v.y - 1, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertUDSite(array, v.x - 1, v.y, &u, size)) {
+    if (checkVertUDSiteThread(array, v.x - 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertUDSite(array, v.x + 1, v.y, &u, size)) {
+    if (checkVertUDSiteThread(array, v.x + 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
     return 0;
 }
 
-int dfsUpDownSite(char** array, int size) {
+int dfsUpDownSiteThread(char** array, int size) {
     STACK stack;
 
     VERT v;
@@ -103,7 +103,7 @@ int dfsUpDownSite(char** array, int size) {
                 index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
                 if (vertices[index] != 1) {
                     vertices[index] = 1;
-                    if(findAdjUDSite(array, &stack, v, size)) {
+                    if(findAdjUDSiteThread(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
                         // if (size <= 64) {
@@ -124,7 +124,7 @@ int dfsUpDownSite(char** array, int size) {
     return 0;
 }
 
-int checkVertLRSite(char** array, int x, int y, VERT * u, int size) {
+int checkVertLRSiteThread(char** array, int x, int y, VERT * u, int size) {
     if (y != -1 && y != size) {
         if (array[(x + size) % size][y]) {
             u->x = (x + size) % size;
@@ -135,28 +135,28 @@ int checkVertLRSite(char** array, int x, int y, VERT * u, int size) {
     return 0;
 }
 
-int findAdjLRSite(char** array, STACK* stack, VERT v, int size) {
+int findAdjLRSiteThread(char** array, STACK* stack, VERT v, int size) {
     if (v.y + 1 == size - 1 && array[v.x][v.y + 1] == 1) {
         return 1;
     }
 
     VERT u;
-    if (checkVertLRSite(array, v.x - 1, v.y, &u, size)) {
+    if (checkVertLRSiteThread(array, v.x - 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertLRSite(array, v.x + 1, v.y, &u, size)) {
+    if (checkVertLRSiteThread(array, v.x + 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertLRSite(array, v.x, v.y - 1, &u, size)) {
+    if (checkVertLRSiteThread(array, v.x, v.y - 1, &u, size)) {
         stack_push(stack, u);
     }
-    if (checkVertLRSite(array, v.x, v.y + 1, &u, size)) {
+    if (checkVertLRSiteThread(array, v.x, v.y + 1, &u, size)) {
         stack_push(stack, u);
     }
     return 0;
 }
 
-int dfsLeftRightSite(char** array, int size) {
+int dfsLeftRightSiteThread(char** array, int size) {
     STACK stack;
 
     VERT v;
@@ -181,7 +181,7 @@ int dfsLeftRightSite(char** array, int size) {
 
                 if (vertices[index] != 1) {
                     vertices[index] = 1;
-                    if(findAdjLRSite(array, &stack, v, size)) {
+                    if(findAdjLRSiteThread(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
 
@@ -199,11 +199,11 @@ int dfsLeftRightSite(char** array, int size) {
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-int checkVertBond(BONDSITE** array, int x, int y) {
+int checkVertBondThread(BONDSITE** array, int x, int y) {
     return (array[x][y].up || array[x][y].down || array[x][y].left || array[x][y].right);
 }
 
-int findAdjUDBond(BONDSITE** array, STACK* stack, VERT v, int size) {
+int findAdjUDBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
     if (v.x + 1 == size - 1 && array[v.x + 1][v.y].down) {
         return 1;
     }
@@ -234,7 +234,7 @@ int findAdjUDBond(BONDSITE** array, STACK* stack, VERT v, int size) {
     return 0;
 }
 
-int dfsUpDownBond(BONDSITE** array, int size) {
+int dfsUpDownBondThread(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
@@ -243,7 +243,7 @@ int dfsUpDownBond(BONDSITE** array, int size) {
     numSites = numSites * numSites;
     int* vertices = calloc(numSites, sizeof(BONDSITE));
     for (int i = 0; i < size; i++) {
-        if (checkVertBond(array, 0, i) && vertices[i] == 0) {
+        if (checkVertBondThread(array, 0, i) && vertices[i] == 0) {
             stack_initialise(&stack, numSites);
             v.x = 0;
             v.y = i;
@@ -255,7 +255,7 @@ int dfsUpDownBond(BONDSITE** array, int size) {
 
                 if (vertices[index] != 1) {
                     vertices[index] = 1;
-                    if(findAdjUDBond(array, &stack, v, size)) {
+                    if(findAdjUDBondThread(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
 
@@ -271,7 +271,7 @@ int dfsUpDownBond(BONDSITE** array, int size) {
     return 0;
 }
 
-int findAdjLRBond(BONDSITE** array, STACK* stack, VERT v, int size) {
+int findAdjLRBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
     if (v.y + 1 == size - 1 && array[v.x][v.y + 1].right) {
         return 1;
     }
@@ -302,7 +302,7 @@ int findAdjLRBond(BONDSITE** array, STACK* stack, VERT v, int size) {
     return 0;
 }
 
-int dfsLeftRightBond(BONDSITE** array, int size) {
+int dfsLeftRightBondThread(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
@@ -311,7 +311,7 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
     numSites = numSites * numSites;
     int* vertices = calloc(numSites, sizeof(BONDSITE));
     for (int i = 0; i < size; i++) {
-        if (checkVertBond(array, i, 0) && vertices[i * size] == 0) {
+        if (checkVertBondThread(array, i, 0) && vertices[i * size] == 0) {
             stack_initialise(&stack, numSites);
             v.x = i;
             v.y = 0;
@@ -323,7 +323,7 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
 
                 if (vertices[index] != 1) {
                     vertices[index] = 1;
-                    if(findAdjLRBond(array, &stack, v, size)) {
+                    if(findAdjLRBondThread(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
 

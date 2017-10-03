@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "stack.h"
 
 extern int dfsUpDownSite(char** array, int size);

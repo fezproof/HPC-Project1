@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     double chance;
     int test;
     if (argc != 4) {
-        latticeType = 'b';
+        latticeType = 's';
         chance = 0.5;
         test = 2;
     } else {
