@@ -7,19 +7,20 @@ double rand_01(void) {
 
 char** createLatticeSite(int size, double chance)
 {
-    char* values;
     char** rows = malloc(size * sizeof(char*));
-    for (int i = 0; i < size; i++) {
-        values = calloc(size, sizeof(char));
-        for (int j = 0; j < size; j++) {
-            if (chance >= rand_01()) {
-                values[j] = 1; //occupied
-            } else {
-                values[j] = 0; //not occupied
+    #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = calloc(size, sizeof(char));
+            for (int j = 0; j < size; j++) {
+                if (chance >= rand_01()) {
+                    values[j] = 1; //occupied
+                } else {
+                    values[j] = 0; //not occupied
+                }
             }
+            rows[i] = values;
         }
-        rows[i] = values;
-    }
     return rows;
 }
 
@@ -140,8 +141,7 @@ int main(int argc, char *argv[])
     srand(time(NULL));
     if (latticeType == 's') {
         char** lattice;
-        clock_t begin;
-        clock_t end;
+        struct timespec start, end;
         unsigned long long largestClusterSize;
         int percResult;
 
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
         FILE *fp = fopen("site.csv","a+");
 
         time_t curtime;
-        time(&curtime);
+        // time(&curtime);
         fprintf(fp, "\n\n\n%s", ctime(&curtime));
         fprintf(fp, "\nLattice,Site");
         fprintf(fp, "\nProbability,%f", chance);
@@ -166,40 +166,43 @@ int main(int argc, char *argv[])
             printf("\n------------------------------------------\n");
             printf("Lattice size = %d x %d\n", size, size);
 
-            begin = clock();
+            clock_gettime(CLOCK_MONOTONIC_RAW, &start);
             lattice = createLatticeSite(size, chance);
             if(lattice == NULL) {
                 printf("Failed whilst creating lattice\n");
                 break;
             } else {
-                end = clock();
-                allocationTime = (double)(end-begin) / CLOCKS_PER_SEC;
+                clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+                allocationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
+                if (size < 128) {
+                    printLatticeSite(lattice, size);
+                }
                 printf("Allocation:\n");
-                printf("\tTime taken: %f\n", allocationTime);
+                printf("\tTime taken: %.6f ms\n", allocationTime);
             }
 
 
-            begin = clock();
+            clock_gettime(CLOCK_MONOTONIC_RAW, &start);
             percResult = percolateSite(lattice, size, test);
             if(percResult == 2) {
                 printf("Failed whilst checking for percolation\n");
                 break;
             } else {
-                end = clock();
-                percolationTime = (double)(end-begin) / CLOCKS_PER_SEC;
+                clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+                percolationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
                 printf("Percolation:\n");
-                printf("\tTime taken: %f\n", percolationTime);
+                printf("\tTime taken: %.6f ms\n", percolationTime);
                 printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
             }
 
-            begin = clock();
+            clock_gettime(CLOCK_MONOTONIC_RAW, &start);
             if(chance > 0) {
                 largestClusterSize = findLargestCluster(lattice, size);
                 if(largestClusterSize > 0) {
-                    end = clock();
-                    clusterTime = (double)(end-begin) / CLOCKS_PER_SEC;
+                    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+                    clusterTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
                     printf("Cluster:\n");
-                    printf("\tTime taken: %f\n", clusterTime);
+                    printf("\tTime taken: %.6f ms\n", clusterTime);
                     printf("\tLargest cluster = %lld sites\n", largestClusterSize);
                 } else {
                     printf("Failed whilst finding the largest cluster\n");
