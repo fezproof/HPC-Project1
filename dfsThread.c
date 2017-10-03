@@ -78,50 +78,58 @@ int findAdjUDSiteThread(char** array, STACK* stack, VERT v, int size) {
 }
 
 int dfsUpDownSiteThread(char** array, int size) {
-    STACK stack;
 
-    VERT v;
-
-    unsigned long long index;
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
 
-    int* vertices = calloc(numSites, sizeof(int));
+    char** vertices = malloc(size * sizeof(char*));
+    #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = calloc(size, sizeof(char));
+            vertices[i] = values;
+        }
 
-    for (int i = 0; i < size; i++) {
-        if (array[0][i] == 1 && vertices[i] == 0) {
-            stack_initialise(&stack, numSites);
+    char complete = 0;
 
-            v.x = 0;
-            v.y = i;
-            stack_push(&stack, v);
+    STACK stack;
+    VERT v;
 
-            while (!stack_isempty(&stack)) {
+    #pragma omp parallel for private(stack, v)
+        for (int i = 0; i < size; i++) {
+            if (!complete) {
+                if (array[0][i] == 1 && vertices[0][i] == 0) {
+                    stack_initialise(&stack, numSites);
 
-                v = stack_pop(&stack);
+                    v.x = 0;
+                    v.y = i;
+                    stack_push(&stack, v);
 
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
-                    if(findAdjUDSiteThread(array, &stack, v, size)) {
-                        stack_clear(&stack);
-                        free(vertices);
-                        // if (size <= 64) {
-                        //     printf("SUCCEEDED! - Up to Down search\n\n");
-                        //     printArray(vertices, array, size);
-                        // }
-                        return 1;
+                    while (!complete && !stack_isempty(&stack)) {
+
+                        v = stack_pop(&stack);
+
+                        if (vertices[v.x][v.y] != 1) {
+                            vertices[v.x][v.y] = 1;
+                            if(findAdjUDSiteThread(array, &stack, v, size)) {
+                                // if (size <= 64) {
+                                //     printf("SUCCEEDED! - Up to Down search\n\n");
+                                //     printArray(vertices, array, size);
+                                // }
+                                complete = 1;
+                            }
+                        }
+
                     }
+                    stack_clear(&stack);
                 }
-
             }
         }
-    }
 
-    stack_clear(&stack);
+    free(*vertices);
     free(vertices);
 
-    return 0;
+    return complete;
 }
 
 int checkVertLRSiteThread(char** array, int x, int y, VERT * u, int size) {
@@ -157,44 +165,60 @@ int findAdjLRSiteThread(char** array, STACK* stack, VERT v, int size) {
 }
 
 int dfsLeftRightSiteThread(char** array, int size) {
-    STACK stack;
-
-    VERT v;
-
-    unsigned long long index;
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
 
-    int* vertices = calloc(numSites, sizeof(int));
+    char** vertices = malloc(size * sizeof(char*));
+    #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = calloc(size, sizeof(char));
+            vertices[i] = values;
+        }
 
-    for (int i = 0; i < size; i++) {
-        if (array[i][0] == 1 && vertices[i * size] == 0) {
-            stack_initialise(&stack, numSites);
-            v.x = i;
-            v.y = 0;
-            stack_push(&stack, v);
+    char complete = 0;
 
-            while (!stack_isempty(&stack)) {
-                v = stack_pop(&stack);
+    STACK stack;
+    VERT v;
 
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+    #pragma omp parallel for private(stack, v)
+        for (int i = 0; i < size; i++) {
+            if (!complete) {
+                if (array[i][0] == 1 && vertices[i][0] == 0) {
+                    stack_initialise(&stack, numSites);
 
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
-                    if(findAdjLRSiteThread(array, &stack, v, size)) {
-                        stack_clear(&stack);
-                        free(vertices);
+                    v.x = 0;
+                    v.y = i;
+                    stack_push(&stack, v);
 
-                        return 1;
+                    while (!complete && !stack_isempty(&stack)) {
+
+                        v = stack_pop(&stack);
+
+                        if (vertices[v.x][v.y] != 1) {
+                            vertices[v.x][v.y] = 1;
+                            if(findAdjUDSiteThread(array, &stack, v, size)) {
+                                // stack_clear(&stack);
+                                // free(vertices);
+                                // if (size <= 64) {
+                                //     printf("SUCCEEDED! - Up to Down search\n\n");
+                                //     printArray(vertices, array, size);
+                                // }
+                                complete = 1;
+                            }
+                        }
+
                     }
+                    stack_clear(&stack);
                 }
             }
         }
-    }
-    stack_clear(&stack);
+
+
+    free(*vertices);
     free(vertices);
 
-    return 0;
+    return complete;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

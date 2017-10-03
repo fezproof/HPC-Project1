@@ -64,6 +64,17 @@ int percolateSite(char** arr, int size, int type) {
     return 0;
 }
 
+int percolateSiteThread(char** arr, int size, int type) {
+    if (type == 0) {
+        return dfsUpDownSiteThread(arr, size);
+    } else if (type == 1) {
+        return dfsLeftRightSiteThread(arr, size);
+    } else if (type == 2) {
+        return (dfsUpDownSiteThread(arr, size) && dfsLeftRightSiteThread(arr, size));
+    }
+    return 0;
+}
+
 int percolateBond(BONDSITE** arr, int size, int type) {
     if (type == 0) {
         return dfsUpDownBond(arr, size);
@@ -130,7 +141,7 @@ int main(int argc, char *argv[])
     int test;
     if (argc != 4) {
         latticeType = 's';
-        chance = 0.5;
+        chance = 0.6;
         test = 2;
     } else {
         latticeType = argv[1][0];
@@ -160,6 +171,7 @@ int main(int argc, char *argv[])
 
         double allocationTime;
         double percolationTime;
+        double percolationTimeThreaded;
         double clusterTime;
 
         do {
@@ -174,9 +186,9 @@ int main(int argc, char *argv[])
             } else {
                 clock_gettime(CLOCK_MONOTONIC_RAW, &end);
                 allocationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-                if (size < 128) {
-                    printLatticeSite(lattice, size);
-                }
+                // if (size < 128) {
+                //     printLatticeSite(lattice, size);
+                // }
                 printf("Allocation:\n");
                 printf("\tTime taken: %.6f ms\n", allocationTime);
             }
@@ -192,6 +204,19 @@ int main(int argc, char *argv[])
                 percolationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
                 printf("Percolation:\n");
                 printf("\tTime taken: %.6f ms\n", percolationTime);
+                printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
+            }
+
+            clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+            percResult = percolateSiteThread(lattice, size, test);
+            if(percResult == 2) {
+                printf("Failed whilst checking for percolation\n");
+                break;
+            } else {
+                clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+                percolationTimeThreaded = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
+                printf("Percolation (Threaded):\n");
+                printf("\tTime taken: %.6f ms\n", percolationTimeThreaded);
                 printf("\t%s\n", percResult ? "SUCCEEDED" : "FAILED");
             }
 
@@ -290,7 +315,7 @@ int main(int argc, char *argv[])
 
             size = size * 2;
 
-        } while (size < 4000);
+        } while (size < 131072);
 
         fclose(fp);
 

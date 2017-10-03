@@ -7,3 +7,11 @@ extern int dfsLeftRightSite(char** array, int size);
 extern int dfsUpDownBond(BONDSITE** array, int size);
 
 extern int dfsLeftRightBond(BONDSITE** array, int size);
+
+extern int dfsUpDownSiteThread(char** array, int size);
+
+extern int dfsLeftRightSiteThread(char** array, int size);
+
+extern int dfsUpDownBondThread(BONDSITE** array, int size);
+
+extern int dfsLeftRightBondThread(BONDSITE** array, int size);
