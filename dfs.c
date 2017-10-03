@@ -239,18 +239,23 @@ int dfsUpDownBond(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
-    int* vertices = calloc(size*size, sizeof(BONDSITE));
+    unsigned long long index;
+    unsigned long long numSites = (unsigned long long) size;
+    numSites = numSites * numSites;
+    int* vertices = calloc(numSites, sizeof(BONDSITE));
     for (int i = 0; i < size; i++) {
         if (checkVertBond(array, 0, i) && vertices[i] == 0) {
-            stack_initialise(&stack, size * size);
+            stack_initialise(&stack, numSites);
             v.x = 0;
             v.y = i;
             stack_push(&stack, v);
 
             while (!stack_isempty(&stack)) {
                 v = stack_pop(&stack);
-                if (vertices[v.x * size + v.y] != 1) {
-                    vertices[v.x * size + v.y] = 1;
+                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+
+                if (vertices[index] != 1) {
+                    vertices[index] = 1;
                     if(findAdjUDBond(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);
@@ -302,18 +307,23 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
-    int* vertices = calloc(size * size, sizeof(BONDSITE));
+    unsigned long long index;
+    unsigned long long numSites = (unsigned long long) size;
+    numSites = numSites * numSites;
+    int* vertices = calloc(numSites, sizeof(BONDSITE));
     for (int i = 0; i < size; i++) {
         if (checkVertBond(array, i, 0) && vertices[i * size] == 0) {
-            stack_initialise(&stack, size * size);
+            stack_initialise(&stack, numSites);
             v.x = i;
             v.y = 0;
             stack_push(&stack, v);
 
             while (!stack_isempty(&stack)) {
                 v = stack_pop(&stack);
-                if (vertices[v.x * size + v.y] != 1) {
-                    vertices[v.x * size + v.y] = 1;
+                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+
+                if (vertices[index] != 1) {
+                    vertices[index] = 1;
                     if(findAdjLRBond(array, &stack, v, size)) {
                         stack_clear(&stack);
                         free(vertices);

@@ -98,25 +98,27 @@ void printLatticeSite(char** lattice, int size)
     }
 }
 
+// //main for testing site stuff
 // int main(int argc, char *argv[])
 // {
 //     srand(time(NULL));
 //
-//     int size = 65536;
-//     int test = 1;
+//     int size = 4;
+//     // int test = 1;
 //     float chance = 0.6;
 //
 //     printf("Working...\n");
 //
-//     char** lattice = createLattice(size, chance);
+//     char** lattice = createLatticeSite(size, chance);
 //
-//     int percResult = percolateSite(lattice, size, test);
-//     printf("Percolation %s\n", percResult ? "SUCCEEDED" : "FAILED");
-//     printf("\n");
-//
-//     // unsigned long long largestClusterSize = findLargestCluster(lattice, size);
-//     // printf("\n\nLargest cluster: %llu", largestClusterSize);
+//     // int percResult = percolateSite(lattice, size, test);
+//     // printf("Percolation %s\n", percResult ? "SUCCEEDED" : "FAILED");
 //     // printf("\n");
+//
+//     printLatticeSite(lattice, size);
+//     unsigned long long largestClusterSize = findLargestCluster(lattice, size);
+//     printf("\n\nLargest cluster: %llu", largestClusterSize);
+//     printf("\n");
 // }
 
 int main(int argc, char *argv[])
@@ -149,8 +151,9 @@ int main(int argc, char *argv[])
         time_t curtime;
         time(&curtime);
         fprintf(fp, "\n\n\n%s", ctime(&curtime));
-        fprintf(fp, "\nType,Site");
+        fprintf(fp, "\nLattice,Site");
         fprintf(fp, "\nProbability,%f", chance);
+        fprintf(fp, "\nPerc type,%d", test);
         fprintf(fp, "\nThreads,%d", 1);
 
         fprintf(fp,"\nSize,Allocation,Percolation,Cluster,Total,,Peroclates?,Cluster size");
@@ -216,7 +219,7 @@ int main(int argc, char *argv[])
 
             size = size * 2;
 
-        } while (size < 65536);
+        } while (size < 131072);
 
         fclose(fp);
 
@@ -226,16 +229,25 @@ int main(int argc, char *argv[])
         BONDSITE** lattice;
         clock_t begin;
         clock_t end;
-        // int largestClusterSize;
+        int largestClusterSize;
         int percResult;
 
         //Initialise a CSV file
-        FILE *fp = fopen("site.csv","w+");
-        fprintf(fp,"Size,Allocation,Percolation,Cluster,Total");
+        FILE *fp = fopen("bond.csv","a+");
+
+        time_t curtime;
+        time(&curtime);
+        fprintf(fp, "\n\n\n%s", ctime(&curtime));
+        fprintf(fp, "\nLattice,Bond");
+        fprintf(fp, "\nProbability,%f", chance);
+        fprintf(fp, "\nPerc type,%d", test);
+        fprintf(fp, "\nThreads,%d", 1);
+
+        fprintf(fp,"\nSize,Allocation,Percolation,Cluster,Total,,Peroclates?,Cluster size");
 
         double allocationTime;
         double percolationTime;
-        // double clusterTime;
+        double clusterTime;
 
         do {
             printf("\n------------------------------------------\n");
@@ -263,15 +275,19 @@ int main(int argc, char *argv[])
             // printf("Cluster:\n");
             // printf("\tTime taken: %f\n", clusterTime);
             // printf("\tLargest cluster = %d sites", largestClusterSize);
-            //
+
+            largestClusterSize = 0;
+            clusterTime = 0;
+            printf("Ignore this line %f %d\n", clusterTime, largestClusterSize);
+
             destroyArrayBond(lattice);
             //
             // //add to csv file
-            // fprintf(fp,"%d,%f,%f,%f,%f", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime);
+            fprintf(fp,"\n%d,%f,%f,%f,%f", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime);
 
             size = size * 2;
 
-        } while (size < 1048576);
+        } while (size < 131072);
 
         fclose(fp);
 

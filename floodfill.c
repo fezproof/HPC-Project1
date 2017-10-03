@@ -8,6 +8,10 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
 
     unsigned long long clusterSize = 0;
 
+    int i = 0;
+    int nextWestVert = 0;
+    int nextEastVert = 0;
+
     int westVert = 0;
     int eastVert = 0;
     int southVert = 0;
@@ -20,8 +24,11 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
         clusterSize++;
 
         v = dequeue(&queue);
-        westVert = (v.y - 1 + size) % size;
-        eastVert = (v.y + 1 + size) % size;
+
+        westVert = v.y;
+        nextWestVert = (v.y - 1 + size) % size;
+        eastVert = v.y;
+        nextEastVert = (v.y + 1 + size) % size;
 
         southVert = (v.x+1 + size) % size;
         northVert = (v.x-1 + size) % size;
@@ -42,50 +49,79 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
             enqueue(&queue, newV);
         }
 
+        //--------------WEST--------------
 
         //move west and check
-        while(array[v.x][westVert] == 1)
+        while(array[v.x][nextWestVert] == 1)
         {
-            array[v.x][westVert] = 2;
-            //check south and add to queue
-            if(array[southVert][westVert] == 1) {
-                array[southVert][westVert] = 2;
-                newV.y = westVert;
-                newV.x = southVert;
-                enqueue(&queue, newV);
-            }
-
-            //check north and add to queue
-            if(array[northVert][westVert] == 1) {
-                array[northVert][westVert] = 2;
-                newV.y = westVert;
-                newV.x = northVert;
-                enqueue(&queue, newV);
-            }
-            westVert = (westVert-1 + size) % size;
             clusterSize++;
+            westVert = nextWestVert;
+            array[v.x][westVert] = 2;
+            nextWestVert = (westVert-1 + size) % size;
         }
 
         //move east and check
-        while(array[v.x][eastVert] == 1)
+        while(array[v.x][nextEastVert] == 1)
         {
+            clusterSize++;
+            eastVert = nextEastVert;
             array[v.x][eastVert] = 2;
-            //check south and add to queue
-            if(array[southVert][eastVert] == 1) {
-                array[southVert][eastVert] = 2;
-                newV.y = eastVert;
-                newV.x = southVert;
-                enqueue(&queue, newV);
-            }
+            nextEastVert = (nextEastVert+1 + size) % size;
+        }
+
+        i = westVert;
+
+        while(i != v.y)
+        {
             //check north and add to queue
-            if(array[northVert][eastVert] == 1) {
-                array[northVert][eastVert] = 2;
-                newV.y = eastVert;
+            if(array[northVert][i] == 1) {
+                array[northVert][i] = 2;
+                newV.y = i;
                 newV.x = northVert;
                 enqueue(&queue, newV);
             }
-            eastVert = (eastVert+1 + size) % size;
-            clusterSize++;
+            i = (i+1 + size) % size;
+        }
+
+        //check there are sites to the east
+        i = v.y;
+
+        while(i != eastVert)
+        {
+            i = (i+1 + size) % size;
+            if(array[northVert][i] == 1) {
+                array[northVert][i] = 2;
+                newV.y = i;
+                newV.x = northVert;
+                enqueue(&queue, newV);
+            }
+        }
+
+        i = westVert;
+
+        while(i != v.y)
+        {
+            //check south and add to queue
+            if(array[southVert][i] == 1) {
+                array[southVert][i] = 2;
+                newV.y = i;
+                newV.x = southVert;
+                enqueue(&queue, newV);
+            }
+            i = (i+1 + size) % size;
+        }
+
+        i = v.y;
+
+        while(i != eastVert)
+        {
+            i = (i+1 + size) % size;
+            if(array[southVert][i] == 1) {
+                array[southVert][i] = 2;
+                newV.y = i;
+                newV.x = southVert;
+                enqueue(&queue, newV);
+            }
         }
     }
     return clusterSize;
