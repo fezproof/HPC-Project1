@@ -99,7 +99,7 @@ void printLatticeSite(char** lattice, int size)
     }
 }
 
-// //main for testing site stuff
+//main for testing site stuff
 // int main(int argc, char *argv[])
 // {
 //     srand(time(NULL));

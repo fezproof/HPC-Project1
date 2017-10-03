@@ -49,9 +49,7 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
             enqueue(&queue, newV);
         }
 
-        //--------------WEST--------------
-
-        //move west and check
+        //move from centre to west and check current row
         while(array[v.x][nextWestVert] == 1)
         {
             clusterSize++;
@@ -60,7 +58,7 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
             nextWestVert = (westVert-1 + size) % size;
         }
 
-        //move east and check
+        //move from centre to east and check current row
         while(array[v.x][nextEastVert] == 1)
         {
             clusterSize++;
@@ -69,58 +67,153 @@ unsigned long long floodfill(char** array, int size, QUEUE queue)
             nextEastVert = (nextEastVert+1 + size) % size;
         }
 
+        //move from west to centre and check north row
         i = westVert;
-
-        while(i != v.y)
-        {
-            //check north and add to queue
-            if(array[northVert][i] == 1) {
-                array[northVert][i] = 2;
-                newV.y = i;
-                newV.x = northVert;
-                enqueue(&queue, newV);
+        if(i <= v.y) {
+            while(i != v.y)
+            {
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
             }
-            i = (i+1 + size) % size;
+        } else {
+            while(i != size)
+            {
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
+            }
+            i = 0;
+            while(i != v.y)
+            {
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
+            }
         }
 
-        //check there are sites to the east
+        //move from centre to east and check north row
         i = v.y;
-
-        while(i != eastVert)
+        if(eastVert >= v.y)
         {
-            i = (i+1 + size) % size;
-            if(array[northVert][i] == 1) {
-                array[northVert][i] = 2;
-                newV.y = i;
-                newV.x = northVert;
-                enqueue(&queue, newV);
+            while(i != eastVert)
+            {
+                i++;
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
+            }
+        } else {
+            while(i != size)
+            {
+                i++;
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
+            }
+            i = 0;
+            while(i != eastVert)
+            {
+                i++;
+                if(array[northVert][i] == 1) {
+                    array[northVert][i] = 2;
+                    newV.y = i;
+                    newV.x = northVert;
+                    enqueue(&queue, newV);
+                }
             }
         }
 
+        //move from west to centre and check south row
         i = westVert;
-
-        while(i != v.y)
+        if(i <= v.y)
         {
-            //check south and add to queue
-            if(array[southVert][i] == 1) {
-                array[southVert][i] = 2;
-                newV.y = i;
-                newV.x = southVert;
-                enqueue(&queue, newV);
+            while(i != v.y)
+            {
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
             }
-            i = (i+1 + size) % size;
+        } else {
+            while(i != size)
+            {
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
+            }
+            i = 0;
+            while(i != v.y)
+            {
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
+                i++;
+            }
         }
 
         i = v.y;
-
-        while(i != eastVert)
+        if(eastVert >= v.y)
         {
-            i = (i+1 + size) % size;
-            if(array[southVert][i] == 1) {
-                array[southVert][i] = 2;
-                newV.y = i;
-                newV.x = southVert;
-                enqueue(&queue, newV);
+            while(i != eastVert)
+            {
+                i++;
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
+            }
+        } else {
+            while(i != size)
+            {
+                i++;
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
+            }
+            i = 0;
+            while(i != eastVert)
+            {
+                i++;
+                if(array[southVert][i] == 1) {
+                    array[southVert][i] = 2;
+                    newV.y = i;
+                    newV.x = southVert;
+                    enqueue(&queue, newV);
+                }
             }
         }
     }
