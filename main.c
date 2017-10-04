@@ -1,5 +1,9 @@
 #include "main.h"
 
+#define RUNS 1000
+#define NUMTHREADS 8
+#define MAXLATTICESIZE 8192 //131072 16384 8192 4096
+
 void destroyArraySite(char** arr)
 {
     free(*arr);
@@ -74,8 +78,8 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
             allocationTime += timeAllocateSite(&lattice, size, chance);
             percolationTime += timePercSite(lattice, size, test, &percResult);
             percolationTimeThreaded += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
-            clusterTime += timeClusterSite(lattice, size, chance, &largestClusterSize);
-            clusterTimeThreaded += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+            // clusterTime += timeClusterSite(lattice, size, chance, &largestClusterSize);
+            // clusterTimeThreaded += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded);
 
             sumLargestClusterSize += largestClusterSize;
             sumLargestClusterSizeThreaded += largestClusterSizeThreaded;
@@ -124,7 +128,7 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
 
         size = size * 2;
 
-    } while (size < 16384);
+    } while (size < maxLatticeSize);
 }
 
 void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, FILE *fp)
@@ -211,13 +215,11 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, F
 
 int main(int argc, char *argv[])
 {
-    int runs = 10;
-    int maxLatticeSize = 8192; //131072 16384 8192 4096
 
     //Prevents the system from changing the number of threads
-    omp_set_dynamic(1);
+    // omp_set_dynamic(NUMTHREADS);
     //Sets the number of threads
-    omp_set_num_threads(1);
+    omp_set_num_threads(NUMTHREADS);
 
     char latticeType;
     int size;
@@ -236,13 +238,13 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     //Initialise a CSV file
-    FILE *fp = initialiseCSV(latticeType, chance, test, runs);
+    FILE *fp = initialiseCSV(latticeType, chance, test, RUNS);
 
     if (latticeType == 's') {
-        sitePerc(size, chance, test, runs, maxLatticeSize, fp);
+        sitePerc(size, chance, test, RUNS, MAXLATTICESIZE, fp);
     }
     else {
-        bondPerc(size, chance, test, runs, maxLatticeSize, fp);
+        bondPerc(size, chance, test, RUNS, MAXLATTICESIZE, fp);
     }
 
     fclose(fp);
