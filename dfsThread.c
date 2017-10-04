@@ -95,7 +95,7 @@ int dfsUpDownSiteThread(char** array, int size) {
     STACK stack;
     VERT v;
 
-    #pragma omp parallel for private(stack, v) schedule(dynamic)
+    #pragma omp parallel for private(stack, v)
         for (int i = 0; i < size; i++) {
             if (!complete) {
                 if (array[0][i] == 1 && vertices[0][i] == 0) {
@@ -181,7 +181,7 @@ int dfsLeftRightSiteThread(char** array, int size) {
     STACK stack;
     VERT v;
 
-    #pragma omp parallel for private(stack, v) schedule(dynamic)
+    #pragma omp parallel for private(stack, v)
         for (int i = 0; i < size; i++) {
             if (!complete) {
                 if (array[i][0] == 1 && vertices[i][0] == 0) {

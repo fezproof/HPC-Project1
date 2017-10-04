@@ -211,8 +211,13 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, F
 
 int main(int argc, char *argv[])
 {
-    int runs = 50;
-    int maxLatticeSize = 16384; //131072
+    int runs = 10;
+    int maxLatticeSize = 8192; //131072 16384 8192 4096
+
+    //Prevents the system from changing the number of threads
+    omp_set_dynamic(1);
+    //Sets the number of threads
+    omp_set_num_threads(1);
 
     char latticeType;
     int size;

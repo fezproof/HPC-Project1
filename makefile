@@ -1,4 +1,4 @@
-PROJECT =   percolation
+PROJECT =   main
 HEADERS =   $(PROJECT).h
 OBJ     =   main.o percolation.o cluster.o stack.o dfs.o dfsThread.o queue.o floodfill.o floodfillThread.o siteTimers.o bondTimers.o lattice.o
 

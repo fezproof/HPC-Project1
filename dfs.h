@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include "stack.h"
 #include "bond.h"
 
