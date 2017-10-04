@@ -1,3 +1,6 @@
+#ifndef QUEUE_H
+#define QUEUE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -31,3 +34,5 @@ extern int queue_initialise(QUEUE* queue, unsigned long long size);
 extern void queue_clear(QUEUE* queue);
 
 void queue_free(QUEUE* queue);
+
+#endif

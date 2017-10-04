@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <omp.h>
 #include "dfs.h"
-#include "floodfill.h"
-#include <omp.h>
+
+extern int percolateBond(BONDSITE** arr, int size, int type);
+extern int percolateBondThread(BONDSITE** arr, int size, int type);
+extern int percolateSite(char** arr, int size, int type);
+extern int percolateSiteThread(char** arr, int size, int type);

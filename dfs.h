@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "bond.h"
 
 extern int dfsUpDownSite(char** array, int size);
 

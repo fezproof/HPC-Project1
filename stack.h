@@ -1,6 +1,8 @@
+#ifndef STACK_H
+#define STACK_H
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "bond.h"
 
 typedef struct {
     int x;
@@ -26,3 +28,5 @@ extern int stack_push(STACK* stack, VERT data);
 extern void stack_initialise(STACK* stack, unsigned long long size);
 
 extern void stack_clear(STACK* stack);
+
+#endif
