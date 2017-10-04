@@ -92,7 +92,7 @@ int dfsUpDownSiteThread(char** array, int size) {
 
     char complete = 0;
 
-    #pragma omp parallel for
+    #pragma omp parallel for shared(vertices)
         for (int i = 0; i < size; i++) {
             if (!complete) {
                 if (array[0][i] == 1 && vertices[0][i] == 0) {
@@ -121,13 +121,16 @@ int dfsUpDownSiteThread(char** array, int size) {
                         }
 
                     }
-                    if (!stack_isempty(&stack))
+                    // if (!stack_isempty(&stack))
                         stack_clear(&stack);
                 }
             }
         }
 
-    free(*vertices);
+    #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return complete;
@@ -179,7 +182,7 @@ int dfsLeftRightSiteThread(char** array, int size) {
 
     char complete = 0;
 
-    #pragma omp parallel for
+    #pragma omp parallel for shared(vertices)
         for (int i = 0; i < size; i++) {
             if (!complete) {
                 if (array[i][0] == 1 && vertices[i][0] == 0) {
@@ -199,8 +202,6 @@ int dfsLeftRightSiteThread(char** array, int size) {
                         if (vertices[v.x][v.y] != 1) {
                             vertices[v.x][v.y] = 1;
                             if(findAdjUDSiteThread(array, &stack, v, size)) {
-                                // stack_clear(&stack);
-                                // free(vertices);
                                 // if (size <= 64) {
                                 //     printf("SUCCEEDED! - Up to Down search\n\n");
                                 //     printArray(vertices, array, size);
@@ -210,14 +211,16 @@ int dfsLeftRightSiteThread(char** array, int size) {
                         }
 
                     }
-                    if (!stack_isempty(&stack))
+                    // if (!stack_isempty(&stack))
                         stack_clear(&stack);
                 }
             }
         }
 
-
-    free(*vertices);
+    #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return complete;

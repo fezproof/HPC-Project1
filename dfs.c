@@ -108,6 +108,9 @@ int dfsUpDownSite(char** array, int size) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjUDSite(array, &stack, v, size)) {
                         stack_clear(&stack);
+                        for (int i = 0; i < size; i++) {
+                            free(vertices[i]);
+                        }
                         free(vertices);
                         // if (size <= 64) {
                         //     printf("SUCCEEDED! - Up to Down search\n\n");
@@ -118,11 +121,13 @@ int dfsUpDownSite(char** array, int size) {
                 }
 
             }
+            stack_clear(&stack);
         }
     }
 
-    stack_clear(&stack);
-    free(*vertices);
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return 0;
@@ -171,7 +176,7 @@ int dfsLeftRightSite(char** array, int size) {
     char** vertices = malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
         char* values;
-        values = calloc(size, sizeof(char));
+        values = malloc(size * sizeof(char));
         vertices[i] = values;
     }
 
@@ -189,16 +194,22 @@ int dfsLeftRightSite(char** array, int size) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjLRSite(array, &stack, v, size)) {
                         stack_clear(&stack);
+                        for (int i = 0; i < size; i++) {
+                            free(vertices[i]);
+                        }
                         free(vertices);
 
                         return 1;
                     }
                 }
             }
+            stack_clear(&stack);
         }
     }
-    stack_clear(&stack);
-    free(*vertices);
+
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return 0;

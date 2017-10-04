@@ -1,18 +1,22 @@
 #include "main.h"
 
-#define RUNS 50
+#define RUNS 25
 #define NUMTHREADS 4
 #define MAXLATTICESIZE 16384 //131072 16384 8192 4096
 
-void destroyArraySite(char** arr)
+void destroyArraySite(char** arr, int size)
 {
-    free(*arr);
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
     free(arr);
 }
 
-void destroyArrayBond(BONDSITE** arr)
+void destroyArrayBond(BONDSITE** arr, int size)
 {
-    free(*arr);
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
     free(arr);
 }
 
@@ -30,13 +34,11 @@ void printLatticeSite(char** lattice, int size)
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs)
 {
-    FILE *fp;
-
     char* file = latticeType == 's' ? "site.csv" : "bond.csv";
-    fp = fopen(file,"a+");
+    FILE *fp = fopen(file,"a+");;
 
     time_t curtime;
-    // time(&curtime);
+    time(&curtime);
     fprintf(fp, "\n\n\n%s", ctime(&curtime));
     fprintf(fp, "\nPercolation,%s", latticeType == 's' ? "Site" : "Bond");
     fprintf(fp, "\nProbability,%f", chance);
@@ -87,7 +89,7 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
             if(percResult == 1) numPercolated++;
             if(percResultThreaded == 1) numPercolatedThreaded++;
 
-            destroyArraySite(lattice);
+            destroyArraySite(lattice, size);
 
         }
 
@@ -169,7 +171,7 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, F
             if(percResult == 1) numPercolated++;
             if(percResultThreaded == 1) numPercolatedThreaded++;
 
-            destroyArrayBond(lattice);
+            destroyArrayBond(lattice, size);
 
         }
 
@@ -234,7 +236,7 @@ int main(int argc, char *argv[])
         chance = atof(argv[2]);
         test = atoi(argv[3]);
     }
-    size = 16;
+    size = 64;
     srand(time(NULL));
 
     //Initialise a CSV file

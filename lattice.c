@@ -11,7 +11,7 @@ char** createLatticeSite(int size, double chance)
     #pragma omp parallel for
         for (int i = 0; i < size; i++) {
             char* values;
-            values = calloc(size, sizeof(char));
+            values = malloc(size * sizeof(char));
             for (int j = 0; j < size; j++) {
                 if (chance >= rand_01()) {
                     values[j] = 1; //occupied
@@ -29,7 +29,7 @@ BONDSITE** createLatticeBond(int size, double chance)
     BONDSITE* values;
     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
     for (int i = 0; i < size; i++) {
-        values = calloc(size, sizeof(BONDSITE));
+        values = malloc(size * sizeof(BONDSITE));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
                 values[j].left = 1; //occupied
