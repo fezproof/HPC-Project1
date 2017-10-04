@@ -167,12 +167,13 @@ int main(int argc, char *argv[])
         fprintf(fp, "\nPerc type,%d", test);
         fprintf(fp, "\nThreads,%d", 1);
 
-        fprintf(fp,"\nSize,Allocation,Percolation,Cluster,Total,,Peroclates?,Cluster size");
+        fprintf(fp,"\nSize,Allocation,Percolation,T: Percolation,Cluster,T: Cluster,Total,T: Total,,Peroclates?,Cluster size");
 
         double allocationTime;
         double percolationTime;
         double percolationTimeThreaded;
         double clusterTime;
+        double clusterTimeThreaded;
 
         do {
             printf("\n------------------------------------------\n");
@@ -239,15 +240,16 @@ int main(int argc, char *argv[])
                 printf("\tLargest cluster = 0 sites\n");
             }
 
+            clusterTimeThreaded = 0;
 
             destroyArraySite(lattice);
 
             //add to csv file
-            fprintf(fp,"\n%d,%f,%f,%f,%f,,%s,%llu", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime, percResult ? "SUCCEEDED" : "FAILED", largestClusterSize);
+            fprintf(fp,"\n%d,%f,%f,%f,%f,%f,%f,%f,,%s,%llu", size, allocationTime, percolationTime, percolationTimeThreaded, clusterTime, clusterTimeThreaded, percolationTime+clusterTime, percolationTimeThreaded + clusterTimeThreaded, percResult ? "SUCCEEDED" : "FAILED", largestClusterSize);
 
             size = size * 2;
 
-        } while (size < 131072);
+        } while (size < 65536);
 
         fclose(fp);
 
@@ -275,7 +277,9 @@ int main(int argc, char *argv[])
 
         double allocationTime;
         double percolationTime;
+        double percolationTimeThreaded = 0;
         double clusterTime;
+        double clusterTimeThreaded = 0;
 
         do {
             printf("\n------------------------------------------\n");
@@ -304,6 +308,7 @@ int main(int argc, char *argv[])
             // printf("\tTime taken: %f\n", clusterTime);
             // printf("\tLargest cluster = %d sites", largestClusterSize);
 
+
             largestClusterSize = 0;
             clusterTime = 0;
             printf("Ignore this line %f %llu\n", clusterTime, largestClusterSize);
@@ -311,7 +316,7 @@ int main(int argc, char *argv[])
             destroyArrayBond(lattice);
             //
             // //add to csv file
-            fprintf(fp,"\n%d,%f,%f,%f,%f,,%s,%llu", size, allocationTime, percolationTime, clusterTime, allocationTime+percolationTime+clusterTime, percResult ? "SUCCEEDED" : "FAILED", largestClusterSize);
+            fprintf(fp,"\n%d,%f,%f,%f,%f,%f,%f,%f,,%s,%llu", size, allocationTime, percolationTime, percolationTimeThreaded, clusterTime, clusterTimeThreaded, percolationTime+clusterTime, percolationTimeThreaded+clusterTimeThreaded, percResult ? "SUCCEEDED" : "FAILED", largestClusterSize);
 
             size = size * 2;
 
