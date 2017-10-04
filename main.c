@@ -1,8 +1,8 @@
 #include "main.h"
 
-#define RUNS 2
+#define RUNS 50
 #define NUMTHREADS 4
-#define MAXLATTICESIZE 8192 //131072 16384 8192 4096
+#define MAXLATTICESIZE 16384 //131072 16384 8192 4096
 
 void destroyArraySite(char** arr)
 {

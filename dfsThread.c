@@ -121,7 +121,8 @@ int dfsUpDownSiteThread(char** array, int size) {
                         }
 
                     }
-                    stack_clear(&stack);
+                    if (!stack_isempty(&stack))
+                        stack_clear(&stack);
                 }
             }
         }
@@ -209,7 +210,8 @@ int dfsLeftRightSiteThread(char** array, int size) {
                         }
 
                     }
-                    stack_clear(&stack);
+                    if (!stack_isempty(&stack))
+                        stack_clear(&stack);
                 }
             }
         }
