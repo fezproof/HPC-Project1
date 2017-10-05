@@ -1,6 +1,8 @@
 #include "dfs.h"
 
-void printLatticeBond(BONDSITE** lattice, int* vertices, int size)
+#define PRINT 0
+
+void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -18,7 +20,7 @@ void printLatticeBond(BONDSITE** lattice, int* vertices, int size)
                 printf(" ");
             }
             if (lattice[i][j].left == 1 || lattice[i][j].right == 1 || lattice[i][j].up == 1 || lattice[i][j].down == 1) {
-                if (vertices[i * size + j]) {
+                if (vertices[i][j]) {
                     printf("\u2588");
                 } else {
                     printf("+");
@@ -42,6 +44,25 @@ void printLatticeBond(BONDSITE** lattice, int* vertices, int size)
         // }
         // printf("\n");
     }
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+void printLatticeSite(char** lattice, int size, char** vertices) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (vertices[i][j] && lattice[i][j]) {
+                printf(" \u2588");
+            }
+            else if (lattice[i][j]) {
+                printf(" X");
+            }
+            else {
+                printf("  .");
+            }
+        }
+        printf("\n");
+    }
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
 int checkVertUDSite(char** array, int x, int y, VERT * u, int size) {
@@ -61,14 +82,13 @@ int findAdjUDSite(char** array, STACK* stack, VERT v, int size) {
     }
 
     VERT u;
-
+    if (checkVertUDSite(array, v.x - 1, v.y, &u, size)) {
+        stack_push(stack, u);
+    }
     if (checkVertUDSite(array, v.x, v.y + 1, &u, size)) {
         stack_push(stack, u);
     }
     if (checkVertUDSite(array, v.x, v.y - 1, &u, size)) {
-        stack_push(stack, u);
-    }
-    if (checkVertUDSite(array, v.x - 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
     if (checkVertUDSite(array, v.x + 1, v.y, &u, size)) {
@@ -107,23 +127,28 @@ int dfsUpDownSite(char** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjUDSite(array, &stack, v, size)) {
+                        if (PRINT && size <= 128) {
+                            printLatticeSite(array, size, vertices);
+                        }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
                         }
                         free(vertices);
-                        // if (size <= 64) {
-                        //     printf("SUCCEEDED! - Up to Down search\n\n");
-                        //     printArray(vertices, array, size);
-                        // }
+
                         return 1;
                     }
                 }
 
             }
-            stack_clear(&stack);
+            // if (!stack_isempty(&stack))
+                stack_clear(&stack);
         }
     }
+    if (PRINT && size <= 128) {
+        printLatticeSite(array, size, vertices);
+    }
+    // stack_clear(&stack);
 
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -150,13 +175,13 @@ int findAdjLRSite(char** array, STACK* stack, VERT v, int size) {
     }
 
     VERT u;
+    if (checkVertLRSite(array, v.x, v.y - 1, &u, size)) {
+        stack_push(stack, u);
+    }
     if (checkVertLRSite(array, v.x - 1, v.y, &u, size)) {
         stack_push(stack, u);
     }
     if (checkVertLRSite(array, v.x + 1, v.y, &u, size)) {
-        stack_push(stack, u);
-    }
-    if (checkVertLRSite(array, v.x, v.y - 1, &u, size)) {
         stack_push(stack, u);
     }
     if (checkVertLRSite(array, v.x, v.y + 1, &u, size)) {
@@ -176,7 +201,7 @@ int dfsLeftRightSite(char** array, int size) {
     char** vertices = malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
         char* values;
-        values = malloc(size * sizeof(char));
+        values = calloc(size, sizeof(char));
         vertices[i] = values;
     }
 
@@ -193,6 +218,9 @@ int dfsLeftRightSite(char** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjLRSite(array, &stack, v, size)) {
+                        if (PRINT && size <= 128) {
+                            printLatticeSite(array, size, vertices);
+                        }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
@@ -203,9 +231,14 @@ int dfsLeftRightSite(char** array, int size) {
                     }
                 }
             }
-            stack_clear(&stack);
+            // if (!stack_isempty(&stack))
+                stack_clear(&stack);
         }
     }
+    if (PRINT && size <= 128) {
+        printLatticeSite(array, size, vertices);
+    }
+    // stack_clear(&stack);
 
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -222,7 +255,7 @@ int checkVertBond(BONDSITE** array, int x, int y) {
 }
 
 int findAdjUDBond(BONDSITE** array, STACK* stack, VERT v, int size) {
-    if (v.x + 1 == size - 1 && array[v.x + 1][v.y].down) {
+    if (array[v.x][v.y].down && v.x + 1 == size - 1 && array[v.x + 1][v.y].down) {
         return 1;
     }
 
@@ -256,12 +289,19 @@ int dfsUpDownBond(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
-    unsigned long long index;
+
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
-    int* vertices = calloc(numSites, sizeof(BONDSITE));
+
+    char** vertices = malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
-        if (checkVertBond(array, 0, i) && vertices[i] == 0) {
+        char* values;
+        values = calloc(size, sizeof(char));
+        vertices[i] = values;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (checkVertBond(array, 0, i) && vertices[0][i] == 0) {
             stack_initialise(&stack, numSites);
             v.x = 0;
             v.y = i;
@@ -269,28 +309,39 @@ int dfsUpDownBond(BONDSITE** array, int size) {
 
             while (!stack_isempty(&stack)) {
                 v = stack_pop(&stack);
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
 
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
+                if (vertices[v.x][v.y] != 1) {
+                    vertices[v.x][v.y] = 1;
                     if(findAdjUDBond(array, &stack, v, size)) {
+                        if (PRINT && size <= 32) {
+                            printLatticeBond(array, size, vertices);
+                        }
                         stack_clear(&stack);
+                        for (int i = 0; i < size; i++) {
+                            free(vertices[i]);
+                        }
                         free(vertices);
 
                         return 1;
                     }
                 }
             }
+            stack_clear(&stack);
         }
     }
-    stack_clear(&stack);
+    if (PRINT && size <= 32) {
+        printLatticeBond(array, size, vertices);
+    }
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return 0;
 }
 
 int findAdjLRBond(BONDSITE** array, STACK* stack, VERT v, int size) {
-    if (v.y + 1 == size - 1 && array[v.x][v.y + 1].right) {
+    if (array[v.x][v.y].right && v.y + 1 == size - 1 && array[v.x][v.y + 1].right) {
         return 1;
     }
 
@@ -324,12 +375,19 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
     STACK stack;
 
     VERT v;
-    unsigned long long index;
+
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
-    int* vertices = calloc(numSites, sizeof(BONDSITE));
+
+    char** vertices = malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
-        if (checkVertBond(array, i, 0) && vertices[i * size] == 0) {
+        char* values;
+        values = calloc(size, sizeof(char));
+        vertices[i] = values;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (checkVertBond(array, i, 0) && vertices[i][0] == 0) {
             stack_initialise(&stack, numSites);
             v.x = i;
             v.y = 0;
@@ -337,21 +395,33 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
 
             while (!stack_isempty(&stack)) {
                 v = stack_pop(&stack);
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
 
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
+                if (vertices[v.x][v.y] != 1) {
+                    vertices[v.x][v.y] = 1;
                     if(findAdjLRBond(array, &stack, v, size)) {
+                        if (PRINT && size <= 32) {
+                            printLatticeBond(array, size, vertices);
+                        }
                         stack_clear(&stack);
+                        for (int i = 0; i < size; i++) {
+                            free(vertices[i]);
+                        }
                         free(vertices);
 
                         return 1;
                     }
                 }
             }
+            stack_clear(&stack);
         }
     }
-    stack_clear(&stack);
+    if (PRINT && size <= 32) {
+        printLatticeBond(array, size, vertices);
+    }
+
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
     return 0;

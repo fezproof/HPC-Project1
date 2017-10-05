@@ -12,7 +12,14 @@ int percolateBond(BONDSITE** arr, int size, int type) {
 }
 
 int percolateBondThread(BONDSITE** arr, int size, int type) {
-    return 1;
+    if (type == 0) {
+        return dfsUpDownBondThread(arr, size);
+    } else if (type == 1) {
+        return dfsLeftRightBondThread(arr, size);
+    } else if (type == 2) {
+        return (dfsUpDownBondThread(arr, size) && dfsLeftRightBondThread(arr, size));
+    }
+    return 0;
 }
 
 int percolateSite(char** arr, int size, int type) {

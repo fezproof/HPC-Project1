@@ -12,8 +12,8 @@ double timeAllocateBond(BONDSITE*** lattice, int size, double chance)
     } else {
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
         allocationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-        printf("Allocation:\n");
-        printf("\tTime taken: %.6f ms\n", allocationTime);
+        // printf("Allocation:\n");
+        // printf("\tTime taken: %.6f ms\n", allocationTime);
     }
 
     return allocationTime;
@@ -31,9 +31,9 @@ double timePercBond(BONDSITE** lattice, int size, int test, int *percResult)
     } else {
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
         percolationTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-        printf("Percolation:\n");
-        printf("\tTime taken: %.6f ms\n", percolationTime);
-        printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
+        // printf("Percolation:\n");
+        // printf("\tTime taken: %.6f ms\n", percolationTime);
+        // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
     return percolationTime;
@@ -51,9 +51,9 @@ double timePercBondThreaded(BONDSITE** lattice, int size, int test, int *percRes
     } else {
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
         percolationTimeThreaded = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-        printf("Percolation (Threaded):\n");
-        printf("\tTime taken: %.6f ms\n", percolationTimeThreaded);
-        printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
+        // printf("Percolation (Threaded):\n");
+        // printf("\tTime taken: %.6f ms\n", percolationTimeThreaded);
+        // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
     return percolationTimeThreaded;

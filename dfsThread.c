@@ -1,6 +1,8 @@
 #include "dfs.h"
 
-void printLatticeBondThread(BONDSITE** lattice, int* vertices, int size)
+#define PRINT 0
+
+void printLatticeBondThread(BONDSITE** lattice, int size, char** vertices)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -18,7 +20,7 @@ void printLatticeBondThread(BONDSITE** lattice, int* vertices, int size)
                 printf(" ");
             }
             if (lattice[i][j].left == 1 || lattice[i][j].right == 1 || lattice[i][j].up == 1 || lattice[i][j].down == 1) {
-                if (vertices[i * size + j]) {
+                if (vertices[i][j]) {
                     printf("\u2588");
                 } else {
                     printf("+");
@@ -42,6 +44,25 @@ void printLatticeBondThread(BONDSITE** lattice, int* vertices, int size)
         // }
         // printf("\n");
     }
+    printf("T~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+void printLatticeSiteThread(char** lattice, int size, char** vertices) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (vertices[i][j] && lattice[i][j]) {
+                printf(" \u2588");
+            }
+            else if (lattice[i][j]) {
+                printf(" X");
+            }
+            else {
+                printf("  .");
+            }
+        }
+        printf("\n");
+    }
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
 int checkVertUDSiteThread(char** array, int x, int y, VERT * u, int size) {
@@ -110,7 +131,8 @@ int dfsUpDownSiteThread(char** array, int size) {
                         v = stack_pop(&stack);
 
                         if (vertices[v.x][v.y] != 1) {
-                            vertices[v.x][v.y] = 1;
+                            #pragma omp atomic write
+                                vertices[v.x][v.y] = 1;
                             if(findAdjUDSiteThread(array, &stack, v, size)) {
                                 // if (size <= 64) {
                                 //     printf("SUCCEEDED! - Up to Down search\n\n");
@@ -126,7 +148,9 @@ int dfsUpDownSiteThread(char** array, int size) {
                 }
             }
         }
-
+        if (PRINT && size <= 128) {
+            printLatticeSiteThread(array, size, vertices);
+        }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -191,8 +215,8 @@ int dfsLeftRightSiteThread(char** array, int size) {
 
                     stack_initialise(&stack, numSites);
 
-                    v.x = 0;
-                    v.y = i;
+                    v.x = i;
+                    v.y = 0;
                     stack_push(&stack, v);
 
                     while (!complete && !stack_isempty(&stack)) {
@@ -200,8 +224,9 @@ int dfsLeftRightSiteThread(char** array, int size) {
                         v = stack_pop(&stack);
 
                         if (vertices[v.x][v.y] != 1) {
-                            vertices[v.x][v.y] = 1;
-                            if(findAdjUDSiteThread(array, &stack, v, size)) {
+                            #pragma omp atomic write
+                                vertices[v.x][v.y] = 1;
+                            if(findAdjLRSiteThread(array, &stack, v, size)) {
                                 // if (size <= 64) {
                                 //     printf("SUCCEEDED! - Up to Down search\n\n");
                                 //     printArray(vertices, array, size);
@@ -216,7 +241,9 @@ int dfsLeftRightSiteThread(char** array, int size) {
                 }
             }
         }
-
+        if (PRINT && size <= 128) {
+            printLatticeSiteThread(array, size, vertices);
+        }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -233,7 +260,7 @@ int checkVertBondThread(BONDSITE** array, int x, int y) {
 }
 
 int findAdjUDBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
-    if (v.x + 1 == size - 1 && array[v.x + 1][v.y].down) {
+    if (array[v.x][v.y].down && v.x + 1 == size - 1 && array[v.x + 1][v.y].down) {
         return 1;
     }
 
@@ -264,44 +291,62 @@ int findAdjUDBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
 }
 
 int dfsUpDownBondThread(BONDSITE** array, int size) {
-    STACK stack;
-
-    VERT v;
-    unsigned long long index;
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
-    int* vertices = calloc(numSites, sizeof(BONDSITE));
+
+    char** vertices = malloc(size * sizeof(char*));
+    #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = calloc(size, sizeof(char));
+            vertices[i] = values;
+        }
+
+    char complete = 0;
+
+    #pragma omp parallel for shared(vertices)
     for (int i = 0; i < size; i++) {
-        if (checkVertBondThread(array, 0, i) && vertices[i] == 0) {
-            stack_initialise(&stack, numSites);
-            v.x = 0;
-            v.y = i;
-            stack_push(&stack, v);
+        if (!complete) {
+            if (vertices[0][i] == 0 && checkVertBondThread(array, 0, i)) {
+                STACK stack;
+                VERT v;
 
-            while (!stack_isempty(&stack)) {
-                v = stack_pop(&stack);
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+                stack_initialise(&stack, numSites);
+                v.x = 0;
+                v.y = i;
+                stack_push(&stack, v);
 
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
-                    if(findAdjUDBondThread(array, &stack, v, size)) {
-                        stack_clear(&stack);
-                        free(vertices);
+                while (!complete && !stack_isempty(&stack)) {
+                    v = stack_pop(&stack);
 
-                        return 1;
+                    if (vertices[v.x][v.y] != 1) {
+                        #pragma omp atomic write
+                            vertices[v.x][v.y] = 1;
+                        if(findAdjUDBondThread(array, &stack, v, size)) {
+                            complete = 1;
+                        }
                     }
                 }
+                stack_clear(&stack);
             }
         }
     }
-    stack_clear(&stack);
+    if (PRINT && size <= 32) {
+        printLatticeBondThread(array, size, vertices);
+    }
+    #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
-    return 0;
+    return complete;
 }
 
+
+
 int findAdjLRBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
-    if (v.y + 1 == size - 1 && array[v.x][v.y + 1].right) {
+    if (array[v.x][v.y].right && v.y + 1 == size - 1 && array[v.x][v.y + 1].right) {
         return 1;
     }
 
@@ -332,38 +377,54 @@ int findAdjLRBondThread(BONDSITE** array, STACK* stack, VERT v, int size) {
 }
 
 int dfsLeftRightBondThread(BONDSITE** array, int size) {
-    STACK stack;
-
-    VERT v;
-    unsigned long long index;
     unsigned long long numSites = (unsigned long long) size;
     numSites = numSites * numSites;
-    int* vertices = calloc(numSites, sizeof(BONDSITE));
+
+    char** vertices = malloc(size * sizeof(char*));
+    #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = calloc(size, sizeof(char));
+            vertices[i] = values;
+        }
+
+    char complete = 0;
+
+    #pragma omp parallel for shared(vertices)
     for (int i = 0; i < size; i++) {
-        if (checkVertBondThread(array, i, 0) && vertices[i * size] == 0) {
-            stack_initialise(&stack, numSites);
-            v.x = i;
-            v.y = 0;
-            stack_push(&stack, v);
+        if (!complete) {
+            if (vertices[i][0] == 0 && checkVertBondThread(array, i, 0)) {
+                STACK stack;
+                VERT v;
 
-            while (!stack_isempty(&stack)) {
-                v = stack_pop(&stack);
-                index = (unsigned long long) v.x * (unsigned long long) size + (unsigned long long) v.y;
+                stack_initialise(&stack, numSites);
+                v.x = i;
+                v.y = 0;
+                stack_push(&stack, v);
 
-                if (vertices[index] != 1) {
-                    vertices[index] = 1;
-                    if(findAdjLRBondThread(array, &stack, v, size)) {
-                        stack_clear(&stack);
-                        free(vertices);
+                while (!complete && !stack_isempty(&stack)) {
+                    v = stack_pop(&stack);
 
-                        return 1;
+                    if (vertices[v.x][v.y] != 1) {
+                        #pragma omp atomic write
+                            vertices[v.x][v.y] = 1;
+                        if(findAdjLRBondThread(array, &stack, v, size)) {
+                            complete = 1;
+                        }
                     }
                 }
+                stack_clear(&stack);
             }
         }
     }
-    stack_clear(&stack);
+    if (PRINT && size <= 32) {
+        printLatticeBondThread(array, size, vertices);
+    }
+    #pragma omp parallel for
+    for (int i = 0; i < size; i++) {
+        free(vertices[i]);
+    }
     free(vertices);
 
-    return 0;
+    return complete;
 }

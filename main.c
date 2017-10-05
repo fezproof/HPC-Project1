@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define RUNS 25
+#define RUNS 10
 #define NUMTHREADS 4
 #define MAXLATTICESIZE 16384 //131072 16384 8192 4096
 
@@ -20,17 +20,17 @@ void destroyArrayBond(BONDSITE** arr, int size)
     free(arr);
 }
 
-void printLatticeSite(char** lattice, int size)
-{
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if(lattice[i][j] == (char) 0) printf(". ");
-            else if(lattice[i][j] == (char) 1) printf("X ");
-            else printf("%c ", lattice[i][j]);
-        }
-        printf("\n");
-    }
-}
+// void printLatticeSite(char** lattice, int size)
+// {
+//     for (int i = 0; i < size; i++) {
+//         for (int j = 0; j < size; j++) {
+//             if(lattice[i][j] == (char) 0) printf(". ");
+//             else if(lattice[i][j] == (char) 1) printf("X ");
+//             else printf("%c ", lattice[i][j]);
+//         }
+//         printf("\n");
+//     }
+// }
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs)
 {
@@ -43,7 +43,7 @@ FILE* initialiseCSV(char latticeType, double chance, int test, int runs)
     fprintf(fp, "\nPercolation,%s", latticeType == 's' ? "Site" : "Bond");
     fprintf(fp, "\nProbability,%f", chance);
     fprintf(fp, "\nPerc type,%d", test);
-    fprintf(fp, "\nThreads,%d", 1);
+    fprintf(fp, "\nThreads,%d", NUMTHREADS);
     fprintf(fp, "\nRuns,%d", runs);
 
     fprintf(fp,"\nSize,Allocation,Percolation,T: Percolation,Cluster,T: Cluster,Total,T: Total,,Times percolated, T: Times percolated,Avg cluster size,T: Avg cluster size");
@@ -162,8 +162,8 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, F
             allocationTime += timeAllocateBond(&lattice, size, chance);
             percolationTime += timePercBond(lattice, size, test, &percResult);
             percolationTimeThreaded += timePercBondThreaded(lattice, size, test, &percResultThreaded);
-            clusterTime += timeClusterBond(lattice, size, chance, &largestClusterSize);
-            clusterTimeThreaded += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+            // clusterTime += timeClusterBond(lattice, size, chance, &largestClusterSize);
+            // clusterTimeThreaded += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
 
             sumLargestClusterSize += largestClusterSize;
             sumLargestClusterSizeThreaded += largestClusterSizeThreaded;
@@ -228,15 +228,15 @@ int main(int argc, char *argv[])
     double chance;
     int test;
     if (argc != 4) {
-        latticeType = 's';
-        chance = 0.6;
+        latticeType = 'b';
+        chance = 0.5;
         test = 2;
     } else {
         latticeType = argv[1][0];
         chance = atof(argv[2]);
         test = atoi(argv[3]);
     }
-    size = 64;
+    size = 16;
     srand(time(NULL));
 
     //Initialise a CSV file
