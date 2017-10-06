@@ -2,16 +2,15 @@
 
 double timeAllocateSite(char*** lattice, int size, double chance)
 {
-    clock_t start_t, end_t;
+    double startTime;
     double allocationTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *lattice = createLatticeSite(size, chance);
     if(*lattice == NULL) {
         printf("Failed whilst creating lattice\n");
     } else {
-        end_t = clock();
-        allocationTime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        allocationTime = omp_get_wtime() - startTime;
         // printf("Allocation:\n");
         // printf("\tTime taken: %.6f ms\n", allocationTime);
     }
@@ -21,16 +20,15 @@ double timeAllocateSite(char*** lattice, int size, double chance)
 
 double timePercSite(char** lattice, int size, int test, int *percResult)
 {
-    clock_t start_t, end_t;
+    double startTime;
     double percolationTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *percResult = percolateSite(lattice, size, test);
     if(*percResult == 2) {
         printf("Failed whilst checking for percolation\n");
     } else {
-        end_t = clock();
-        percolationTime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        percolationTime = omp_get_wtime() - startTime;
         // printf("Percolation:\n");
         // printf("\tTime taken: %.6f ms\n", percolationTime);
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
@@ -41,16 +39,15 @@ double timePercSite(char** lattice, int size, int test, int *percResult)
 
 double timePercSiteThreaded(char** lattice, int size, int test, int *percResult)
 {
-    clock_t start_t, end_t;
+    double startTime;
     double percolationTimeThreaded;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *percResult = percolateSiteThread(lattice, size, test);
     if(*percResult == 2) {
         printf("Failed whilst checking for percolation (threaded)\n");
     } else {
-        end_t = clock();
-        percolationTimeThreaded = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        percolationTimeThreaded = omp_get_wtime() - startTime;
         // printf("Percolation (Threaded):\n");
         // printf("\tTime taken: %.6f ms\n", percolationTimeThreaded);
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
@@ -61,15 +58,14 @@ double timePercSiteThreaded(char** lattice, int size, int test, int *percResult)
 
 double timeClusterSite(char** lattice, int size, double chance, unsigned long long *largestClusterSize)
 {
-    clock_t start_t, end_t;
+    double startTime;
     double clusterTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     if(chance > 0) {
         *largestClusterSize = findLargestClusterSite(lattice, size);
         if(*largestClusterSize > 0) {
-            end_t = clock();
-            clusterTime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+            clusterTime = omp_get_wtime() - startTime;
             // printf("Cluster:\n");
             // printf("\tTime taken: %.6f ms\n", clusterTime);
             // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
@@ -87,15 +83,14 @@ double timeClusterSite(char** lattice, int size, double chance, unsigned long lo
 
 double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned long long *largestClusterSize)
 {
-    clock_t start_t, end_t;
+    double startTime;
     double clusterTimeThreaded;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     if(chance > 0) {
         *largestClusterSize = findLargestClusterSiteThread(lattice, size);
         if(*largestClusterSize > 0) {
-            end_t = clock();
-            clusterTimeThreaded = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+            clusterTimeThreaded = omp_get_wtime() - startTime;
             // printf("Cluster (Threaded):\n");
             // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
             // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);

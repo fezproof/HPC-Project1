@@ -2,86 +2,86 @@
 
 double timeAllocateBond(BONDSITE*** lattice, int size, double chance)
 {
-    clock_t start_t, end_t, total_t;
+    double startTime;
+    double allocationTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *lattice = createLatticeBond(size, chance);
     if(*lattice == NULL) {
         printf("Failed whilst creating lattice\n");
     } else {
-        end_t = clock();
-        total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        allocationTime = omp_get_wtime() - startTime;
         // printf("Allocation:\n");
         // printf("\tTime taken: %.6f ms\n", allocationTime);
     }
 
-    return (double)total_t;
+    return allocationTime;
 }
 
 double timePercBond(BONDSITE** lattice, int size, int test, int *percResult)
 {
-    clock_t start_t, end_t, total_t;
+    double startTime;
+    double percolationTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *percResult = percolateBond(lattice, size, test);
     if(*percResult == 2) {
         printf("Failed whilst checking for percolation\n");
     } else {
-        end_t = clock();
-        total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        percolationTime = omp_get_wtime() - startTime;
         // printf("Percolation:\n");
         // printf("\tTime taken: %.6f ms\n", percolationTime);
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return (double)total_t;
+    return percolationTime;
 }
 
 double timePercBondThreaded(BONDSITE** lattice, int size, int test, int *percResult)
 {
-    clock_t start_t, end_t, total_t;
+    double startTime;
+    double percolationTimeThreaded;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *percResult = percolateBondThread(lattice, size, test);
     if(*percResult == 2) {
         printf("Failed whilst checking for percolation (threaded)\n");
     } else {
-        end_t = clock();
-        total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        percolationTimeThreaded = omp_get_wtime() - startTime;
         // printf("Percolation (Threaded):\n");
         // printf("\tTime taken: %.6f ms\n", percolationTimeThreaded);
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return (double)total_t;
+    return percolationTimeThreaded;
 }
 
 double timeClusterBond(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize)
 {
-    clock_t start_t, end_t, total_t;
+    double startTime;
+    double clusterTime;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *largestClusterSize = findLargestClusterBond(lattice, size);
-    end_t = clock();
-    total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    clusterTime = omp_get_wtime() - startTime;
     // printf("Cluster:\n");
     // printf("\tTime taken: %.6f ms\n", clusterTime);
     // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
-    return (double)total_t;
+    return clusterTime;
 }
 
 double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize)
 {
-    clock_t start_t, end_t, total_t;
+    double startTime;
+    double clusterTimeThreaded;
 
-    start_t = clock();
+    startTime = omp_get_wtime();
     *largestClusterSize = findLargestClusterBondThread(lattice, size);
-    end_t = clock();
-    total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    clusterTimeThreaded = omp_get_wtime() - startTime;
     // printf("Cluster (Threaded):\n");
     // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
     // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
-    return (double)total_t;
+    return clusterTimeThreaded;
 }
