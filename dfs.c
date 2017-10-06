@@ -2,69 +2,6 @@
 
 #define PRINT 0
 
-void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
-{
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (lattice[i][j].up == 1) {
-                printf(" | ");
-            } else {
-                printf("   ");
-            }
-        }
-        printf("\n");
-        for (int j = 0; j < size; j++) {
-            if (lattice[i][j].left == 1) {
-                printf("-");
-            } else {
-                printf(" ");
-            }
-            if (lattice[i][j].left == 1 || lattice[i][j].right == 1 || lattice[i][j].up == 1 || lattice[i][j].down == 1) {
-                if (vertices[i][j]) {
-                    printf("\u2588");
-                } else {
-                    printf("+");
-                // }
-            } else {
-                printf(" ");
-            }
-            if (lattice[i][j].right == 1) {
-                printf("-");
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-        // for (int j = 0; j < size; j++) {
-        //     if (lattice[i][j].down == 1) {
-        //         printf(" | ");
-        //     } else {
-        //         printf("   ");
-        //     }
-        // }
-        // printf("\n");
-    }
-    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
-}
-
-void printLatticeSite(char** lattice, int size, char** vertices) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (vertices[i][j] && lattice[i][j]) {
-                printf(" \u2588");
-            }
-            else if (lattice[i][j]) {
-                printf(" X");
-            }
-            else {
-                printf("  .");
-            }
-        }
-        printf("\n");
-    }
-    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
-}
-
 int checkVertUDSite(char** array, int x, int y, VERT * u, int size) {
     if (x != -1 && x != size) {
         if (array[x][(y + size) % size] == 1) {

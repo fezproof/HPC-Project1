@@ -68,9 +68,9 @@ double timeClusterBond(BONDSITE** lattice, int size, double chance, unsigned lon
     *largestClusterSize = findLargestClusterBond(lattice, size);
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
     clusterTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-    printf("Cluster:\n");
-    printf("\tTime taken: %.6f ms\n", clusterTime);
-    printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
+    // printf("Cluster:\n");
+    // printf("\tTime taken: %.6f ms\n", clusterTime);
+    // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
     return clusterTime;
 }
@@ -84,9 +84,9 @@ double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsi
     *largestClusterSize = findLargestClusterBondThread(lattice, size);
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
     clusterTimeThreaded = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-    printf("Cluster (Threaded):\n");
-    printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
-    printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
+    // printf("Cluster (Threaded):\n");
+    // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
+    // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
     return clusterTimeThreaded;
 }

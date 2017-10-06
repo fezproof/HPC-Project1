@@ -128,14 +128,65 @@ void destroyArrayBond(BONDSITE** arr, int size)
     free(arr);
 }
 
-void printLatticeSite(char** lattice, int size)
-{
+void printLatticeSite(char** lattice, int size, char** vertices) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if(lattice[i][j] == (char) 0) printf(". ");
-            else if(lattice[i][j] == (char) 1) printf("X ");
-            else printf("%c ", lattice[i][j]);
+            if (vertices[i][j] && lattice[i][j]) {
+                printf(" \u2588");
+            }
+            else if (lattice[i][j]) {
+                printf(" X");
+            }
+            else {
+                printf("  .");
+            }
         }
         printf("\n");
     }
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
+{
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (lattice[i][j].up == 1) {
+                printf(" | ");
+            } else {
+                printf("   ");
+            }
+        }
+        printf("\n");
+        for (int j = 0; j < size; j++) {
+            if (lattice[i][j].left == 1) {
+                printf("-");
+            } else {
+                printf(" ");
+            }
+            if (lattice[i][j].left == 1 || lattice[i][j].right == 1 || lattice[i][j].up == 1 || lattice[i][j].down == 1) {
+                if (vertices[i][j]) {
+                    printf("\u2588");
+                } else {
+                    printf("+");
+                }
+            } else {
+                printf(" ");
+            }
+            if (lattice[i][j].right == 1) {
+                printf("-");
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+        // for (int j = 0; j < size; j++) {
+        //     if (lattice[i][j].down == 1) {
+        //         printf(" | ");
+        //     } else {
+        //         printf("   ");
+        //     }
+        // }
+        // printf("\n");
+    }
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }

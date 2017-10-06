@@ -70,16 +70,16 @@ double timeClusterSite(char** lattice, int size, double chance, unsigned long lo
         if(*largestClusterSize > 0) {
             clock_gettime(CLOCK_MONOTONIC_RAW, &end);
             clusterTime = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-            printf("Cluster:\n");
-            printf("\tTime taken: %.6f ms\n", clusterTime);
-            printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
+            // printf("Cluster:\n");
+            // printf("\tTime taken: %.6f ms\n", clusterTime);
+            // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
         } else {
             printf("Failed whilst finding the largest cluster\n");
         }
     } else {
-        printf("Cluster:\n");
-        printf("\tTime taken: 0\n");
-        printf("\tLargest cluster = 0 sites\n");
+        // printf("Cluster:\n");
+        // printf("\tTime taken: 0\n");
+        // printf("\tLargest cluster = 0 sites\n");
     }
 
     return clusterTime;
@@ -96,16 +96,16 @@ double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned
         if(*largestClusterSize > 0) {
             clock_gettime(CLOCK_MONOTONIC_RAW, &end);
             clusterTimeThreaded = (end.tv_sec - start.tv_sec) * 1E3 + (end.tv_nsec - start.tv_nsec) / 1E6;
-            printf("Cluster (Threaded):\n");
-            printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
-            printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
+            // printf("Cluster (Threaded):\n");
+            // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
+            // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
         } else {
             printf("Failed whilst finding the largest cluster (threaded)\n");
         }
     } else {
-        printf("Cluster (Threaded):\n");
-        printf("\tTime taken: 0\n");
-        printf("\tLargest cluster = 0 sites\n");
+        // printf("Cluster (Threaded):\n");
+        // printf("\tTime taken: 0\n");
+        // printf("\tLargest cluster = 0 sites\n");
     }
 
     return clusterTimeThreaded;

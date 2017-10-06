@@ -8,7 +8,7 @@
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs)
 {
     char* file = latticeType == 's' ? "site.csv" : "bond.csv";
-    FILE *fp = fopen(file,"a+");n
+    FILE *fp = fopen(file,"a+");
 
     time_t curtime;
     time(&curtime);
@@ -51,8 +51,8 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
         for(int i = 0; i < runs; i++)
         {
             allocationTime += timeAllocateSite(&lattice, size, chance);
-            // percolationTime += timePercSite(lattice, size, test, &percResult);
-            // percolationTimeThreaded += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
+            percolationTime += timePercSite(lattice, size, test, &percResult);
+            percolationTimeThreaded += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
             clusterTime += timeClusterSite(lattice, size, chance, &largestClusterSize);
             clusterTimeThreaded += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded);
 
@@ -110,7 +110,7 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
 
         size = size * 2;
 
-    } while (size < maxLatticeSize);
+    } while (size <= maxLatticeSize);
 }
 
 void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, FILE *fp)
