@@ -15,7 +15,7 @@ double timeAllocateBond(BONDSITE*** lattice, int size, double chance)
         // printf("\tTime taken: %.6f ms\n", allocationTime);
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timePercBond(BONDSITE** lattice, int size, int test, int *percResult)
@@ -34,7 +34,7 @@ double timePercBond(BONDSITE** lattice, int size, int test, int *percResult)
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timePercBondThreaded(BONDSITE** lattice, int size, int test, int *percResult)
@@ -53,7 +53,7 @@ double timePercBondThreaded(BONDSITE** lattice, int size, int test, int *percRes
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timeClusterBond(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize)
@@ -68,7 +68,7 @@ double timeClusterBond(BONDSITE** lattice, int size, double chance, unsigned lon
     // printf("\tTime taken: %.6f ms\n", clusterTime);
     // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize)
@@ -83,5 +83,5 @@ double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsi
     // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);
     // printf("\tLargest cluster = %lld sites\n", *largestClusterSize);
 
-    return total_t;
+    return (double)total_t;
 }

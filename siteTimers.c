@@ -15,7 +15,7 @@ double timeAllocateSite(char*** lattice, int size, double chance)
         // printf("\tTime taken: %.6f ms\n", allocationTime);
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timePercSite(char** lattice, int size, int test, int *percResult)
@@ -34,7 +34,7 @@ double timePercSite(char** lattice, int size, int test, int *percResult)
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timePercSiteThreaded(char** lattice, int size, int test, int *percResult)
@@ -53,7 +53,7 @@ double timePercSiteThreaded(char** lattice, int size, int test, int *percResult)
         // printf("\t%s\n", *percResult ? "SUCCEEDED" : "FAILED");
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timeClusterSite(char** lattice, int size, double chance, unsigned long long *largestClusterSize)
@@ -78,7 +78,7 @@ double timeClusterSite(char** lattice, int size, double chance, unsigned long lo
         // printf("\tLargest cluster = 0 sites\n");
     }
 
-    return total_t;
+    return (double)total_t;
 }
 
 double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned long long *largestClusterSize)
@@ -103,5 +103,5 @@ double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned
         // printf("\tLargest cluster = 0 sites\n");
     }
 
-    return total_t;
+    return (double)total_t;
 }
