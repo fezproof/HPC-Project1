@@ -18,3 +18,5 @@ extern int dfsLeftRightSiteThread(char** array, int size);
 extern int dfsUpDownBondThread(BONDSITE** array, int size);
 
 extern int dfsLeftRightBondThread(BONDSITE** array, int size);
+
+extern void printLatticeBond(BONDSITE** lattice, int size);

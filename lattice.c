@@ -37,6 +37,7 @@ BONDSITE** createLatticeBond(int size, double chance)
             } else {
                 values[j].left = 0; //not occupied
             }
+            values[j].seen = 0;
         }
         rows[i] = values;
     }
@@ -51,4 +52,90 @@ BONDSITE** createLatticeBond(int size, double chance)
         }
     }
     return rows;
+}
+
+char** copyLatticeSite(char** src, int size)
+{
+    char** rows = malloc(size * sizeof(char*));
+    for (int i = 0; i < size; i++) {
+        char* values;
+        values = malloc(size * sizeof(char));
+        for (int j = 0; j < size; j++) {
+            values[j] = src[i][j];
+        }
+        rows[i] = values;
+    }
+    return rows;
+}
+
+char** copyLatticeSiteThread(char** src, int size)
+{
+    char** rows = malloc(size * sizeof(char*));
+    // #pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            char* values;
+            values = malloc(size * sizeof(char));
+            for (int j = 0; j < size; j++) {
+                values[j] = src[i][j];
+            }
+            rows[i] = values;
+        }
+    return rows;
+}
+
+BONDSITE** copyLatticeBond(BONDSITE** src, int size)
+{
+    BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+
+    for (int i = 0; i < size; i++) {
+        BONDSITE* values;
+        values = malloc(size * sizeof(BONDSITE));
+        memcpy(values, src[i], size * sizeof(BONDSITE));
+        rows[i] = values;
+    }
+    return rows;
+}
+
+BONDSITE** copyLatticeBondThread(BONDSITE** src, int size)
+{
+
+    BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+
+    #pragma omp parallel
+    for (int i = 0; i < size; i++) {
+        BONDSITE* values;
+        values = malloc(size * sizeof(BONDSITE));
+        memcpy(values, src[i], size * sizeof(BONDSITE));
+        rows[i] = values;
+    }
+    return rows;
+}
+
+
+void destroyArraySite(char** arr, int size)
+{
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+void destroyArrayBond(BONDSITE** arr, int size)
+{
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+void printLatticeSite(char** lattice, int size)
+{
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if(lattice[i][j] == (char) 0) printf(". ");
+            else if(lattice[i][j] == (char) 1) printf("X ");
+            else printf("%c ", lattice[i][j]);
+        }
+        printf("\n");
+    }
 }

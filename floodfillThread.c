@@ -2,15 +2,11 @@
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-unsigned long long floodfillThread(char** array, int size, QUEUE queue)
+unsigned long long floodfillSiteThread(char** array, int size, QUEUE queue)
 {
     QUEUE_VERT v;
 
     unsigned long long clusterSize = 0;
-
-    int i = 0;
-    int nextWestVert = 0;
-    int nextEastVert = 0;
 
     int westVert = 0;
     int eastVert = 0;
@@ -24,17 +20,15 @@ unsigned long long floodfillThread(char** array, int size, QUEUE queue)
         clusterSize++;
 
         v = dequeue(&queue);
-
-        westVert = v.y;
-        nextWestVert = (v.y - 1 + size) % size;
-        eastVert = v.y;
-        nextEastVert = (v.y + 1 + size) % size;
+        westVert = (v.y - 1 + size) % size;
+        eastVert = (v.y + 1 + size) % size;
 
         southVert = (v.x+1 + size) % size;
         northVert = (v.x-1 + size) % size;
 
         //check south of the dequeued site
         if(array[southVert][v.y] == 1) {
+            #pragma omp atomic write
             array[southVert][v.y] = 2;
             newV.y = v.y;
             newV.x = southVert;
@@ -43,232 +37,424 @@ unsigned long long floodfillThread(char** array, int size, QUEUE queue)
 
         //check north of the dequeued site
         if(array[northVert][v.y] == 1) {
+            #pragma omp atomic write
             array[northVert][v.y] = 2;
             newV.y = v.y;
             newV.x = northVert;
             enqueue(&queue, newV);
         }
 
-        //move from centre to west and check current row
-        while(array[v.x][nextWestVert] == 1)
+        //move west and check
+        while(array[v.x][westVert] == 1)
         {
-            clusterSize++;
-            westVert = nextWestVert;
+            #pragma omp atomic write
             array[v.x][westVert] = 2;
-            nextWestVert = (westVert-1 + size) % size;
-        }
+            //check south and add to queue
+            if(array[southVert][westVert] == 1) {
+                #pragma omp atomic write
+                array[southVert][westVert] = 2;
+                newV.y = westVert;
+                newV.x = southVert;
+                enqueue(&queue, newV);
+            }
 
-        //move from centre to east and check current row
-        while(array[v.x][nextEastVert] == 1)
-        {
+            //check north and add to queue
+            if(array[northVert][westVert] == 1) {
+                #pragma omp atomic write
+                array[northVert][westVert] = 2;
+                newV.y = westVert;
+                newV.x = northVert;
+                enqueue(&queue, newV);
+            }
+            westVert = (westVert-1 + size) % size;
             clusterSize++;
-            eastVert = nextEastVert;
+        }
+
+        //move east and check
+        while(array[v.x][eastVert] == 1)
+        {
+            #pragma omp atomic write
             array[v.x][eastVert] = 2;
-            nextEastVert = (nextEastVert+1 + size) % size;
-        }
-
-        //move from west to centre and check north row
-        i = westVert;
-        if(i <= v.y) {
-            while(i != v.y)
-            {
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
+            //check south and add to queue
+            if(array[southVert][eastVert] == 1) {
+                #pragma omp atomic write
+                array[southVert][eastVert] = 2;
+                newV.y = eastVert;
+                newV.x = southVert;
+                enqueue(&queue, newV);
             }
-        } else {
-            while(i != size)
-            {
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
+            //check north and add to queue
+            if(array[northVert][eastVert] == 1) {
+                #pragma omp atomic write
+                array[northVert][eastVert] = 2;
+                newV.y = eastVert;
+                newV.x = northVert;
+                enqueue(&queue, newV);
             }
-            i = 0;
-            while(i != v.y)
-            {
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
-            }
-        }
-
-        //move from centre to east and check north row
-        i = v.y;
-        if(eastVert >= v.y)
-        {
-            while(i != eastVert)
-            {
-                i++;
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-            }
-        } else {
-            while(i != size)
-            {
-                i++;
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-            }
-            i = 0;
-            while(i != eastVert)
-            {
-                i++;
-                if(array[northVert][i] == 1) {
-                    array[northVert][i] = 2;
-                    newV.y = i;
-                    newV.x = northVert;
-                    enqueue(&queue, newV);
-                }
-            }
-        }
-
-        //move from west to centre and check south row
-        i = westVert;
-        if(i <= v.y)
-        {
-            while(i != v.y)
-            {
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
-            }
-        } else {
-            while(i != size)
-            {
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
-            }
-            i = 0;
-            while(i != v.y)
-            {
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-                i++;
-            }
-        }
-
-        i = v.y;
-        if(eastVert >= v.y)
-        {
-            while(i != eastVert)
-            {
-                i++;
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-            }
-        } else {
-            while(i != size)
-            {
-                i++;
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-            }
-            i = 0;
-            while(i != eastVert)
-            {
-                i++;
-                if(array[southVert][i] == 1) {
-                    array[southVert][i] = 2;
-                    newV.y = i;
-                    newV.x = southVert;
-                    enqueue(&queue, newV);
-                }
-            }
+            eastVert = (eastVert+1 + size) % size;
+            clusterSize++;
         }
     }
     return clusterSize;
 }
 
 
-//perform floodfill on each unseen vertice
-    //0 - unoccupied
-    //1 - occupied
-    //2 - occupied and seen
-//returns the size of the largest cluster
 
-//returns 0 if failed
-unsigned long long findLargestClusterThread(char** array, int size)
+//returns the size of a cluster
+//first element in the queue is the start of the cluster
+unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue)
 {
-    unsigned long long largestSize = 0;
-    unsigned long long currentSize = 0;
-
-    QUEUE queue;
-
-    unsigned long long queueSize = (unsigned long long) size;
-    queueSize = queueSize * queueSize;
-
-    if(queue_initialise(&queue, queueSize)) {
-        return 0;
-    }
-
     QUEUE_VERT v;
 
-    for(int i = 0; i < size; i++)
+    unsigned long long clusterSize = 0;
+
+    int curVert = 0;
+
+    int westVert = 0;
+    int eastVert = 0;
+    int southVert = 0;
+    int northVert = 0;
+
+    QUEUE_VERT newV;
+
+    while(!queue_isempty(&queue))
     {
-        for(int j = 0; j < size; j++)
+        clusterSize++;
+
+        v = dequeue(&queue);
+        westVert = (v.y-1 + size) % size;
+        eastVert = (v.y+1 + size) % size;
+
+        southVert = (v.x+1 + size) % size;
+        northVert = (v.x-1 + size) % size;
+
+        //check south of the dequeued site
+        if(array[v.x][v.y].down == 1 && array[southVert][v.y].seen == 0) {
+            array[southVert][v.y].seen = 1;
+            newV.y = v.y;
+            newV.x = southVert;
+            enqueue(&queue, newV);
+        }
+
+        //check north of the dequeued site
+        if(array[v.x][v.y].up == 1 && array[northVert][v.y].seen == 0) {
+            array[northVert][v.y].seen = 1;
+            newV.y = v.y;
+            newV.x = northVert;
+            enqueue(&queue, newV);
+        }
+
+        curVert = v.y;
+
+        //move west and check
+        while(array[v.x][curVert].left == 1 && array[v.x][westVert].seen == 0)
         {
-            if(array[i][j] == 1) {
-                array[i][j] = 2; //mark as seen
-
-                queue_clear(&queue);
-
-                //vertice from which a cluster is checked
-                v.x = i;
-                v.y = j;
-
-                enqueue(&queue, v);
-
-                currentSize = floodfillThread(array, size, queue);
-                if(currentSize == 0) {
-                    return 0;
-                } else if(largestSize < currentSize) {
-                    largestSize = currentSize;
-                }
+            array[v.x][westVert].seen = 1;
+            //check south and add to queue
+            if(array[v.x][westVert].down == 1 && array[southVert][westVert].seen == 0) {
+                array[southVert][westVert].seen = 1;
+                newV.y = westVert;
+                newV.x = southVert;
+                enqueue(&queue, newV);
             }
+
+            //check north and add to queue
+            if(array[v.x][westVert].up == 1 && array[northVert][westVert].seen == 0) {
+                array[northVert][westVert].seen = 1;
+                newV.y = westVert;
+                newV.x = northVert;
+                enqueue(&queue, newV);
+            }
+            curVert = westVert;
+            westVert = (westVert-1 + size) % size;
+            clusterSize++;
+        }
+
+        curVert = v.y;
+
+        //move east and check
+        while(array[v.x][curVert].right == 1 && array[v.x][eastVert].seen == 0)
+        {
+            array[v.x][eastVert].seen = 1;
+            //check south and add to queue
+            if(array[v.x][eastVert].down == 1 && array[southVert][eastVert].seen == 0) {
+                array[southVert][eastVert].seen = 1;
+                newV.y = eastVert;
+                newV.x = southVert;
+                enqueue(&queue, newV);
+            }
+            //check north and add to queue
+            if(array[v.x][eastVert].up == 1 && array[northVert][eastVert].seen == 0) {
+                array[northVert][eastVert].seen = 1;
+                newV.y = eastVert;
+                newV.x = northVert;
+                enqueue(&queue, newV);
+            }
+            curVert = eastVert;
+            eastVert = (eastVert+1 + size) % size;
+            clusterSize++;
         }
     }
-
-    queue_free(&queue);
-    return largestSize;
+    return clusterSize;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// //returns the size of a cluster
+// //first element in the queue is the start of the cluster
+// unsigned long long floodfillThread(char** array, int size, QUEUE queue, QUEUE nw, QUEUE ne, QUEUE sw, QUEUE se)
+// {
+//     QUEUE_VERT v;
+//
+//     unsigned long long clusterSize = 0;
+//
+//     int i = 0;
+//     int nextWestVert = 0;
+//     int nextEastVert = 0;
+//
+//     int westVert = 0;
+//     int eastVert = 0;
+//     int southVert = 0;
+//     int northVert = 0;
+//
+//     QUEUE_VERT newV;
+//
+//     while(!queue_isempty(&queue))
+//     {
+//         clusterSize++;
+//
+//         v = dequeue(&queue);
+//
+//         westVert = v.y;
+//         nextWestVert = (v.y - 1 + size) % size;
+//         eastVert = v.y;
+//         nextEastVert = (v.y + 1 + size) % size;
+//
+//         southVert = (v.x+1 + size) % size;
+//         northVert = (v.x-1 + size) % size;
+//
+//         //check south of the dequeued site
+//         if(array[southVert][v.y] == 1) {
+//             array[southVert][v.y] = 2;
+//             newV.y = v.y;
+//             newV.x = southVert;
+//             enqueue(&queue, newV);
+//         }
+//
+//         //check north of the dequeued site
+//         if(array[northVert][v.y] == 1) {
+//             array[northVert][v.y] = 2;
+//             newV.y = v.y;
+//             newV.x = northVert;
+//             enqueue(&queue, newV);
+//         }
+//
+//         //move from centre to west and check current row
+//         while(array[v.x][nextWestVert] == 1)
+//         {
+//             clusterSize++;
+//             westVert = nextWestVert;
+//             array[v.x][westVert] = 2;
+//             nextWestVert = (westVert-1 + size) % size;
+//         }
+//
+//         //move from centre to east and check current row
+//         while(array[v.x][nextEastVert] == 1)
+//         {
+//             clusterSize++;
+//             eastVert = nextEastVert;
+//             array[v.x][eastVert] = 2;
+//             nextEastVert = (nextEastVert+1 + size) % size;
+//         }
+//
+//         //move from west to centre and check north row
+//         i = westVert;
+//         if(i <= v.y) {
+//             while(i != v.y)
+//             {
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&nw, newV);
+//                 }
+//                 i++;
+//             }
+//         } else {
+//             while(i != size)
+//             {
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&nw, newV);
+//                 }
+//                 i++;
+//             }
+//             i = 0;
+//             while(i != v.y)
+//             {
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&nw, newV);
+//                 }
+//                 i++;
+//             }
+//         }
+//
+//         //move from centre to east and check north row
+//         i = v.y;
+//         if(eastVert >= v.y)
+//         {
+//             while(i != eastVert)
+//             {
+//                 i++;
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&ne, newV);
+//                 }
+//             }
+//         } else {
+//             while(i != size)
+//             {
+//                 i++;
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&ne, newV);
+//                 }
+//             }
+//             i = 0;
+//             while(i != eastVert)
+//             {
+//                 i++;
+//                 if(array[northVert][i] == 1) {
+//                     array[northVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = northVert;
+//                     enqueue(&ne, newV);
+//                 }
+//             }
+//         }
+//
+//         //move from west to centre and check south row
+//         i = westVert;
+//         if(i <= v.y)
+//         {
+//             while(i != v.y)
+//             {
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&sw, newV);
+//                 }
+//                 i++;
+//             }
+//         } else {
+//             while(i != size)
+//             {
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&sw, newV);
+//                 }
+//                 i++;
+//             }
+//             i = 0;
+//             while(i != v.y)
+//             {
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&sw, newV);
+//                 }
+//                 i++;
+//             }
+//         }
+//
+//         i = v.y;
+//         if(eastVert >= v.y)
+//         {
+//             while(i != eastVert)
+//             {
+//                 i++;
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&se, newV);
+//                 }
+//             }
+//         } else {
+//             while(i != size)
+//             {
+//                 i++;
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&se, newV);
+//                 }
+//             }
+//             i = 0;
+//             while(i != eastVert)
+//             {
+//                 i++;
+//                 if(array[southVert][i] == 1) {
+//                     array[southVert][i] = 2;
+//                     newV.y = i;
+//                     newV.x = southVert;
+//                     enqueue(&se, newV);
+//                 }
+//             }
+//         }
+//
+//         while(!queue_isempty(&nw))
+//         {
+//             enqueue(&queue, dequeue(&nw));
+//         }
+//         while(!queue_isempty(&ne))
+//         {
+//             enqueue(&queue, dequeue(&ne));
+//         }
+//         while(!queue_isempty(&sw))
+//         {
+//             enqueue(&queue, dequeue(&sw));
+//         }
+//         while(!queue_isempty(&se))
+//         {
+//             enqueue(&queue, dequeue(&se));
+//         }
+//     }
+//     return clusterSize;
+// }

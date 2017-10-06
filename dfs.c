@@ -24,7 +24,7 @@ void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
                     printf("\u2588");
                 } else {
                     printf("+");
-                }
+                // }
             } else {
                 printf(" ");
             }

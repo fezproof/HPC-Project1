@@ -1,5 +1,6 @@
 #include "floodfill.h"
 #include "bond.h"
+#include "lattice.h"
 
 //returns the length of the largest cluster
 extern unsigned long long findLargestClusterSite(char** array, int size);

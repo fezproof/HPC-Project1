@@ -1,41 +1,14 @@
 #include "main.h"
 
-#define RUNS 10
+#define RUNS 30
 #define NUMTHREADS 4
-#define MAXLATTICESIZE 16384 //131072 16384 8192 4096
-
-void destroyArraySite(char** arr, int size)
-{
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
-    free(arr);
-}
-
-void destroyArrayBond(BONDSITE** arr, int size)
-{
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
-    free(arr);
-}
-
-// void printLatticeSite(char** lattice, int size)
-// {
-//     for (int i = 0; i < size; i++) {
-//         for (int j = 0; j < size; j++) {
-//             if(lattice[i][j] == (char) 0) printf(". ");
-//             else if(lattice[i][j] == (char) 1) printf("X ");
-//             else printf("%c ", lattice[i][j]);
-//         }
-//         printf("\n");
-//     }
-// }
+#define STARTSIZE 64 //64
+#define MAXLATTICESIZE 4096/2 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs)
 {
     char* file = latticeType == 's' ? "site.csv" : "bond.csv";
-    FILE *fp = fopen(file,"a+");;
+    FILE *fp = fopen(file,"a+");n
 
     time_t curtime;
     time(&curtime);
@@ -78,10 +51,14 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
         for(int i = 0; i < runs; i++)
         {
             allocationTime += timeAllocateSite(&lattice, size, chance);
-            percolationTime += timePercSite(lattice, size, test, &percResult);
-            percolationTimeThreaded += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
-            // clusterTime += timeClusterSite(lattice, size, chance, &largestClusterSize);
-            // clusterTimeThreaded += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+            // percolationTime += timePercSite(lattice, size, test, &percResult);
+            // percolationTimeThreaded += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
+            clusterTime += timeClusterSite(lattice, size, chance, &largestClusterSize);
+            clusterTimeThreaded += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+
+            if(largestClusterSize != largestClusterSizeThreaded) {
+                printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
+            }
 
             sumLargestClusterSize += largestClusterSize;
             sumLargestClusterSizeThreaded += largestClusterSizeThreaded;
@@ -125,6 +102,9 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, F
         sumLargestClusterSize = 0;
         sumLargestClusterSizeThreaded = 0;
 
+        largestClusterSize = 0;
+        largestClusterSizeThreaded = 0;
+
         numPercolated = 0;
         numPercolatedThreaded = 0;
 
@@ -162,8 +142,12 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, F
             allocationTime += timeAllocateBond(&lattice, size, chance);
             percolationTime += timePercBond(lattice, size, test, &percResult);
             percolationTimeThreaded += timePercBondThreaded(lattice, size, test, &percResultThreaded);
-            // clusterTime += timeClusterBond(lattice, size, chance, &largestClusterSize);
-            // clusterTimeThreaded += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+            clusterTime += timeClusterBond(lattice, size, chance, &largestClusterSize);
+            clusterTimeThreaded += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+
+            if(largestClusterSize != largestClusterSizeThreaded) {
+                printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
+            }
 
             sumLargestClusterSize += largestClusterSize;
             sumLargestClusterSizeThreaded += largestClusterSizeThreaded;
@@ -236,7 +220,7 @@ int main(int argc, char *argv[])
         chance = atof(argv[2]);
         test = atoi(argv[3]);
     }
-    size = 16;
+    size = STARTSIZE;
     srand(time(NULL));
 
     //Initialise a CSV file

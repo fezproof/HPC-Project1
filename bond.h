@@ -4,7 +4,7 @@
 typedef struct bondsite BONDSITE;
 
 struct bondsite {
-    unsigned int up : 2, down : 2, left : 2, right : 2;
+    unsigned int up : 1, down : 1, left : 1, right : 1, seen : 1;
 };
 
 #endif
