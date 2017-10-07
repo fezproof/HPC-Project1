@@ -3,7 +3,7 @@
 #define RUNS 20
 #define MAX_NUM_THREADS 4
 #define START_SIZE 64 //64
-#define MAX_LATTICE_SIZE 8192 //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 8192/2/2/2 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -153,14 +153,14 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
     int timesPerc[maxNumThreads-1];
     unsigned long long clusterSizes[maxNumThreads-1];
 
-    memset(percTimes, 0, sizeof percTimes);
-    memset(clusterTimes, 0, sizeof clusterTimes);
-    memset(percSpeedUp, 0, sizeof percSpeedUp);
-    memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
-    memset(timesPerc, 0, sizeof timesPerc);
-    memset(clusterSizes, 0, sizeof clusterSizes);
-
     do {
+
+        memset(percTimes, 0, sizeof percTimes);
+        memset(clusterTimes, 0, sizeof clusterTimes);
+        memset(percSpeedUp, 0, sizeof percSpeedUp);
+        memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
+        memset(timesPerc, 0, sizeof timesPerc);
+        memset(clusterSizes, 0, sizeof clusterSizes);
 
         printf("\n------------------------------------------\n");
         printf("Lattice size = %d x %d\n", size, size);
@@ -218,13 +218,6 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
         printfCSVLine(fp, maxNumThreads, size, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, timesPerc, clusterSizes);
 
-        memset(percTimes, 0, sizeof percTimes);
-        memset(clusterTimes, 0, sizeof clusterTimes);
-        memset(percSpeedUp, 0, sizeof percSpeedUp);
-        memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
-        memset(timesPerc, 0, sizeof timesPerc);
-        memset(clusterSizes, 0, sizeof clusterSizes);
-
         allocationTime = 0;
 
         largestClusterSize = 0;
@@ -255,14 +248,14 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
     int timesPerc[maxNumThreads-1];
     unsigned long long clusterSizes[maxNumThreads-1];
 
-    memset(percTimes, 0, sizeof percTimes);
-    memset(clusterTimes, 0, sizeof clusterTimes);
-    memset(percSpeedUp, 0, sizeof percSpeedUp);
-    memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
-    memset(timesPerc, 0, sizeof timesPerc);
-    memset(clusterSizes, 0, sizeof clusterSizes);
-
     do {
+
+        memset(percTimes, 0, sizeof percTimes);
+        memset(clusterTimes, 0, sizeof clusterTimes);
+        memset(percSpeedUp, 0, sizeof percSpeedUp);
+        memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
+        memset(timesPerc, 0, sizeof timesPerc);
+        memset(clusterSizes, 0, sizeof clusterSizes);
 
         printf("\n------------------------------------------\n");
         printf("Lattice size = %d x %d\n", size, size);
@@ -319,13 +312,6 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
         printfCSVLine(fp, maxNumThreads, size, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, timesPerc, clusterSizes);
 
-        memset(percTimes, 0, sizeof percTimes);
-        memset(clusterTimes, 0, sizeof clusterTimes);
-        memset(percSpeedUp, 0, sizeof percSpeedUp);
-        memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
-        memset(timesPerc, 0, sizeof timesPerc);
-        memset(clusterSizes, 0, sizeof clusterSizes);
-
         allocationTime = 0;
 
         largestClusterSize = 0;
@@ -348,6 +334,9 @@ int main(int argc, char *argv[])
     // } else {
     //     maxNumThreads = omp_get_max_threads();
     // }
+
+    printf("Size of int: %ld", sizeof(int));
+    printf("Size of luu: %ld", sizeof(unsigned long long));
 
     int maxNumThreads = MAX_NUM_THREADS;
 

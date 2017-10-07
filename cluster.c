@@ -179,16 +179,19 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
     unsigned long long queueSize = (unsigned long long) size;
     queueSize = queueSize * queueSize;
 
+    unsigned long long* setArr = createSetArr(size);
+    unsigned long long* sizeArr = createSizeArr(size);
+
     #pragma omp parallel
     {
         int numThreads = omp_get_num_threads();
         int threadSize = size / numThreads;
-        #pragma omp for schedule(static, 1) reduction(max: largestSize)
+        #pragma omp for schedule(static, 1)
         for (int n = 0; n < numThreads; n ++) {
 
             QUEUE queue;
             queue_initialise(&queue, queueSize);
-            unsigned long long currentSize = 0;
+            // unsigned long long currentSize = 0;
             QUEUE_VERT v;
 
             for (int i = n * threadSize; i < (n + 1) * threadSize; i++) {
@@ -211,11 +214,11 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
 
                         enqueue(&queue, v);
 
-                        currentSize = floodfillBondThread(arrayCpy, size, queue, n * threadSize, (n + 1) * threadSize - 1);
+                        floodfillBondThread(arrayCpy, size, queue, n * threadSize, (n + 1) * threadSize - 1, setArr, sizeArr);
                         // printf("\n\tCurrent size: %llu", currentSize);
-                        if(largestSize < currentSize) {
-                            largestSize = currentSize;
-                        }
+                        // if(largestSize < currentSize) {
+                        //     largestSize = currentSize;
+                        // }
                     }
                 }
             }
@@ -256,6 +259,11 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
     //     }
     // }
 
+
+    largestSize = findLargestCluster(setArr, size);
+
+
     destroyArrayBond(arrayCpy, size);
+
     return largestSize;
 }

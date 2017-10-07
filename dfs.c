@@ -64,9 +64,9 @@ int dfsUpDownSite(char** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjUDSite(array, &stack, v, size)) {
-                        if (PRINT && size <= 128) {
-                            printLatticeSite(array, size, vertices);
-                        }
+                        // if (PRINT && size <= 128) {
+                        //     printLatticeSite(array, size, vertices);
+                        // }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
@@ -82,9 +82,9 @@ int dfsUpDownSite(char** array, int size) {
                 stack_clear(&stack);
         }
     }
-    if (PRINT && size <= 128) {
-        printLatticeSite(array, size, vertices);
-    }
+    // if (PRINT && size <= 128) {
+    //     printLatticeSite(array, size, vertices);
+    // }
     // stack_clear(&stack);
 
     for (int i = 0; i < size; i++) {
@@ -155,9 +155,9 @@ int dfsLeftRightSite(char** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjLRSite(array, &stack, v, size)) {
-                        if (PRINT && size <= 128) {
-                            printLatticeSite(array, size, vertices);
-                        }
+                        // if (PRINT && size <= 128) {
+                        //     printLatticeSite(array, size, vertices);
+                        // }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
@@ -172,9 +172,9 @@ int dfsLeftRightSite(char** array, int size) {
                 stack_clear(&stack);
         }
     }
-    if (PRINT && size <= 128) {
-        printLatticeSite(array, size, vertices);
-    }
+    // if (PRINT && size <= 128) {
+    //     printLatticeSite(array, size, vertices);
+    // }
     // stack_clear(&stack);
 
     for (int i = 0; i < size; i++) {
@@ -250,9 +250,9 @@ int dfsUpDownBond(BONDSITE** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjUDBond(array, &stack, v, size)) {
-                        if (PRINT && size <= 32) {
-                            printLatticeBond(array, size, vertices);
-                        }
+                        // if (PRINT && size <= 32) {
+                        //     printLatticeBond(array, size, vertices);
+                        // }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
@@ -266,9 +266,9 @@ int dfsUpDownBond(BONDSITE** array, int size) {
             stack_clear(&stack);
         }
     }
-    if (PRINT && size <= 32) {
-        printLatticeBond(array, size, vertices);
-    }
+    // if (PRINT && size <= 32) {
+    //     printLatticeBond(array, size, vertices);
+    // }
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
     }
@@ -336,9 +336,9 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
                 if (vertices[v.x][v.y] != 1) {
                     vertices[v.x][v.y] = 1;
                     if(findAdjLRBond(array, &stack, v, size)) {
-                        if (PRINT && size <= 32) {
-                            printLatticeBond(array, size, vertices);
-                        }
+                        // if (PRINT && size <= 32) {
+                        //     printLatticeBond(array, size, vertices);
+                        // }
                         stack_clear(&stack);
                         for (int i = 0; i < size; i++) {
                             free(vertices[i]);
@@ -352,9 +352,9 @@ int dfsLeftRightBond(BONDSITE** array, int size) {
             stack_clear(&stack);
         }
     }
-    if (PRINT && size <= 32) {
-        printLatticeBond(array, size, vertices);
-    }
+    // if (PRINT && size <= 32) {
+    //     printLatticeBond(array, size, vertices);
+    // }
 
     for (int i = 0; i < size; i++) {
         free(vertices[i]);

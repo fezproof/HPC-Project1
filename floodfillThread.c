@@ -102,11 +102,11 @@ unsigned long long floodfillSiteThread(char** array, int size, QUEUE queue)
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, int southLim)
+void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, int southLim, unsigned long long* setArr, unsigned long long* sizeArr)
 {
     QUEUE_VERT v;
 
-    unsigned long long clusterSize = 0;
+    // unsigned long long clusterSize = 0;
 
     int curVert = 0;
 
@@ -117,9 +117,10 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
 
     QUEUE_VERT newV;
 
+
     while(!queue_isempty(&queue))
     {
-        clusterSize++;
+        // clusterSize++;
 
         v = dequeue(&queue);
 
@@ -143,6 +144,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
             array[southVert][v.y].seen = 1;
             newV.y = v.y;
             newV.x = southVert;
+            unionAB(setArr, sizeArr, size, v.x, v.y, southVert, v.y);
             enqueue(&queue, newV);
         }
 
@@ -152,6 +154,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
             array[northVert][v.y].seen = 1;
             newV.y = v.y;
             newV.x = northVert;
+            unionAB(setArr, sizeArr, size, v.x, v.y, northVert, v.y);
             enqueue(&queue, newV);
         }
 
@@ -161,12 +164,15 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         while(array[v.x][curVert].left == 1 && array[v.x][westVert].seen == 0)
         {
             array[v.x][westVert].seen = 1;
+            unionAB(setArr, sizeArr, size, v.x, curVert, v.x, westVert);
+
             //check south and add to queue
             if (southVert != 0)
             if(array[v.x][westVert].down == 1 && array[southVert][westVert].seen == 0) {
                 array[southVert][westVert].seen = 1;
                 newV.y = westVert;
                 newV.x = southVert;
+                unionAB(setArr, sizeArr, size, v.x, westVert, southVert, westVert);
                 enqueue(&queue, newV);
             }
 
@@ -176,11 +182,12 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
                 array[northVert][westVert].seen = 1;
                 newV.y = westVert;
                 newV.x = northVert;
+                unionAB(setArr, sizeArr, size, v.x, westVert, northVert, westVert);
                 enqueue(&queue, newV);
             }
             curVert = westVert;
             westVert = (westVert-1 + size) % size;
-            clusterSize++;
+            // clusterSize++;
         }
 
         curVert = v.y;
@@ -189,12 +196,15 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         while(array[v.x][curVert].right == 1 && array[v.x][eastVert].seen == 0)
         {
             array[v.x][eastVert].seen = 1;
+            unionAB(setArr, sizeArr, size, v.x, curVert, v.x, eastVert);
+
             //check south and add to queue
             if (southVert != 0)
             if(array[v.x][eastVert].down == 1 && array[southVert][eastVert].seen == 0) {
                 array[southVert][eastVert].seen = 1;
                 newV.y = eastVert;
                 newV.x = southVert;
+                unionAB(setArr, sizeArr, size, v.x, eastVert, southVert, eastVert);
                 enqueue(&queue, newV);
             }
             //check north and add to queue
@@ -203,14 +213,15 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
                 array[northVert][eastVert].seen = 1;
                 newV.y = eastVert;
                 newV.x = northVert;
+                unionAB(setArr, sizeArr, size, v.x, eastVert, northVert, eastVert);
                 enqueue(&queue, newV);
             }
             curVert = eastVert;
             eastVert = (eastVert+1 + size) % size;
-            clusterSize++;
+            // clusterSize++;
         }
     }
-    return clusterSize;
+    // return clusterSize;
 }
 
 
