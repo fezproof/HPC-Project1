@@ -102,7 +102,7 @@ unsigned long long floodfillSiteThread(char** array, int size, QUEUE queue)
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue)
+unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, int southLim)
 {
     QUEUE_VERT v;
 
@@ -122,11 +122,14 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue)
         clusterSize++;
 
         v = dequeue(&queue);
+
         westVert = (v.y-1 + size) % size;
         eastVert = (v.y+1 + size) % size;
 
-        southVert = (v.x+1 + size) % size;
-        northVert = (v.x-1 + size) % size;
+        if (v.x + 1 <= southLim)
+            southVert = v.x + 1;
+        if (v.x - 1 >= northLim)
+            northVert = v.x - 1;
 
         //check south of the dequeued site
         if(array[v.x][v.y].down == 1 && array[southVert][v.y].seen == 0) {

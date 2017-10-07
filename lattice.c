@@ -29,7 +29,7 @@ BONDSITE** createLatticeBond(int size, double chance)
     BONDSITE* values;
     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
     for (int i = 0; i < size; i++) {
-        values = malloc(size * sizeof(BONDSITE));
+        values = calloc(size, sizeof(BONDSITE));
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
                 values[j].left = 1; //occupied
@@ -146,7 +146,7 @@ void printLatticeSite(char** lattice, int size, char** vertices) {
     printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
+void printLatticeBond(BONDSITE** lattice, int size)
 {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -164,7 +164,7 @@ void printLatticeBond(BONDSITE** lattice, int size, char** vertices)
                 printf(" ");
             }
             if (lattice[i][j].left == 1 || lattice[i][j].right == 1 || lattice[i][j].up == 1 || lattice[i][j].down == 1) {
-                if (vertices[i][j]) {
+                if (lattice[i][j].seen) {
                     printf("\u2588");
                 } else {
                     printf("+");

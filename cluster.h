@@ -1,3 +1,4 @@
+#include <omp.h>
 #include "floodfill.h"
 #include "bond.h"
 #include "lattice.h"

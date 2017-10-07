@@ -1,9 +1,9 @@
 #include "main.h"
 
-#define RUNS 10
-#define MAX_NUM_THREADS 8
+#define RUNS 20
+#define MAX_NUM_THREADS 4
 #define START_SIZE 64 //64
-#define MAX_LATTICE_SIZE 4096 //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 1024 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -284,7 +284,7 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
 
                 if(largestClusterSize != largestClusterSizeThreaded) {
-                    printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
+                    // printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
                 }
 
                 if(percResult != percResultThreaded) {
