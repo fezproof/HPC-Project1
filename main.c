@@ -3,7 +3,7 @@
 #define RUNS 20
 #define MAX_NUM_THREADS 4
 #define START_SIZE 64 //64
-#define MAX_LATTICE_SIZE 1024 //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 8192 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {

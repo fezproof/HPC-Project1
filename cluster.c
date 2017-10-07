@@ -189,10 +189,11 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
             QUEUE queue;
             queue_initialise(&queue, queueSize);
             unsigned long long currentSize = 0;
+            QUEUE_VERT v;
 
             for (int i = n * threadSize; i < (n + 1) * threadSize; i++) {
                 for(int j = 0; j < size; j++) {
-                    QUEUE_VERT v;
+
 
                     if(arrayCpy[i][j].seen == 0 && (
                             arrayCpy[i][j].left == 1 ||

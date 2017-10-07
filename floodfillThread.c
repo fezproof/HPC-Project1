@@ -126,12 +126,19 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         westVert = (v.y-1 + size) % size;
         eastVert = (v.y+1 + size) % size;
 
-        if (v.x + 1 <= southLim)
+        if (v.x + 1 <= southLim) {
             southVert = v.x + 1;
-        if (v.x - 1 >= northLim)
+        } else {
+            southVert = 0;
+        }
+        if (v.x - 1 >= northLim) {
             northVert = v.x - 1;
+        } else{
+            northVert = 0;
+        }
 
         //check south of the dequeued site
+        if (southVert != 0)
         if(array[v.x][v.y].down == 1 && array[southVert][v.y].seen == 0) {
             array[southVert][v.y].seen = 1;
             newV.y = v.y;
@@ -140,6 +147,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         }
 
         //check north of the dequeued site
+        if (northVert != 0)
         if(array[v.x][v.y].up == 1 && array[northVert][v.y].seen == 0) {
             array[northVert][v.y].seen = 1;
             newV.y = v.y;
@@ -154,6 +162,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         {
             array[v.x][westVert].seen = 1;
             //check south and add to queue
+            if (southVert != 0)
             if(array[v.x][westVert].down == 1 && array[southVert][westVert].seen == 0) {
                 array[southVert][westVert].seen = 1;
                 newV.y = westVert;
@@ -162,6 +171,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
             }
 
             //check north and add to queue
+            if (northVert != 0)
             if(array[v.x][westVert].up == 1 && array[northVert][westVert].seen == 0) {
                 array[northVert][westVert].seen = 1;
                 newV.y = westVert;
@@ -180,6 +190,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
         {
             array[v.x][eastVert].seen = 1;
             //check south and add to queue
+            if (southVert != 0)
             if(array[v.x][eastVert].down == 1 && array[southVert][eastVert].seen == 0) {
                 array[southVert][eastVert].seen = 1;
                 newV.y = eastVert;
@@ -187,6 +198,7 @@ unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, 
                 enqueue(&queue, newV);
             }
             //check north and add to queue
+            if (northVert != 0)
             if(array[v.x][eastVert].up == 1 && array[northVert][eastVert].seen == 0) {
                 array[northVert][eastVert].seen = 1;
                 newV.y = eastVert;
