@@ -10,7 +10,7 @@ unsigned long long* createSetArr(int latticeSize)
     unsigned long long* setArr = NULL;
 
     setArr = malloc(length * sizeof(unsigned long long));
-    #pragma omp parallel for
+    // #pragma omp parallel for
         for (unsigned long long i = 0; i < length; i++) {
             setArr[i] = i;
         }
@@ -26,8 +26,8 @@ unsigned long long* createSizeArr(int latticeSize)
     unsigned long long* sizeArr;
 
     sizeArr = malloc(length * sizeof(unsigned long long));
-    #pragma omp parallel for
-        for (int i = 0; i < length; i++) {
+    // #pragma omp parallel for
+        for (unsigned long long i = 0; i < length; i++) {
             sizeArr[i] = 1;
         }
 
@@ -88,21 +88,33 @@ int find(unsigned long long* setArr, unsigned long long latticeSize, unsigned lo
 
 unsigned long long findLargestCluster(unsigned long long* sizeArr, int latticeSize)
 {
+
+
     unsigned long long size = (unsigned long long) latticeSize;
     size = size * size;
 
+
+        // for(unsigned long long i = 0; i < size; i++)
+        // {
+        //     printf("%llu\n", sizeArr[i]);
+        // }
+
     unsigned long long largestClusterSize = 0;
 
-    #pragma omp parallel for reduction(max: largestClusterSize)
-    for(int i = 0; i < size; i++) {
+    // #pragma omp parallel for reduction(max: largestClusterSize)
+    for(unsigned long long i = 0; i < size; i++) {
         if(sizeArr[i] > largestClusterSize) largestClusterSize = sizeArr[i];
     }
 
     return largestClusterSize;
 }
 
-void destroySet(unsigned long long* setArr, unsigned long long* sizeArr)
+void destroySetArr(unsigned long long* setArr)
 {
     free(setArr);
+}
+
+void destroySizeArr(unsigned long long* sizeArr)
+{
     free(sizeArr);
 }

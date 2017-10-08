@@ -1,9 +1,10 @@
 #include "main.h"
 
-#define RUNS 20
-#define MAX_NUM_THREADS 4
-#define START_SIZE 64 //64
-#define MAX_LATTICE_SIZE 8192/2/2/2 //131072 16384 8192 4096
+#define RUNS 1
+#define MAX_NUM_THREADS 16
+
+#define START_SIZE 16 //64
+#define MAX_LATTICE_SIZE 2  //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -176,7 +177,11 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
             for(int j = 1; j < maxNumThreads; j++)
             {
-                omp_set_num_threads(j+1);
+                if(j+1 > size) {
+                    omp_set_num_threads(size);
+                } else {
+                    omp_set_num_threads(j+1);
+                }
                 // printf("Num threads: %d\n", omp_get_num_threads());
 
                 percTimes[j] += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
@@ -271,7 +276,11 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
             for(int j = 1; j < maxNumThreads; j++)
             {
-                omp_set_num_threads(j+1);
+                if(j+1 > size) {
+                    omp_set_num_threads(size);
+                } else {
+                    omp_set_num_threads(j+1);
+                }
 
                 percTimes[j] += timePercBondThreaded(lattice, size, test, &percResultThreaded);
                 clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
@@ -286,6 +295,9 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
                 if(percResultThreaded == 1) timesPerc[j]++;
                 clusterSizes[j] += largestClusterSizeThreaded;
+
+                printf("\n------------------------------------------\n");
+                
             }
             destroyArrayBond(lattice, size);
         }
