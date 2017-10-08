@@ -297,7 +297,7 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 clusterSizes[j] += largestClusterSizeThreaded;
 
                 printf("\n------------------------------------------\n");
-                
+
             }
             destroyArrayBond(lattice, size);
         }

@@ -254,7 +254,7 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
             // for (int i = n * threadSize; i < (n + 1) * threadSize; i++) {
             //     for(int j = 0; j < size; j++) {
 
-            for (int i = downBound; i <= upBound; i++) {
+            for (int i = upBound; i <= downBound; i++) {
                 for(int j = 0; j < size; j++) {
 
                     // perror("hey");
@@ -278,7 +278,7 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
 
                         enqueue(&queue, v);
 
-                        // floodfillBondThread(arrayCpy, size, queue, upBound, downBound, setArr, sizeArr);
+                        floodfillBondThread(arrayCpy, size, queue, upBound, downBound, setArr, sizeArr);
                         // printf("\n\tCurrent size: %llu", currentSize);
                         // if(largestSize < currentSize) {
                         //     largestSize = currentSize;
@@ -292,13 +292,15 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
 
     }
 
+    printLatticeBond(arrayCpy, size);
+
     int threadSize = size / numThreads;
     // int lastThreadSize = size % threadSize;
 
     // printf("Num threads: %d\nThread size: %d\nLast thread size: %d\n\n", numThreads, threadSize ,lastThreadSize);
 
     //combine boundaries
-    #pragma omp for
+    // #pragma omp for
     for(int i = threadSize; i < size - 1 - threadSize; i = i + threadSize) {
         for(int j = 0; j < size; j++) {
             if(arrayCpy[i][j].down == 1) {
@@ -307,7 +309,7 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
         }
     }
 
-    #pragma omp for
+    // #pragma omp for
     for(int j = 0; j < size; j++) {
         if(arrayCpy[size-1][j].down == 1) {
             unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
