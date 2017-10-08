@@ -148,9 +148,6 @@ int dfsUpDownSiteThread(char** array, int size) {
                 }
             }
         }
-        if (PRINT && size <= 128) {
-            printLatticeSiteThread(array, size, vertices);
-        }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -241,9 +238,6 @@ int dfsLeftRightSiteThread(char** array, int size) {
                 }
             }
         }
-        if (PRINT && size <= 128) {
-            printLatticeSiteThread(array, size, vertices);
-        }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -331,9 +325,6 @@ int dfsUpDownBondThread(BONDSITE** array, int size) {
             }
         }
     }
-    if (PRINT && size <= 32) {
-        printLatticeBondThread(array, size, vertices);
-    }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {
         free(vertices[i]);
@@ -416,9 +407,6 @@ int dfsLeftRightBondThread(BONDSITE** array, int size) {
                 stack_clear(&stack);
             }
         }
-    }
-    if (PRINT && size <= 32) {
-        printLatticeBondThread(array, size, vertices);
     }
     #pragma omp parallel for
     for (int i = 0; i < size; i++) {

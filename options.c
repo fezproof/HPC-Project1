@@ -7,10 +7,10 @@ void printUsage(void)
 {
     printf("\n\nValid options are:\n"
             "\t-t <s OR b> : type of lattice (site OR bond)\n"
-            "\t-P <0-1 float> : chance of alloction\n"
-            "\t-p <0, 1, OR 2> : whether perlocation does LR, UD or both\n"
+            "\t-P <0-1 float> : chance of allocation\n"
+            "\t-p <0, 1, OR 2> : whether percolation does UD, LR, or both\n"
             "\t-r <positive int> : how many runs per size for averaging\n"
-            "\t-n <poistive int> : number of threads to try to\n"
+            "\t-n <positive int> : number of threads to try to\n"
             "\t-l <positive even int> : min lattice size\n"
             "\t-h <positive even int> : max lattice size\n\n");
     exit(EXIT_FAILURE);
