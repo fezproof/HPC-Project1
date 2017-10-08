@@ -4,7 +4,8 @@
 #define MAX_NUM_THREADS 4
 
 #define START_SIZE 16 //64
-#define MAX_LATTICE_SIZE 1024/2 //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 512 //131072 16384 8192 4096
+
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -146,14 +147,14 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
     unsigned long long largestClusterSize = 0;
     unsigned long long largestClusterSizeThreaded = 0;
 
-    double percTimes[maxNumThreads-1];
-    double clusterTimes[maxNumThreads-1];
-    double percSpeedUp[maxNumThreads-1];
-    double clusterSpeedUp[maxNumThreads-1];
-    double totalTimes[maxNumThreads-1];
-    double totalSpeedUp[maxNumThreads-1];
-    int timesPerc[maxNumThreads-1];
-    unsigned long long clusterSizes[maxNumThreads-1];
+    double percTimes[maxNumThreads];
+    double clusterTimes[maxNumThreads];
+    double percSpeedUp[maxNumThreads];
+    double clusterSpeedUp[maxNumThreads];
+    double totalTimes[maxNumThreads];
+    double totalSpeedUp[maxNumThreads];
+    int timesPerc[maxNumThreads];
+    unsigned long long clusterSizes[maxNumThreads];
 
     do {
 
@@ -185,7 +186,6 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                     numThreads = j + 1;
                 }
                 omp_set_num_threads(numThreads);
-                // printf("Num threads: %d\n", omp_get_num_threads());
 
                 percTimes[j] += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
                 clusterTimes[j] += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
@@ -249,14 +249,14 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
     unsigned long long largestClusterSize = 0;
     unsigned long long largestClusterSizeThreaded = 0;
 
-    double percTimes[maxNumThreads-1];
-    double clusterTimes[maxNumThreads-1];
-    double percSpeedUp[maxNumThreads-1];
-    double clusterSpeedUp[maxNumThreads-1];
-    double totalTimes[maxNumThreads-1];
-    double totalSpeedUp[maxNumThreads-1];
-    int timesPerc[maxNumThreads-1];
-    unsigned long long clusterSizes[maxNumThreads-1];
+    double percTimes[maxNumThreads];
+    double clusterTimes[maxNumThreads];
+    double percSpeedUp[maxNumThreads];
+    double clusterSpeedUp[maxNumThreads];
+    double totalTimes[maxNumThreads];
+    double totalSpeedUp[maxNumThreads];
+    int timesPerc[maxNumThreads];
+    unsigned long long clusterSizes[maxNumThreads];
 
     do {
 
@@ -279,10 +279,6 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
             if(percResult == 1) timesPerc[0]++;
             clusterSizes[0] += largestClusterSize;
 
-            // printf("correct largest: %llu\n", largestClusterSize);
-
-            // printf("\n------------------------------------------\n");
-
             for(int j = 1; j < maxNumThreads; j++)
             {
                 int numThreads;
@@ -297,7 +293,7 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
 
                 if(largestClusterSize != largestClusterSizeThreaded) {
-                    // printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
+                    printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
                 }
 
                 if(percResult != percResultThreaded) {
@@ -306,10 +302,6 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
                 if(percResultThreaded == 1) timesPerc[j]++;
                 clusterSizes[j] += largestClusterSizeThreaded;
-
-                // printf("largest: %llu\n", largestClusterSizeThreaded);
-
-                // printf("\n------------------------------------------\n");
 
             }
             destroyArrayBond(lattice, size);
@@ -354,13 +346,6 @@ int main(int argc, char *argv[])
 
     //Prevents the system from changing the number of threads
     omp_set_dynamic(0);
-
-    // int maxNumThreads = 0;
-    // if(MAX_NUM_THREADS < omp_get_max_threads()) {
-    //     maxNumThreads = MAX_NUM_THREADS;
-    // } else {
-    //     maxNumThreads = omp_get_max_threads();
-    // }
 
     printf("Size of int: %ld", sizeof(int));
     printf("Size of luu: %ld", sizeof(unsigned long long));
