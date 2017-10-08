@@ -169,7 +169,7 @@ unsigned long long findLargestClusterBond(BONDSITE** array, int size)
     return largestSize;
 }
 
-unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
+unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int numThreads)
 {
     BONDSITE** arrayCpy = NULL;
     arrayCpy = copyLatticeBondThread(array, size);
@@ -179,35 +179,28 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
     unsigned long long* setArr = createSetArr(size);
     unsigned long long* sizeArr = createSizeArr(size);
 
-    int numThreads = 0;
+    int stdThreadSize = 0;
+    int lastThreadSize = 0;
+    int numStdThreads = 0;
+
+    if(size % numThreads != 0) {
+        if(numThreads <= size/2) {
+            stdThreadSize = size / numThreads;
+            lastThreadSize = stdThreadSize + (size % numThreads);
+            numStdThreads = numThreads - 1;
+        } else {
+            stdThreadSize = 2;
+            lastThreadSize = 1;
+            numStdThreads = size % numThreads;
+        }
+    } else {
+        stdThreadSize = size / numThreads;
+        lastThreadSize = size / numThreads;
+        numStdThreads = numThreads;
+    }
 
     #pragma omp parallel
     {
-        #pragma omp atomic write
-        numThreads = omp_get_num_threads();
-
-        int stdThreadSize = 0;
-        int lastThreadSize = 0;
-        int numStdThreads = 0;
-
-        // #pragma omp taskwait
-        // {
-            if(size % numThreads != 0) {
-                if(numThreads <= size/2) {
-                    stdThreadSize = size / numThreads;
-                    lastThreadSize = stdThreadSize + (size % numThreads);
-                    numStdThreads = numThreads - 1;
-                } else {
-                    stdThreadSize = 2;
-                    lastThreadSize = 1;
-                    numStdThreads = size % numThreads;
-                }
-            } else {
-                stdThreadSize = size / numThreads;
-                lastThreadSize = size / numThreads;
-                numStdThreads = numThreads;
-            }
-        // }
 
         #pragma omp for schedule(static, 1)
         for (int n = 0; n < numThreads; n++) {
@@ -260,31 +253,8 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size)
 
     // printLatticeBond(arrayCpy, size);
 
-    // int threadSize = size / numThreads;
-
-    int stdThreadSize = 0;
-    int lastThreadSize = 0;
-    int numStdThreads = 0;
-
-    if(size % numThreads != 0) {
-        if(numThreads <= size/2) {
-            stdThreadSize = size / numThreads;
-            lastThreadSize = stdThreadSize + (size % numThreads);
-            numStdThreads = numThreads - 1;
-        } else {
-            stdThreadSize = 2;
-            lastThreadSize = 1;
-            numStdThreads = size % numThreads;
-        }
-    } else {
-        stdThreadSize = size / numThreads;
-        lastThreadSize = size / numThreads;
-        numStdThreads = numThreads;
-    }
-
     int bound = 0;
     //combine boundaries
-    // #pragma omp for
     for(int i = 0; i < numThreads; i++) {
         if(i < numStdThreads) {
             bound = i * stdThreadSize + stdThreadSize - 1;

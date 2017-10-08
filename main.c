@@ -280,14 +280,16 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
             for(int j = 1; j < maxNumThreads; j++)
             {
+                int numThreads;
                 if(j+1 > size) {
-                    omp_set_num_threads(size);
+                    numThreads = size;
                 } else {
-                    omp_set_num_threads(j+1);
+                    numThreads = j + 1;
                 }
+                omp_set_num_threads(numThreads);
 
                 percTimes[j] += timePercBondThreaded(lattice, size, test, &percResultThreaded);
-                clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+                clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
 
                 if(largestClusterSize != largestClusterSizeThreaded) {
                     // printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
