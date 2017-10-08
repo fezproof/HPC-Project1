@@ -13,5 +13,5 @@ extern BONDSITE** copyLatticeBond(BONDSITE** src, int size);
 extern BONDSITE** copyLatticeBondThread(BONDSITE** src, int size);
 
 
-extern void printLatticeSite(char** lattice, int size, char** vertices);
+extern void printLatticeSite(char** lattice, int size);
 extern void printLatticeBond(BONDSITE** lattice, int size);

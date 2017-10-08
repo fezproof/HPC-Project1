@@ -105,3 +105,207 @@ Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: 
 1024x1024,0.008956,,0.055860,0.041287,0.036931,0.039988,0.041839,0.040795,0.046107,0.050704,,0,1.000000,1.352973,1.512545,1.396932,1.335116,1.369297,1.211533,1.101685,,0.036691,0.018644,0.017823,0.016025,0.016586,0.016252,0.016252,0.016210,,0,1.000000,1.967990,2.058597,2.289553,2.212114,2.257616,2.257685,2.263477,,0.092551,0.059931,0.054754,0.056013,0.058425,0.057047,0.062358,0.066914,,0,1.000000,1.544300,1.690293,1.652312,1.584088,1.622372,1.484178,1.383131,,,9,9,9,9,9,9,9,34,,466681,239228,173433,113291,132753,128363,147765,136081,
 2048x2048,0.033485,,0.102674,0.089918,0.086103,0.107290,0.135592,0.120527,0.134226,0.198337,,0,1.000000,1.141866,1.192455,0.956976,0.757227,0.851875,0.764936,0.517674,,0.142780,0.076114,0.065694,0.060463,0.061607,0.059129,0.058478,0.060263,,0,1.000000,1.875884,2.173425,2.361465,2.317610,2.414746,2.441624,2.369271,,0.245454,0.166031,0.151797,0.167753,0.197199,0.179656,0.192703,0.258601,,0,1.000000,1.478361,1.616993,1.463191,1.244705,1.366249,1.273743,0.949163,,,10,10,10,10,10,10,10,44,,1883995,963487,634572,493905,509429,444193,469541,392826,
 4096x4096,0.143523,,0.081373,0.135423,0.141401,0.128703,0.148093,0.141677,0.167123,0.173860,,0,1.000000,0.600878,0.575474,0.632251,0.549471,0.574352,0.486904,0.468034,,0.599041,0.307274,0.273099,0.223993,0.220331,0.223392,0.225134,0.240227,,0,1.000000,1.949532,2.193493,2.674373,2.718821,2.681567,2.660824,2.493647,,0.680414,0.442697,0.414500,0.352696,0.368424,0.365069,0.392256,0.414087,,0,1.000000,1.536973,1.641528,1.929178,1.846824,1.863793,1.734616,1.643165,,,10,10,10,10,10,10,10,54,,7516639,3659013,2466329,1922488,1746333,1741885,1512570,1494117,
+
+
+
+Sun Oct  8 18:01:26 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000198,,0.000037,0.000132,0.000103,0.000128,0.000146,0.000154,0.000147,0.000159,0.000172,0.000224,0.000273,0.000272,0.000374,0.000386,0.000401,0.000614,,0,1.000000,0.280303,0.359224,0.289063,0.253425,0.240260,0.251701,0.232705,0.215117,0.165179,0.135531,0.136030,0.098931,0.095855,0.092269,0.060261,,0.000018,0.000173,0.000171,0.000205,0.000230,0.000272,0.000288,0.000426,0.000417,0.000471,0.000526,0.000663,0.000658,0.000647,0.000540,0.000938,,0,1.000000,0.104046,0.105263,0.087805,0.078261,0.066177,0.062500,0.042254,0.043166,0.038217,0.034221,0.027149,0.027356,0.027821,0.033333,0.019190,,0.000055,0.000305,0.000274,0.000333,0.000376,0.000426,0.000435,0.000585,0.000589,0.000695,0.000799,0.000935,0.001032,0.001033,0.000941,0.001552,,0,1.000000,0.180328,0.200730,0.165165,0.146277,0.129108,0.126437,0.094017,0.093379,0.079137,0.068836,0.058824,0.053295,0.053243,0.058449,0.035438,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,,138,27,34,47,47,29,49,49,32,33,34,34,34,34,34,4294967329,
+
+
+
+Sun Oct  8 18:02:06 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000216,,0.000051,0.000244,0.000333,0.000242,0.000322,0.000382,0.000333,0.000337,0.000535,0.000487,0.000592,0.000523,0.000774,0.001031,0.000641,0.000677,,0,1.000000,0.209016,0.153153,0.210743,0.158385,0.133508,0.153153,0.151335,0.095327,0.104723,0.086149,0.097514,0.065891,0.049466,0.079563,0.075332,,0.000021,0.000275,0.000368,0.000335,0.000290,0.000301,0.000329,0.000430,0.000477,0.000409,0.000571,0.000677,0.000606,0.000651,0.000728,0.000780,,0,1.000000,0.076364,0.057065,0.062687,0.072414,0.069768,0.063830,0.048837,0.044025,0.051345,0.036778,0.031019,0.034654,0.032258,0.028846,0.026923,,0.000072,0.000519,0.000701,0.000577,0.000612,0.000683,0.000662,0.000767,0.001012,0.000896,0.001163,0.001200,0.001380,0.001682,0.001369,0.001457,,0,1.000000,0.138728,0.102710,0.124783,0.117647,0.105417,0.108761,0.093872,0.071146,0.080357,0.061909,0.060000,0.052174,0.042806,0.052593,0.049417,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,137,63,44,63,34,63,64,60,61,61,61,58,59,60,48,4294967344,
+
+
+
+Sun Oct  8 18:03:05 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000208,,0.000049,0.000203,0.000173,0.000225,0.000249,0.000768,0.000622,0.000436,0.000559,0.000389,0.000534,0.000616,0.000576,0.000717,0.000636,0.000861,,0,1.000000,0.241380,0.283237,0.217778,0.196787,0.063802,0.078778,0.112385,0.087657,0.125964,0.091760,0.079545,0.085069,0.068340,0.077044,0.056911,,0.000019,0.000159,0.000194,0.000213,0.000227,0.000582,0.000472,0.000419,0.000513,0.000374,0.000544,0.000452,0.000599,0.000563,0.000874,0.001037,,0,1.000000,0.119497,0.097938,0.089202,0.083701,0.032646,0.040254,0.045346,0.037037,0.050802,0.034927,0.042035,0.031720,0.033748,0.021739,0.018322,,0.000068,0.000362,0.000367,0.000438,0.000476,0.001350,0.001094,0.000855,0.001072,0.000763,0.001078,0.001068,0.001175,0.001280,0.001510,0.001898,,0,1.000000,0.187845,0.185286,0.155251,0.142857,0.050370,0.062157,0.079532,0.063433,0.089122,0.063080,0.063670,0.057872,0.053125,0.045033,0.035827,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,146,146,143,148,154,176,177,177,183,187,192,194,196,198,201,4294967499,
+
+
+
+Sun Oct  8 18:04:27 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000218,,0.000045,0.000208,0.000186,0.000222,0.000271,0.000269,0.000308,0.000300,0.000428,0.000408,0.000560,0.000576,0.000945,0.000540,0.000977,0.001115,,0,1.000000,0.216346,0.241935,0.202703,0.166052,0.167286,0.146104,0.150000,0.105140,0.110294,0.080357,0.078125,0.047619,0.083333,0.046059,0.040359,,0.000018,0.000178,0.000185,0.000233,0.000222,0.000225,0.000278,0.000347,0.000426,0.000450,0.000514,0.000642,0.000735,0.000550,0.002167,0.000995,,0,1.000000,0.101124,0.097297,0.077253,0.081081,0.080000,0.064748,0.051873,0.042254,0.040000,0.035019,0.028037,0.024490,0.032727,0.008306,0.018090,,0.000063,0.000386,0.000371,0.000455,0.000493,0.000494,0.000586,0.000647,0.000854,0.000858,0.001074,0.001218,0.001680,0.001090,0.003144,0.002110,,0,1.000000,0.163212,0.169811,0.138462,0.127789,0.127530,0.107509,0.097373,0.073771,0.073427,0.058659,0.051724,0.037500,0.057798,0.020038,0.029858,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,123,100,127,110,137,152,157,158,161,162,165,167,170,171,172,4294967470,
+
+
+
+Sun Oct  8 18:06:09 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000200,,0.000030,0.000145,0.000142,0.000110,0.000127,0.000130,0.000171,0.000264,0.000708,0.000435,0.000425,0.000265,0.000277,0.000425,0.000563,0.000265,,0,1.000000,0.206896,0.211268,0.272727,0.236220,0.230769,0.175439,0.113636,0.042373,0.068965,0.070588,0.113208,0.108303,0.070588,0.053286,0.113208,,0.000019,0.000168,0.000174,0.000198,0.000233,0.000291,0.000267,0.000602,0.000698,0.000665,0.000768,0.000660,0.000615,0.000662,0.000667,0.000671,,0,1.000000,0.113095,0.109195,0.095959,0.081545,0.065292,0.071161,0.031561,0.027221,0.028571,0.024739,0.028788,0.030894,0.028701,0.028486,0.028316,,0.000049,0.000313,0.000316,0.000308,0.000360,0.000421,0.000438,0.000866,0.001406,0.001100,0.001193,0.000925,0.000892,0.001087,0.001230,0.000936,,0,1.000000,0.156549,0.155063,0.159091,0.136111,0.116389,0.111872,0.056582,0.034851,0.044545,0.041073,0.052973,0.054933,0.045078,0.039837,0.052350,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,,119,123,129,129,133,132,137,139,143,147,149,151,151,155,158,4294967456,
+
+
+
+Sun Oct  8 18:09:52 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000227,,0.000049,0.000158,0.000191,0.000197,0.000261,0.000301,0.000327,0.000411,0.000387,0.000518,0.000493,0.000519,0.000679,0.000831,0.000754,0.002025,,0,1.000000,0.310126,0.256544,0.248731,0.187739,0.162790,0.149847,0.119221,0.126615,0.094594,0.099391,0.094412,0.072165,0.058965,0.064987,0.024197,,0.000020,0.000141,0.000171,0.000180,0.000220,0.000278,0.000270,0.000391,0.000376,0.000404,0.000619,0.000684,0.000680,0.000609,0.002323,0.001080,,0,1.000000,0.141844,0.116959,0.111111,0.090909,0.071943,0.074074,0.051151,0.053192,0.049505,0.032310,0.029240,0.029412,0.032841,0.008610,0.018519,,0.000069,0.000299,0.000362,0.000377,0.000481,0.000579,0.000597,0.000802,0.000763,0.000922,0.001112,0.001203,0.001359,0.001440,0.003077,0.003105,,0,1.000000,0.230769,0.190608,0.183024,0.143451,0.119171,0.115578,0.086035,0.090432,0.074837,0.062050,0.057357,0.050773,0.047917,0.022424,0.022222,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,147,153,154,162,163,170,175,178,183,185,186,188,190,191,192,4294967490,
+
+
+
+Sun Oct  8 18:13:17 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000303,,0.000056,0.000356,0.000464,0.000370,0.000303,0.000374,0.000353,0.000386,0.000379,0.000408,0.000614,0.000529,0.000512,0.000770,0.000766,0.000785,,0,1.000000,0.157303,0.120690,0.151351,0.184818,0.149733,0.158640,0.145078,0.147757,0.137255,0.091205,0.105860,0.109375,0.072727,0.073107,0.071338,,0.000023,0.000386,0.000510,0.000400,0.000545,0.000441,0.000426,0.000478,0.000526,0.000684,0.000700,0.000800,0.000732,0.000849,0.001063,0.001185,,0,1.000000,0.059586,0.045098,0.057500,0.042202,0.052154,0.053991,0.048117,0.043726,0.033626,0.032857,0.028750,0.031421,0.027091,0.021637,0.019409,,0.000079,0.000742,0.000974,0.000770,0.000848,0.000815,0.000779,0.000864,0.000905,0.001092,0.001314,0.001329,0.001244,0.001619,0.001829,0.001970,,0,1.000000,0.106469,0.081109,0.102597,0.093160,0.096933,0.101412,0.091435,0.087293,0.072344,0.060122,0.059443,0.063505,0.048796,0.043193,0.040102,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,103,114,118,120,116,120,123,125,126,130,133,133,134,141,142,4294967437,
+
+
+
+Sun Oct  8 18:13:53 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000192,,0.000041,0.000181,0.000198,0.000205,0.000236,0.000287,0.000304,0.000328,0.000325,0.000451,0.000456,0.000571,0.000592,0.000664,0.001481,0.001237,,0,1.000000,0.226520,0.207071,0.200000,0.173729,0.142857,0.134869,0.125000,0.126154,0.090909,0.089912,0.071804,0.069257,0.061747,0.027684,0.033145,,0.000014,0.000251,0.000266,0.000324,0.000399,0.000420,0.000414,0.000505,0.000531,0.000521,0.000625,0.000902,0.001008,0.001126,0.001651,0.000948,,0,1.000000,0.055777,0.052632,0.043210,0.035088,0.033334,0.033817,0.027723,0.026366,0.026872,0.022400,0.015521,0.013889,0.012433,0.008480,0.014768,,0.000055,0.000432,0.000464,0.000529,0.000635,0.000707,0.000718,0.000833,0.000856,0.000972,0.001081,0.001473,0.001600,0.001790,0.003132,0.002185,,0,1.000000,0.127315,0.118535,0.103970,0.086614,0.077794,0.076602,0.066027,0.064253,0.056585,0.050879,0.037339,0.034375,0.030726,0.017561,0.025172,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,,145,153,154,156,163,167,167,167,172,177,181,185,190,192,196,4294967493,
+
+
+
+Sun Oct  8 18:14:39 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000230,,0.000022,0.000187,0.000174,0.000190,,0,1.000000,0.117647,0.126437,0.115790,,0.000006,0.000159,0.000241,0.000269,,0,1.000000,0.037735,0.024896,0.022305,,0.000028,0.000346,0.000415,0.000459,,0,1.000000,0.080925,0.067470,0.061002,,,0,0,0,0,,8,8,10,11,
+
+
+
+Sun Oct  8 18:16:04 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000190,,0.000021,0.000111,0.000108,0.000107,,0,1.000000,0.189190,0.194445,0.196262,,0.000006,0.000162,0.000170,0.000210,,0,1.000000,0.037037,0.035294,0.028571,,0.000027,0.000273,0.000278,0.000317,,0,1.000000,0.098901,0.097122,0.085173,,,0,0,0,0,,9,12,13,13,
+
+
+
+Sun Oct  8 18:16:14 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000203,,0.000018,0.000104,0.000092,0.000093,,0,1.000000,0.173077,0.195652,0.193549,,0.000005,0.000191,0.000185,0.000220,,0,1.000000,0.026178,0.027027,0.022727,,0.000023,0.000295,0.000277,0.000313,,0,1.000000,0.077966,0.083033,0.073483,,,0,0,0,0,,4,5,5,7,
+
+
+
+Sun Oct  8 18:16:15 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000220,,0.000020,0.000168,0.000172,0.000206,,0,1.000000,0.119047,0.116279,0.097087,,0.000005,0.000166,0.000198,0.000202,,0,1.000000,0.030121,0.025253,0.024753,,0.000025,0.000334,0.000370,0.000408,,0,1.000000,0.074850,0.067567,0.061274,,,1,1,1,1,,11,14,14,15,
+
+
+
+Sun Oct  8 18:16:16 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000235,,0.000022,0.000165,0.000148,0.000185,,0,1.000000,0.133334,0.148649,0.118919,,0.000005,0.000157,0.000176,0.000204,,0,1.000000,0.031847,0.028409,0.024510,,0.000027,0.000322,0.000324,0.000389,,0,1.000000,0.083851,0.083334,0.069409,,,1,1,1,1,,10,12,13,13,
+
+
+
+Sun Oct  8 18:16:27 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000192,,0.000022,0.000188,0.000173,0.000211,,0,1.000000,0.117021,0.127167,0.104265,,0.000006,0.000161,0.000201,0.000217,,0,1.000000,0.037267,0.029851,0.027650,,0.000028,0.000349,0.000374,0.000428,,0,1.000000,0.080229,0.074866,0.065421,,,1,1,1,1,,11,14,14,15,
+
+
+
+Sun Oct  8 18:16:31 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000215,,0.000026,0.000165,0.000160,0.003282,,0,1.000000,0.157576,0.162500,0.007922,,0.000006,0.000145,0.000185,0.000234,,0,1.000000,0.041379,0.032432,0.025641,,0.000032,0.000310,0.000345,0.003516,,0,1.000000,0.103226,0.092754,0.009101,,,1,1,1,1,,11,13,14,15,
+
+
+
+Sun Oct  8 18:19:25 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000231,,0.000027,0.000198,0.000195,0.000204,,0,1.000000,0.136364,0.138461,0.132353,,0.000006,0.000141,0.000198,0.000220,,0,1.000000,0.042554,0.030303,0.027273,,0.000033,0.000339,0.000393,0.000424,,0,1.000000,0.097345,0.083969,0.077830,,,0,0,0,0,,10,10,10,10,
+
+
+
+Sun Oct  8 18:19:45 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+4x4,0.000198,,0.000021,0.000152,0.000160,0.000201,,0,1.000000,0.138158,0.131250,0.104478,,0.000005,0.000135,0.000138,0.000160,,0,1.000000,0.037036,0.036231,0.031250,,0.000026,0.000287,0.000298,0.000361,,0,1.000000,0.090592,0.087248,0.072022,,,0,0,0,0,,10,10,10,10,
+
+
+
+Sun Oct  8 18:20:00 2017
+
+Percolation,Site
+Probability,0.600000
+Perc type,2,
+Runs,1
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,,0,1,2,3,4,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,,0,1,2,3,4,,1: Total,2: Total,3: Total,4: Total,,0,1,2,3,4,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,
+16x16,0.000219,,0.000047,0.000236,0.000203,0.000196,,0,1.000000,0.199153,0.231527,0.239796,,0.000022,0.000178,0.000238,0.000183,,0,1.000000,0.123596,0.092437,0.120219,,0.000069,0.000414,0.000441,0.000379,,0,1.000000,0.166667,0.156463,0.182058,,,1,1,1,1,,158,158,158,158,
+32x32,0.000061,,0.000153,0.000486,0.000570,0.000595,,0,1.000000,0.314815,0.268421,0.257143,,0.000084,0.000377,0.000391,0.000451,,0,1.000000,0.222812,0.214834,0.186253,,0.000237,0.000863,0.000961,0.001046,,0,1.000000,0.274623,0.246618,0.226577,,,1,1,1,2,,521,521,521,679,
+64x64,0.000135,,0.000439,0.000407,0.000360,0.000885,,0,1.000000,1.078624,1.219445,0.496045,,0.000170,0.000465,0.000283,0.000801,,0,1.000000,0.365591,0.600707,0.212235,,0.000609,0.000872,0.000643,0.001686,,0,1.000000,0.698394,0.947123,0.361210,,,0,0,0,2,,2103,2103,2103,2782,
+128x128,0.000288,,0.001086,0.000979,0.000701,0.001740,,0,1.000000,1.109295,1.549215,0.624138,,0.000786,0.000790,0.000621,0.001379,,0,1.000000,0.994937,1.265701,0.569978,,0.001872,0.001769,0.001322,0.003119,,0,1.000000,1.058225,1.416036,0.600192,,,0,0,0,2,,7180,7180,7180,9962,
+256x256,0.000727,,0.003053,0.003721,0.002353,0.004325,,0,1.000000,0.820478,1.297493,0.705896,,0.003156,0.002859,0.004820,0.003982,,0,1.000000,1.103882,0.654772,0.792567,,0.006209,0.006580,0.007173,0.008307,,0,1.000000,0.943617,0.865607,0.747442,,,1,1,1,3,,28778,28778,28778,38740,
+512x512,0.003469,,0.013246,0.016943,0.013160,0.011895,,0,1.000000,0.781798,1.006535,1.113577,,0.012434,0.013137,0.012864,0.015346,,0,1.000000,0.946487,0.966573,0.810244,,0.025680,0.030080,0.026024,0.027241,,0,1.000000,0.853723,0.986781,0.942697,,,1,1,1,4,,111626,111626,111626,150366,
+1024x1024,0.014065,,0.044428,0.083666,0.107793,0.040327,,0,1.000000,0.531016,0.412160,1.101694,,0.076246,0.047108,0.046865,0.058158,,0,1.000000,1.618536,1.626928,1.311015,,0.120674,0.130774,0.154658,0.098485,,0,1.000000,0.922768,0.780264,1.225303,,,1,1,1,5,,434833,434833,434833,585199,

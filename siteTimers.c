@@ -81,14 +81,14 @@ double timeClusterSite(char** lattice, int size, double chance, unsigned long lo
     return clusterTime;
 }
 
-double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned long long *largestClusterSize)
+double timeClusterSiteThreaded(char** lattice, int size, double chance, unsigned long long *largestClusterSize, int numThreads)
 {
     double startTime;
     double clusterTimeThreaded;
 
     startTime = omp_get_wtime();
     if(chance > 0) {
-        *largestClusterSize = findLargestClusterSiteThread(lattice, size);
+        *largestClusterSize = findLargestClusterSiteThread(lattice, size, numThreads);
         if(*largestClusterSize > 0) {
             clusterTimeThreaded = omp_get_wtime() - startTime;
             // printf("Cluster (Threaded):\n");

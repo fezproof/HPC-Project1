@@ -128,17 +128,17 @@ void destroyArrayBond(BONDSITE** arr, int size)
     free(arr);
 }
 
-void printLatticeSite(char** lattice, int size, char** vertices) {
+void printLatticeSite(char** lattice, int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if (vertices[i][j] && lattice[i][j]) {
+            if (lattice[i][j] == 2) {
                 printf(" \u2588");
             }
             else if (lattice[i][j]) {
                 printf(" X");
             }
             else {
-                printf("  .");
+                printf("  ");
             }
         }
         printf("\n");
