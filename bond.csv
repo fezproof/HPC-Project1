@@ -1,77 +1,11 @@
 
 
 
-Sun Oct  8 13:33:35 2017
+Sun Oct  8 13:56:02 2017
 
 Percolation,Bond
 Probability,0.500000
 Perc type,2,
 Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000256,,0.000047,0.000308,0.000201,0.000214,0.000244,0.000271,0.000292,0.000331,,0,1.000000,0.152597,0.233831,0.219626,0.192623,0.173432,0.160959,0.141994,,0.000036,0.000082,0.000100,0.000118,0.000145,0.000168,0.000191,0.000194,,0,1.000000,0.439025,0.360000,0.305085,0.248276,0.214286,0.188482,0.185567,,0.000083,0.000390,0.000301,0.000332,0.000389,0.000439,0.000483,0.000525,,0,1.000000,0.212821,0.275748,0.250000,0.213368,0.189066,0.171843,0.158095,,,1,1,1,1,1,1,1,1,,182,2,2,2,2,2,2,2,
-
-
-
-Sun Oct  8 13:39:23 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000349,,0.000108,0.000294,0.000152,0.000248,0.000220,0.000202,0.000221,0.000189,,0,1.000000,0.367347,0.710526,0.435484,0.490909,0.534653,0.488688,0.571429,,0.000047,0.000263,0.000150,0.000206,0.000196,0.000224,0.000276,0.000237,,0,1.000000,0.178707,0.313333,0.228155,0.239796,0.209822,0.170290,0.198312,,0.000155,0.000557,0.000302,0.000454,0.000416,0.000426,0.000497,0.000426,,0,1.000000,0.278277,0.513245,0.341410,0.372596,0.363850,0.311871,0.363850,,,0,0,0,0,0,0,0,0,,205,137,54,43,40,47,38,26,
-
-
-
-Sun Oct  8 13:41:44 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000037,,0.000092,0.000296,0.000196,0.000242,0.000264,0.000284,0.000355,0.000333,,0,1.000000,0.310811,0.469388,0.380165,0.348485,0.323944,0.259155,0.276276,,0.000038,0.000117,0.000120,0.000147,0.000153,0.000194,0.000203,0.000253,,0,1.000000,0.324786,0.316666,0.258503,0.248366,0.195876,0.187192,0.150197,,0.000130,0.000413,0.000316,0.000389,0.000417,0.000478,0.000558,0.000586,,0,1.000000,0.314770,0.411392,0.334190,0.311750,0.271966,0.232975,0.221843,,,0,0,0,0,0,0,0,0,,105,60,39,30,30,36,27,15,
-
-
-
-Sun Oct  8 13:42:39 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000041,,0.000052,0.000343,0.000192,0.000244,0.000249,0.000242,0.000360,0.000361,,0,1.000000,0.151603,0.270833,0.213114,0.208835,0.214876,0.144444,0.144044,,0.000032,0.000292,0.000350,0.000288,0.000304,0.000357,0.000367,0.000387,,0,1.000000,0.109589,0.091429,0.111111,0.105263,0.089636,0.087193,0.082687,,0.000084,0.000635,0.000542,0.000532,0.000553,0.000599,0.000727,0.000748,,0,1.000000,0.132283,0.154981,0.157895,0.151899,0.140234,0.115543,0.112299,,,0,0,0,0,0,0,0,0,,226,214,156,74,61,111,55,28,
-
-
-
-Sun Oct  8 13:42:58 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000052,,0.000051,0.000295,0.000174,0.000192,0.000207,0.000248,0.000253,0.000322,,0,1.000000,0.172881,0.293103,0.265625,0.246377,0.205645,0.201581,0.158385,,0.000047,0.000267,0.000331,0.000288,0.000356,0.000348,0.000357,0.000392,,0,1.000000,0.176030,0.141994,0.163194,0.132022,0.135057,0.131653,0.119898,,0.000098,0.000562,0.000505,0.000480,0.000563,0.000596,0.000610,0.000714,,0,1.000000,0.174377,0.194059,0.204167,0.174067,0.164429,0.160656,0.137255,,,1,1,1,1,1,1,1,1,,197,85,61,49,41,43,29,18,
-
-
-
-Sun Oct  8 13:43:32 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-16x16,0.000046,,0.000050,0.000401,0.000220,0.000246,0.000285,0.000352,0.000348,0.000357,,0,1.000000,0.124688,0.227273,0.203252,0.175439,0.142046,0.143678,0.140056,,0.000040,0.000339,0.000249,0.000335,0.000364,0.000354,0.000361,0.000357,,0,1.000000,0.117994,0.160642,0.119403,0.109890,0.112994,0.110803,0.112045,,0.000090,0.000740,0.000469,0.000581,0.000649,0.000706,0.000709,0.000714,,0,1.000000,0.121622,0.191898,0.154905,0.138675,0.127479,0.126939,0.126050,,,1,1,1,1,1,1,1,1,,233,122,87,60,43,78,31,2,
-
-
-
-Sun Oct  8 13:50:03 2017
-
-Percolation,Bond
-Probability,0.500000
-Perc type,2,
-Runs,1
-Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,,0,1,2,3,4,5,6,7,8,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,,0,1,2,3,4,5,6,7,8,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,,0,1,2,3,4,5,6,7,8,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,
-64x64,0.000336,,0.000178,0.000354,0.000313,0.000377,0.000406,0.000487,0.000482,0.000427,,0,1.000000,0.502825,0.568690,0.472148,0.438423,0.365503,0.369295,0.416862,,0.000302,0.003253,0.003002,0.002961,0.004659,0.003111,0.003213,0.003098,,0,1.000000,0.092837,0.100600,0.101993,0.064821,0.097075,0.093993,0.097482,,0.000480,0.003607,0.003315,0.003338,0.005065,0.003598,0.003695,0.003525,,0,1.000000,0.133075,0.144796,0.143799,0.094768,0.133407,0.129905,0.136170,,,1,1,1,1,1,1,1,1,,3255,2150,1286,999,883,728,544,441,
+Size,Allocation,,1: Percolation,2: Percolation,3: Percolation,4: Percolation,5: Percolation,6: Percolation,7: Percolation,8: Percolation,9: Percolation,10: Percolation,11: Percolation,12: Percolation,13: Percolation,14: Percolation,15: Percolation,16: Percolation,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Cluster,2: Cluster,3: Cluster,4: Cluster,5: Cluster,6: Cluster,7: Cluster,8: Cluster,9: Cluster,10: Cluster,11: Cluster,12: Cluster,13: Cluster,14: Cluster,15: Cluster,16: Cluster,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,1: Total,2: Total,3: Total,4: Total,5: Total,6: Total,7: Total,8: Total,9: Total,10: Total,11: Total,12: Total,13: Total,14: Total,15: Total,16: Total,,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,,,1: Times percolated,2: Times percolated,3: Times percolated,4: Times percolated,5: Times percolated,6: Times percolated,7: Times percolated,8: Times percolated,9: Times percolated,10: Times percolated,11: Times percolated,12: Times percolated,13: Times percolated,14: Times percolated,15: Times percolated,16: Times percolated,,1: Avg cluster size,2: Avg cluster size,3: Avg cluster size,4: Avg cluster size,5: Avg cluster size,6: Avg cluster size,7: Avg cluster size,8: Avg cluster size,9: Avg cluster size,10: Avg cluster size,11: Avg cluster size,12: Avg cluster size,13: Avg cluster size,14: Avg cluster size,15: Avg cluster size,16: Avg cluster size,
+16x16,0.000044,,0.000061,0.000350,0.000194,0.000342,0.000236,0.000218,0.000230,0.000267,0.000276,0.000345,0.000356,0.000459,0.000366,0.000523,0.000575,0.000454,,0,1.000000,0.174286,0.314433,0.178363,0.258475,0.279816,0.265217,0.228464,0.221014,0.176812,0.171348,0.132898,0.166667,0.116635,0.106087,0.134361,,0.000039,0.000340,0.000472,0.000550,0.000298,0.000302,0.000272,0.000339,0.000401,0.000429,0.000373,0.000474,0.000619,0.000614,0.000638,0.000592,,0,1.000000,0.114706,0.082627,0.070909,0.130873,0.129139,0.143383,0.115044,0.097257,0.090909,0.104558,0.082279,0.063005,0.063518,0.061129,0.065878,,0.000100,0.000690,0.000666,0.000892,0.000534,0.000520,0.000502,0.000606,0.000677,0.000774,0.000729,0.000933,0.000985,0.001137,0.001213,0.001046,,0,1.000000,0.144928,0.150150,0.112108,0.187266,0.192308,0.199203,0.165017,0.147711,0.129199,0.137174,0.107181,0.101523,0.087951,0.082440,0.095602,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,171,114,90,55,53,81,50,26,143,143,143,143,143,143,143,142,
