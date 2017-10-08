@@ -106,8 +106,6 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, 
 {
     QUEUE_VERT v;
 
-    // unsigned long long clusterSize = 0;
-
     int curVert = 0;
 
     int westVert = 0;
@@ -120,19 +118,17 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, 
 
     while(!queue_isempty(&queue))
     {
-        // clusterSize++;
-
         v = dequeue(&queue);
 
-        westVert = (v.y-1 + size) % size;
-        eastVert = (v.y+1 + size) % size;
+        westVert = (v.y - 1 + size) % size;
+        eastVert = (v.y + 1 + size) % size;
 
-        if (v.x + 1 <= southLim) {
+        if (v.x < southLim) {
             southVert = v.x + 1;
         } else {
             southVert = -1;
         }
-        if (v.x - 1 >= northLim) {
+        if (v.x > northLim) {
             northVert = v.x - 1;
         } else{
             northVert = -1;
@@ -148,7 +144,7 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, 
             enqueue(&queue, newV);
         }
 
-        //check north of the dequeued site
+        // check north of the dequeued site
         if (northVert != -1)
         if(array[v.x][v.y].up == 1 && array[northVert][v.y].seen == 0) {
             array[northVert][v.y].seen = 1;
@@ -186,8 +182,7 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, 
                 enqueue(&queue, newV);
             }
             curVert = westVert;
-            westVert = (westVert-1 + size) % size;
-            // clusterSize++;
+            westVert = (westVert - 1 + size) % size;
         }
 
         curVert = v.y;
@@ -217,11 +212,9 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int northLim, 
                 enqueue(&queue, newV);
             }
             curVert = eastVert;
-            eastVert = (eastVert+1 + size) % size;
-            // clusterSize++;
+            eastVert = (eastVert + 1 + size) % size;
         }
     }
-    // return clusterSize;
 }
 
 

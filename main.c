@@ -1,10 +1,10 @@
 #include "main.h"
 
-#define RUNS 1
-#define MAX_NUM_THREADS 16
+#define RUNS 10
+#define MAX_NUM_THREADS 8
 
 #define START_SIZE 16 //64
-#define MAX_LATTICE_SIZE 2  //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 4096 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -274,6 +274,10 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
             if(percResult == 1) timesPerc[0]++;
             clusterSizes[0] += largestClusterSize;
 
+            // printf("correct largest: %llu\n", largestClusterSize);
+
+            // printf("\n------------------------------------------\n");
+
             for(int j = 1; j < maxNumThreads; j++)
             {
                 if(j+1 > size) {
@@ -296,7 +300,9 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 if(percResultThreaded == 1) timesPerc[j]++;
                 clusterSizes[j] += largestClusterSizeThreaded;
 
-                printf("\n------------------------------------------\n");
+                // printf("largest: %llu\n", largestClusterSizeThreaded);
+
+                // printf("\n------------------------------------------\n");
 
             }
             destroyArrayBond(lattice, size);
@@ -366,7 +372,7 @@ int main(int argc, char *argv[])
         test = atoi(argv[3]);
     }
     size = START_SIZE;
-    srand(time(NULL));
+    // srand(time(NULL));
 
     //Initialise a CSV file
     FILE *fp = initialiseCSV(latticeType, chance, test, RUNS, maxNumThreads);
