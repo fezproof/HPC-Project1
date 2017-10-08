@@ -1,10 +1,10 @@
 #include "main.h"
 
-#define RUNS 1
+#define RUNS 100
 #define MAX_NUM_THREADS 4
 
 #define START_SIZE 16 //64
-#define MAX_LATTICE_SIZE 1024 //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 1024/2 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -136,6 +136,7 @@ int* timesPerc, unsigned long long* clusterSizes)
 
 void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, FILE *fp)
 {
+
     char** lattice;
 
     double allocationTime = 0;
@@ -237,6 +238,8 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
 void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, FILE *fp)
 {
+
+
     BONDSITE** lattice;
 
     double allocationTime = 0;
@@ -332,6 +335,8 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
             clusterSizes[i] /= (double) runs;
         }
 
+
+
         printfCSVLine(fp, maxNumThreads, size, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, timesPerc, clusterSizes);
 
         allocationTime = 0;
@@ -376,7 +381,7 @@ int main(int argc, char *argv[])
         test = atoi(argv[3]);
     }
     size = START_SIZE;
-    srand(time(NULL));
+    // srand(time(NULL));
 
     //Initialise a CSV file
     FILE *fp = initialiseCSV(latticeType, chance, test, RUNS, maxNumThreads);

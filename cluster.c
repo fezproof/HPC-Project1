@@ -91,28 +91,27 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
         #pragma omp for schedule(static, 1)
         for (int n = 0; n < numThreads; n++) {
 
-            int upBound = 0;
-            int downBound = 0;
+            int leftBound = 0;
+            int rightBound = 0;
 
             if(n < numStdThreads) {
-                upBound = n * stdThreadSize;
-                downBound = upBound + stdThreadSize - 1;
+                leftBound = n * stdThreadSize;
+                rightBound = leftBound + stdThreadSize - 1;
             } else {
-                upBound = (numStdThreads * stdThreadSize) + ((n - numStdThreads) * lastThreadSize);
-                downBound = upBound + lastThreadSize - 1;
+                leftBound = (numStdThreads * stdThreadSize) + ((n - numStdThreads) * lastThreadSize);
+                rightBound = leftBound + lastThreadSize - 1;
             }
 
             unsigned long long queueSize = (unsigned long long) size;
-            queueSize = queueSize + queueSize * ((unsigned long long) downBound - (unsigned long long) upBound);
+            queueSize = queueSize + queueSize * ((unsigned long long) rightBound - (unsigned long long) leftBound);
 
             QUEUE queue;
             queue_initialise(&queue, queueSize);
             // unsigned long long currentSize = 0;
             QUEUE_VERT v;
 
-            for (int i = upBound; i <= downBound; i++) {
-                for(int j = 0; j < size; j++)
-                {
+            for (int i = 0; i < size; i++) {
+                for(int j = leftBound; j <= rightBound; j++) {
                     if(arrayCpy[i][j] == 1) {
 
                         arrayCpy[i][j] = 2; //mark as seen
@@ -125,7 +124,7 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
 
                         enqueue(&queue, v);
 
-                        floodfillSiteThread(arrayCpy, size, queue, upBound, downBound, setArr, sizeArr);
+                        floodfillSiteThread(arrayCpy, size, queue, leftBound, rightBound, setArr, sizeArr);
 
                     }
                 }
@@ -146,12 +145,14 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
         }
         // printf("bound: %d\t bound2: %d\n", bound, (bound + 1 + size) % size);
         for(int j = 0; j < size; j++) {
-            if(arrayCpy[bound][j] && arrayCpy[(bound + 1 + size) % size][j]) {
+            if(arrayCpy[j][bound] && arrayCpy[j][(bound + 1 + size) % size]) {
                 // printf("hi\n");
-                unionAB(setArr, sizeArr, size, bound, j, (bound + 1 + size) % size, j);
+                unionAB(setArr, sizeArr, size, j, bound, j, (bound + 1 + size) % size);
             }
         }
     }
+
+
 
     int largestSize = findLargestCluster(sizeArr, size);
 
@@ -256,27 +257,30 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int 
         #pragma omp for schedule(static, 1)
         for (int n = 0; n < numThreads; n++) {
 
-            int upBound = 0;
-            int downBound = 0;
+            int leftBound = 0;
+            int rightBound = 0;
 
             if(n < numStdThreads) {
-                upBound = n * stdThreadSize;
-                downBound = upBound + stdThreadSize - 1;
+                leftBound = n * stdThreadSize;
+                rightBound = leftBound + stdThreadSize - 1;
             } else {
-                upBound = (numStdThreads * stdThreadSize) + ((n - numStdThreads) * lastThreadSize);
-                downBound = upBound + lastThreadSize - 1;
+                leftBound = (numStdThreads * stdThreadSize) + ((n - numStdThreads) * lastThreadSize);
+                rightBound = leftBound + lastThreadSize - 1;
             }
 
             unsigned long long queueSize = (unsigned long long) size;
-            queueSize = queueSize + queueSize * ((unsigned long long) downBound - (unsigned long long) upBound);
+            queueSize = queueSize + queueSize * ((unsigned long long) rightBound - (unsigned long long) leftBound);
 
             QUEUE queue;
             queue_initialise(&queue, queueSize);
             // unsigned long long currentSize = 0;
             QUEUE_VERT v;
 
-            for (int i = upBound; i <= downBound; i++) {
-                for(int j = 0; j < size; j++) {
+            // for (int i = leftBound; i <= rightBound; i++) {
+            //     for(int j = 0; j < size; j++) {
+
+            for (int i = 0; i < size; i++) {
+                for(int j = leftBound; j <= rightBound; j++) {
 
                     if(arrayCpy[i][j].seen == 0 && (arrayCpy[i][j].left == 1 || arrayCpy[i][j].right == 1 ||
                                                     arrayCpy[i][j].up == 1|| arrayCpy[i][j].down == 1)) {
@@ -291,7 +295,7 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int 
 
                         enqueue(&queue, v);
 
-                        floodfillBondThread(arrayCpy, size, queue, upBound, downBound, setArr, sizeArr);
+                        floodfillBondThread(arrayCpy, size, queue, leftBound, rightBound, setArr, sizeArr);
                     }
                 }
             }
@@ -314,9 +318,9 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int 
         }
         // printf("bound: %d\t bound2: %d\n", bound, (bound + 1 + size) % size);
         for(int j = 0; j < size; j++) {
-            if(arrayCpy[bound][j].down == 1) {
+            if(arrayCpy[j][bound].right == 1) {
                 // printf("hi\n");
-                unionAB(setArr, sizeArr, size, bound, j, (bound + 1 + size) % size, j);
+                unionAB(setArr, sizeArr, size, j, bound, j, (bound + 1 + size) % size);
             }
         }
     }
