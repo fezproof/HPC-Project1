@@ -71,13 +71,13 @@ double timeClusterBond(BONDSITE** lattice, int size, double chance, unsigned lon
     return clusterTime;
 }
 
-double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize)
+double timeClusterBondThreaded(BONDSITE** lattice, int size, double chance, unsigned long long *largestClusterSize, int numThreads)
 {
     double startTime;
     double clusterTimeThreaded;
 
     startTime = omp_get_wtime();
-    *largestClusterSize = findLargestClusterBondThread(lattice, size);
+    *largestClusterSize = findLargestClusterBondThread(lattice, size, numThreads);
     clusterTimeThreaded = omp_get_wtime() - startTime;
     // printf("Cluster (Threaded):\n");
     // printf("\tTime taken: %.6f ms\n", clusterTimeThreaded);

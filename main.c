@@ -1,10 +1,10 @@
 #include "main.h"
 
-#define RUNS 1
-#define MAX_NUM_THREADS 16
+#define RUNS 100
+#define MAX_NUM_THREADS 8
 
 #define START_SIZE 16 //64
-#define MAX_LATTICE_SIZE 2  //131072 16384 8192 4096
+#define MAX_LATTICE_SIZE 512 //131072 16384 8192 4096
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -274,16 +274,23 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
             if(percResult == 1) timesPerc[0]++;
             clusterSizes[0] += largestClusterSize;
 
+            // printf("correct largest: %llu\n", largestClusterSize);
+
+            // printf("\n------------------------------------------\n");
+
             for(int j = 1; j < maxNumThreads; j++)
             {
+                int numThreads;
                 if(j+1 > size) {
-                    omp_set_num_threads(size);
+                    numThreads = size;
                 } else {
-                    omp_set_num_threads(j+1);
+                    numThreads = j + 1;
                 }
 
+                omp_set_num_threads(numThreads);
+
                 percTimes[j] += timePercBondThreaded(lattice, size, test, &percResultThreaded);
-                clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded);
+                clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
 
                 if(largestClusterSize != largestClusterSizeThreaded) {
                     // printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
@@ -296,7 +303,9 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 if(percResultThreaded == 1) timesPerc[j]++;
                 clusterSizes[j] += largestClusterSizeThreaded;
 
-                printf("\n------------------------------------------\n");
+                // printf("largest: %llu\n", largestClusterSizeThreaded);
+
+                // printf("\n------------------------------------------\n");
 
             }
             destroyArrayBond(lattice, size);

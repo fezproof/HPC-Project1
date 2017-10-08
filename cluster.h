@@ -12,4 +12,4 @@ extern unsigned long long findLargestClusterSiteThread(char** array, int size);
 
 extern unsigned long long findLargestClusterBond(BONDSITE** array, int size);
 
-extern unsigned long long findLargestClusterBondThread(BONDSITE** array, int size);
+extern unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int numThreads);
