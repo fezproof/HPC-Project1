@@ -6,7 +6,7 @@ int percolateBond(BONDSITE** arr, int size, int type) {
     } else if (type == 1) {
         return dfsLeftRightBond(arr, size);
     } else if (type == 2) {
-        return (dfsUpDownBond(arr, size) && dfsLeftRightBond(arr, size));
+        return (dfsLeftRightBond(arr, size) && dfsUpDownBond(arr, size));
     }
     return 0;
 }
@@ -17,7 +17,7 @@ int percolateBondThread(BONDSITE** arr, int size, int type) {
     } else if (type == 1) {
         return dfsLeftRightBondThread(arr, size);
     } else if (type == 2) {
-        return (dfsUpDownBondThread(arr, size) && dfsLeftRightBondThread(arr, size));
+        return (dfsLeftRightBondThread(arr, size) && dfsUpDownBondThread(arr, size));
     }
     return 0;
 }
@@ -28,7 +28,7 @@ int percolateSite(char** arr, int size, int type) {
     } else if (type == 1) {
         return dfsLeftRightSite(arr, size);
     } else if (type == 2) {
-        return (dfsUpDownSite(arr, size) && dfsLeftRightSite(arr, size));
+        return (dfsLeftRightSite(arr, size) && dfsUpDownSite(arr, size));
     }
     return 0;
 }
@@ -39,7 +39,7 @@ int percolateSiteThread(char** arr, int size, int type) {
     } else if (type == 1) {
         return dfsLeftRightSiteThread(arr, size);
     } else if (type == 2) {
-        return (dfsUpDownSiteThread(arr, size) && dfsLeftRightSiteThread(arr, size));
+        return (dfsLeftRightSiteThread(arr, size) && dfsUpDownSiteThread(arr, size));
     }
     return 0;
 }
