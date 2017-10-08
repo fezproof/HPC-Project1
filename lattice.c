@@ -71,7 +71,7 @@ char** copyLatticeSite(char** src, int size)
 char** copyLatticeSiteThread(char** src, int size)
 {
     char** rows = malloc(size * sizeof(char*));
-    #pragma omp parallel for
+    // #pragma omp parallel for
         for (int i = 0; i < size; i++) {
             char* values;
             values = malloc(size * sizeof(char));
@@ -101,7 +101,7 @@ BONDSITE** copyLatticeBondThread(BONDSITE** src, int size)
 
     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
 
-    #pragma omp parallel
+    // #pragma omp parallel
     for (int i = 0; i < size; i++) {
         BONDSITE* values;
         values = malloc(size * sizeof(BONDSITE));
