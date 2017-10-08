@@ -347,35 +347,21 @@ int main(int argc, char *argv[])
     //Prevents the system from changing the number of threads
     omp_set_dynamic(0);
 
-    printf("Size of int: %ld", sizeof(int));
-    printf("Size of luu: %ld", sizeof(unsigned long long));
+    OPTIONS *options = createOptionsStruct();
+    readOptions(argc, argv, options);
 
-    int maxNumThreads = MAX_NUM_THREADS;
+    printOptions(options);
 
-    char latticeType;
-    int size;
-    double chance;
-    int test;
-    if (argc != 4) {
-        latticeType = 'b';
-        chance = 0.5;
-        test = 2;
-    } else {
-        latticeType = argv[1][0];
-        chance = atof(argv[2]);
-        test = atoi(argv[3]);
-    }
-    size = START_SIZE;
-    // srand(time(NULL));
+    srand(time(NULL));
 
     //Initialise a CSV file
-    FILE *fp = initialiseCSV(latticeType, chance, test, RUNS, maxNumThreads);
+    FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
 
-    if (latticeType == 's') {
-        sitePerc(size, chance, test, RUNS, MAX_LATTICE_SIZE, maxNumThreads, fp);
+    if (options->type == 's') {
+        sitePerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, fp);
     }
-    else {
-        bondPerc(size, chance, test, RUNS, MAX_LATTICE_SIZE, maxNumThreads, fp);
+    else if (options->type == 'b') {
+        bondPerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, fp);
     }
 
     fclose(fp);

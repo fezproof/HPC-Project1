@@ -1,8 +1,8 @@
 PROJECT =   main
 HEADERS =   $(PROJECT).h
-OBJ     =   main.o percolation.o cluster.o stack.o dfs.o dfsThread.o queue.o floodfill.o floodfillThread.o siteTimers.o bondTimers.o lattice.o unionFind.o
+OBJ     =   main.o percolation.o cluster.o stack.o dfs.o dfsThread.o queue.o floodfill.o floodfillThread.o siteTimers.o bondTimers.o lattice.o unionFind.o options.o
 
-C99     =   gcc-7 -std=c99 -fopenmp
+C99     =   cc -std=c99 -fopenmp
 CFLAGS  =   -Wall -pedantic -Werror -g
 
 $(PROJECT) : $(OBJ)
