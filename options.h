@@ -9,6 +9,7 @@ typedef struct {
     short   perlocationType;
     int     runs;
     int     threadNum;
+    int     nodeNum;
     int     minSize;
     int     maxSize;
 } OPTIONS;
