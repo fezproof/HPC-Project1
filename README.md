@@ -34,13 +34,14 @@ So if the program was told to run from a lattice size of 64 to 128, with 50 runs
 
 | Option | Usage | Description |
 | --- | --- | --- |
-| -t | ’s’ OR ‘b’ | Type of lattice (site OR bond) |
+| -l | ’s’ OR ‘b’ | Type of lattice (site OR bond) |
 | -P | 0-1 float | Chance of allocation |
 | -p | 0, 1, OR 2 | Whether to consider percolation that goes up-down, left-right, or both |
 | -r | positive int | How many runs per size for averaging |
-| -n | positive int | Number of threads to use |
-| -l | positive even int | Minimum lattice size |
-| -h | positive even int | Maximum lattice size |
+| -t | positive int | Number of threads per node to use |
+| -n | positive int | Number of nodes to use |
+| -m | positive even int | Minimum lattice size |
+| -M | positive even int | Maximum lattice size |
 
 ## Outputs
 
