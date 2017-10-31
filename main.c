@@ -6,6 +6,8 @@
 #define START_SIZE 16 //64
 #define MAX_LATTICE_SIZE 512 //131072 16384 8192 4096
 
+#define TERMINATE -1;
+
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -164,7 +166,7 @@ int* numPercs, unsigned long long* clusterSizes, FILE *fp)
 
 }
 
-void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, FILE *fp)
+void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
 {
 
     char** lattice;
@@ -191,8 +193,9 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
         printf("Lattice size = %d x %d\n", size, size);
         initialiseCSVRound(size, maxNumThreads, fp);
 
-        for(int n = 1; n <= maxNumNodes; n++) {
+        allocationTime = timeAllocateSite(&lattice, size, chance);
 
+        for(int n = 1; n <= maxNumNodes; n++) {
 
             memset(percTimes, 0, sizeof percTimes);
             memset(clusterTimes, 0, sizeof clusterTimes);
@@ -203,25 +206,18 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
             for(int i = 0; i < runs; i++)
             {
-                allocationTime += timeAllocateSite(&lattice, size, chance);
-                percTimes[0] += timePercSite(lattice, size, test, &percResult);
-                clusterTimes[0] += timeClusterSite(lattice, size, chance, &largestClusterSize);
-
-                if(percResult == 1) numPercs[0]++;
-                clusterSizes[0] += largestClusterSize;
-
-                for(int j = 1; j < maxNumThreads; j++)
+                for(int j = 0; j < maxNumThreads; j++)
                 {
                     int numThreads;
-                    if(j + 1 > size) {
+                    if(j+1 >= size) {
                         numThreads = size;
                     } else {
-                        numThreads = j + 1;
+                        numThreads = j+1;
                     }
                     omp_set_num_threads(numThreads);
 
-                    percTimes[j] += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
-                    clusterTimes[j] += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
+                    percTimes[j] += timeSitePerc(lattice, size, test, &percResultThreaded, numThreads);
+                    clusterTimes[j] += timeSiteCluster(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
 
                     if(largestClusterSize != largestClusterSizeThreaded) {
                         printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
@@ -237,7 +233,6 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 destroyArraySite(lattice, size);
             }
 
-
             for(int i = 0; i < maxNumThreads; i++) {
                 totalTimes[i] = percTimes[i] + clusterTimes[i];
             }
@@ -247,8 +242,6 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
                 clusterSpeedUp[i] = clusterTimes[0] / clusterTimes[i];
                 totalSpeedUp[i] = totalTimes[0] / totalTimes[i];
             }
-
-            allocationTime /= runs;
 
             for(int i = 0; i < maxNumThreads; i++) {
                 percTimes[i] /= (double) runs;
@@ -269,9 +262,27 @@ void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, i
     } while (size <= maxLatticeSize);
 }
 
-void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, FILE *fp)
+void sitePercSlave(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
 {
 
+    int value;
+    MPI_Status status;
+
+    int size;
+    int numNodes;
+    int numThreads;
+    int runs;
+
+    while(true) {
+        MPI_Recv(&value, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        if (status.MPI_TAG == TERMINATE) {
+            break;
+        }
+    }
+}
+
+void doBondTests(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
+{
 
     BONDSITE** lattice;
 
@@ -377,34 +388,43 @@ void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, i
 
 int main(int argc, char *argv[])
 {
-
-    //initialise MPI
-    // int numProcs, rank;
-    // MPI_Init(&argc, &argv);
-    // MPI_Comm_size(MPI_COMM_WORLD, &size);
-    // MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+    // initialise MPI
+    int numProcs, rank;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
     //Prevents the system from changing the number of threads
     omp_set_dynamic(0);
 
     OPTIONS *options = createOptionsStruct();
     readOptions(argc, argv, options);
+    // printOptions(options);
 
-    printOptions(options);
-
-    srand(time(NULL));
-
-    //Initialise a CSV file
-    FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
-
-    if (options->type == 's') {
-        sitePerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, fp);
+    //initialise all nodes with same seed
+    unsigned int seed = 0;
+    if(rank == 0) {
+        seed = time(NULL);
     }
-    else if (options->type == 'b') {
-        bondPerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, fp);
+    MPI_Bcast( &seed, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    srand(seed);
+
+    if(rank == 0) {
+        //Initialise a CSV file
+        FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
+
+        if (options->type == 's') {
+            doSiteTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
+        }
+        else if (options->type == 'b') {
+            doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
+        }
+
+        fclose(fp);
+    } else {
+
     }
 
-    fclose(fp);
 
-    // MPI_Finalize();
+    MPI_Finalize();
 }
