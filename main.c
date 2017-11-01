@@ -194,8 +194,10 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
         allocationTime = timeAllocateSite(&lattice, size, chance);
 
         largestClusterSize = findLargestClusterSite(lattice, size);
+        printf("Largest: %llu\n", largestClusterSize);
 
         for(int n = 1; n <= maxNumNodes; n++) {
+            printf("Number of nodes = %d\n", n);
 
             memset(percTimes, 0, sizeof percTimes);
             memset(clusterTimes, 0, sizeof clusterTimes);
@@ -223,6 +225,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     if(largestClusterSize != largestClusterSizeThreaded) {
                         printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
                     }
+
+                    printf("Largest thread: %llu\n", largestClusterSizeThreaded);
+
 
                     if(percResult != percResultThreaded) {
                         printf("\nERROR: PERCOLATION VARIANCE");
@@ -401,14 +406,14 @@ int main(int argc, char *argv[])
         FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
 
         if (options->type == 's') {
-            doSiteTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
+            doSiteTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, rank, fp);
         }
         // else if (options->type == 'b') {
-        //     doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
+        //     doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, rank, fp);
         // }
 
         fclose(fp);
-        terminateSlaves(options->nodeNum);
+        terminateSlaves(numProcs);
     } else {
         if(options->type == 's') {
             clusterSiteSlave();

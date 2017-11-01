@@ -15,9 +15,9 @@
 
 void terminateSlaves(int numSlaves)
 {
-    int info[1];
+    // int info[1];
     for(int i = 1; i < numSlaves; i++) {
-        MPI_Send(info, 1, MPI_INT, i, TAG_TERMINATE, MPI_COMM_WORLD);
+        MPI_Send(NULL, 0, MPI_INT, i, TAG_TERMINATE, MPI_COMM_WORLD);
     }
 }
 
@@ -50,7 +50,7 @@ void sendArrToSlaves(char** array, int firstSlave, int lastSlave, int numMsgs, i
     unsigned long long offset = 0;
     for(int i = firstSlave; i < lastSlave; i++) {
         for(int j = 0; j < numMsgs-1; j++) {
-            MPI_Send(array+offset, stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD);
+            MPI_Send(array + offset, stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD);
             offset += stdMsgSize;
         }
         if(lastMsgSize == 0) {
@@ -174,10 +174,12 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     unsigned long long* setArr = createSetArr(size, size);
     unsigned long long* sizeArr = createSizeArr(size, size);
 
-    findLargestClusterSiteThread(array, stdRowsPerSlave, size, setArr, sizeArr, numThreads);
+    char** arrCpy = copyLatticeSite(array, stdRowsPerSlave, size);
+
+    findLargestClusterSiteThread(arrCpy, stdRowsPerSlave, size, setArr, sizeArr, numThreads);
 
     unsigned long long setArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) size;
-    unsigned long long sizeArrOffset = (unsigned long long) lastRowsPerSlave * (unsigned long long) size;
+    unsigned long long sizeArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) size;
 
     recieveSizeAndSetArrs(setArr, sizeArr,
     &setArrOffset, &sizeArrOffset, 1, numStdSlaves,
@@ -199,11 +201,9 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
 void clusterSiteSlave()
 {
-    printf("who\n");
-
     MPI_Status status;
 
-    int info[5]; //size and numthreads
+    int info[6]; //size and numthreads
     int numRows;
     int numCols;
     int stdMsgSize;
@@ -225,11 +225,11 @@ void clusterSiteSlave()
         numThreads = info[THREADS_INDEX];
 
         //initialise array
-        array = createSubLatticeSite(numRows,numCols);
+        array = createLatticeSite(numRows, numCols);
 
         unsigned long long offset = 0;
         for(int i = 0; i < numMsgs; i++) {
-            MPI_Recv(array+offset, stdMsgSize, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+            MPI_Recv(array + offset, stdMsgSize, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
             offset += (unsigned long long) stdMsgSize;
         }
 

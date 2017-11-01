@@ -78,13 +78,13 @@ BONDSITE** createSubLatticeBond(int numRows, int numCols)
     return array;
 }
 
-char** copyLatticeSite(char** src, int size)
+char** copyLatticeSite(char** src, int numRows, int numCols)
 {
-    char** rows = malloc(size * sizeof(char*));
-    for (int i = 0; i < size; i++) {
+    char** rows = malloc(numRows * sizeof(char*));
+    for (int i = 0; i < numRows; i++) {
         char* values;
-        values = malloc(size * sizeof(char));
-        for (int j = 0; j < size; j++) {
+        values = malloc(numCols * sizeof(char));
+        for (int j = 0; j < numCols; j++) {
             values[j] = src[i][j];
         }
         rows[i] = values;
