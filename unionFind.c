@@ -1,11 +1,10 @@
 #include "unionFind.h"
 
 //lattice size is just width of lattice
-unsigned long long* createSetArr(int latticeSize)
+unsigned long long* createSetArr(int numRows, int numCols)
 {
 
-    unsigned long long length = (unsigned long long) latticeSize;
-    length = length * length;
+    unsigned long long length = (unsigned long long) numRows * (unsigned long long) numCols;
 
     unsigned long long* setArr = NULL;
 
@@ -18,10 +17,9 @@ unsigned long long* createSetArr(int latticeSize)
     return setArr;
 }
 
-unsigned long long* createSizeArr(int latticeSize)
+unsigned long long* createSizeArr(int numRows, int numCols)
 {
-    unsigned long long length = (unsigned long long) latticeSize;
-    length = length * length;
+    unsigned long long length = (unsigned long long) numRows * (unsigned long long) numCols;
 
     unsigned long long* sizeArr;
 
@@ -35,11 +33,11 @@ unsigned long long* createSizeArr(int latticeSize)
 }
 
 void unionAB(unsigned long long* setArr, unsigned long long* sizeArr,
-    unsigned long long latticeSize, unsigned long long x1, unsigned long long y1,
+    unsigned long long numCols, unsigned long long x1, unsigned long long y1,
     unsigned long long x2, unsigned long long y2)
 {
-    unsigned long long A = x1 * latticeSize + y1;
-    unsigned long long B = x2 * latticeSize + y2;
+    unsigned long long A = x1 * numCols + y1;
+    unsigned long long B = x2 * numCols + y2;
 
     unsigned long long rootA = root(setArr, A);
     unsigned long long rootB = root(setArr, B);

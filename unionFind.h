@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <omp.h>
 
-extern unsigned long long* createSetArr(int latticeSize);
-extern unsigned long long* createSizeArr(int latticeSize);
+extern unsigned long long* createSetArr(int numRows, int numCols);
+extern unsigned long long* createSizeArr(int numRows, int numCols);
 
 
 extern void unionAB(unsigned long long* setArr, unsigned long long* sizeArr,

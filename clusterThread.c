@@ -57,32 +57,27 @@ unsigned long long findLargestClusterSite(char** array, int size)
     return largestSize;
 }
 
-
-unsigned long long findLargestClusterSiteThread(char** array, int size, int numThreads)
+void findLargestClusterSiteThread(char** array, int numRows, int numCols,
+    unsigned long long* setArr, unsigned long long* sizeArr, int numThreads)
 {
-    char** arrayCpy = NULL;
-    arrayCpy = copyLatticeSiteThread(array, size);
-
-    unsigned long long* setArr = createSetArr(size);
-    unsigned long long* sizeArr = createSizeArr(size);
 
     int stdThreadSize = 0;
     int lastThreadSize = 0;
     int numStdThreads = 0;
 
-    if(size % numThreads != 0) {
-        if(numThreads <= size/2) {
-            stdThreadSize = size / numThreads;
-            lastThreadSize = stdThreadSize + (size % numThreads);
+    if(numCols % numThreads != 0) {
+        if(numThreads <= numCols/2) {
+            stdThreadSize = numCols / numThreads;
+            lastThreadSize = stdThreadSize + (numCols % numThreads);
             numStdThreads = numThreads - 1;
         } else {
             stdThreadSize = 2;
             lastThreadSize = 1;
-            numStdThreads = size % numThreads;
+            numStdThreads = numCols % numThreads;
         }
     } else {
-        stdThreadSize = size / numThreads;
-        lastThreadSize = size / numThreads;
+        stdThreadSize = numCols / numThreads;
+        lastThreadSize = numCols / numThreads;
         numStdThreads = numThreads;
     }
 
@@ -102,7 +97,7 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
                 rightBound = leftBound + lastThreadSize - 1;
             }
 
-            unsigned long long queueSize = (unsigned long long) size;
+            unsigned long long queueSize = (unsigned long long) numRows;
             queueSize = queueSize + queueSize * ((unsigned long long) rightBound - (unsigned long long) leftBound);
 
             QUEUE queue;
@@ -110,11 +105,11 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
             // unsigned long long currentSize = 0;
             QUEUE_VERT v;
 
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < numRows; i++) {
                 for(int j = leftBound; j <= rightBound; j++) {
-                    if(arrayCpy[i][j] == 1) {
+                    if(array[i][j] == 1) {
 
-                        arrayCpy[i][j] = 2; //mark as seen
+                        array[i][j] = 2; //mark as seen
 
                         queue_clear(&queue);
 
@@ -124,7 +119,7 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
 
                         enqueue(&queue, v);
 
-                        floodfillSiteThread(arrayCpy, size, queue, leftBound, rightBound, setArr, sizeArr);
+                        floodfillSiteThread(array, numRows, numCols, queue, leftBound, rightBound, setArr, sizeArr);
 
                     }
                 }
@@ -146,25 +141,16 @@ unsigned long long findLargestClusterSiteThread(char** array, int size, int numT
         } else {
             boundLow = (numStdThreads * stdThreadSize) + ((i - numStdThreads) * lastThreadSize) + lastThreadSize - 1;
         }
-        boundHigh = (boundLow + 1 + size) % size;
+        boundHigh = (boundLow + 1 + numCols) % numCols;
         // printf("bound: %d\t bound2: %d\n", bound, (bound + 1 + size) % size);
-        for(int j = 0; j < size; j++) {
-            if(arrayCpy[j][boundLow] && arrayCpy[j][boundHigh]) {
+        for(int j = 0; j < numRows; j++) {
+            if(array[j][boundLow] && array[j][boundHigh]) {
                 // printf("hi\n");
-                unionAB(setArr, sizeArr, size, j, boundLow, j, boundHigh);
+                unionAB(setArr, sizeArr, numCols, j, boundLow, j, boundHigh);
             }
         }
     }
 
-
-
-    int largestSize = findLargestCluster(sizeArr, size);
-
-    destroyArraySite(arrayCpy, size);
-    destroySetArr(setArr);
-    destroySizeArr(sizeArr);
-
-    return largestSize;
 }
 
 
@@ -232,8 +218,8 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int 
 
     unsigned long long largestSize = 0;
 
-    unsigned long long* setArr = createSetArr(size);
-    unsigned long long* sizeArr = createSizeArr(size);
+    unsigned long long* setArr = createSetArr(size, size);
+    unsigned long long* sizeArr = createSizeArr(size, size);
 
     int stdThreadSize = 0;
     int lastThreadSize = 0;

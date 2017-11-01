@@ -3,7 +3,7 @@
 
 #include "lattice.h"
 #include "percolation.h"
-#include "cluster.h"
+#include "clusterThread.h"
 
 extern BONDSITE** createLatticeBond(int size, double chance);
 

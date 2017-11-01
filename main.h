@@ -6,3 +6,5 @@
 #include "siteTimers.h"
 #include "bondTimers.h"
 #include "options.h"
+#include "clusterNode.h"
+#include "clusterThread.h"

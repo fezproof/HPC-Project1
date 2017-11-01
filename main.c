@@ -20,7 +20,7 @@ FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int max
     fprintf(fp, "\nPerc type,%d,", test);
     fprintf(fp, "\nRuns,%d", runs);
 
-    printf("Num threads: %d\n", maxNumThreads);
+    // printf("Num threads: %d\n", maxNumThreads);
 
     fprintf(fp, "\n");
 
@@ -193,6 +193,8 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
         allocationTime = timeAllocateSite(&lattice, size, chance);
 
+        largestClusterSize = findLargestClusterSite(lattice, size);
+
         for(int n = 1; n <= maxNumNodes; n++) {
 
             memset(percTimes, 0, sizeof percTimes);
@@ -214,8 +216,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     }
                     omp_set_num_threads(numThreads);
 
-                    percTimes[j] += timeSitePerc(lattice, size, test, &percResultThreaded, numThreads);
-                    clusterTimes[j] += timeSiteCluster(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
+                    // percTimes[j] += timeSitePerc(lattice, size, test, &percResultThreaded, n, numThreads);
+                    percTimes[j] = 1;
+                    clusterTimes[j] += timeSiteCluster(lattice, size, chance, &largestClusterSizeThreaded, n, numThreads);
 
                     if(largestClusterSize != largestClusterSizeThreaded) {
                         printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
@@ -382,7 +385,7 @@ int main(int argc, char *argv[])
 
     if(options->nodeNum > numProcs) {
         fprintf(stderr, "Cannot execute with %d nodes. Increase the number of nodes specified in run.sh from %d to %d.", options->nodeNum, options->nodeNum, numProcs);
-        exit()
+        exit(EXIT_FAILURE);
     }
 
     //initialise all nodes with same seed
@@ -400,13 +403,19 @@ int main(int argc, char *argv[])
         if (options->type == 's') {
             doSiteTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
         }
-        else if (options->type == 'b') {
-            doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
-        }
+        // else if (options->type == 'b') {
+        //     doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, rank, options->nodeNum, fp);
+        // }
 
         fclose(fp);
+        terminateSlaves(options->nodeNum);
     } else {
-
+        if(options->type == 's') {
+            clusterSiteSlave();
+        }
+        // else if (options->type == 'b') {
+        //     clusterBondSlave();
+        // }
     }
 
 

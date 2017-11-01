@@ -4,7 +4,7 @@
 #include "unionFind.h"
 
 extern unsigned long long floodfillSite(char** array, int size, QUEUE queue);
-void floodfillSiteThread(char** array, int size, QUEUE queue, int northLim, int southLim, unsigned long long* setArr, unsigned long long* sizeArr);
+void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, int northLim, int southLim, unsigned long long* setArr, unsigned long long* sizeArr);
 
 extern unsigned long long floodfillBond(BONDSITE** array, int size, QUEUE queue);
 // extern unsigned long long floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int leftLim, int rightLim, unsigned long long* setArr,unsigned long long* sizeArr);

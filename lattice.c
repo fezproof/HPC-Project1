@@ -144,6 +144,14 @@ void destroyArraySite(char** arr, int size)
     free(arr);
 }
 
+// void destroyArraySite(char** arr, int numRows)
+// {
+//     for (int i = 0; i < numRows; i++) {
+//         free(arr[i]);
+//     }
+//     free(arr);
+// }
+
 void destroyArrayBond(BONDSITE** arr, int size)
 {
     for (int i = 0; i < size; i++) {

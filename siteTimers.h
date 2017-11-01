@@ -3,7 +3,8 @@
 
 #include "lattice.h"
 #include "percolation.h"
-#include "cluster.h"
+#include "clusterThread.h"
+#include "clusterNode.h"
 
 // extern char** createLatticeSite(int size, double chance);
 

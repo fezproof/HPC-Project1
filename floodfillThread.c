@@ -2,7 +2,7 @@
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int eastLim, unsigned long long* setArr, unsigned long long* sizeArr)
+void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, int westLim, int eastLim, unsigned long long* setArr, unsigned long long* sizeArr)
 {
     QUEUE_VERT v;
 
@@ -19,8 +19,8 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
     {
         v = dequeue(&queue);
 
-        northVert = (v.x - 1 + size) % size;
-        southVert = (v.x + 1 + size) % size;
+        northVert = (v.x - 1 + numRows) % numRows;
+        southVert = (v.x + 1 + numRows) % numRows;
 
         if (v.y < eastLim) {
             eastVert = v.y + 1;
@@ -38,7 +38,7 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
             array[southVert][v.y] = 2;
             newV.y = v.y;
             newV.x = southVert;
-            unionAB(setArr, sizeArr, size, v.x, v.y, southVert, v.y);
+            unionAB(setArr, sizeArr, numCols, v.x, v.y, southVert, v.y);
             enqueue(&queue, newV);
         }
 
@@ -47,7 +47,7 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
             array[northVert][v.y] = 2;
             newV.y = v.y;
             newV.x = northVert;
-            unionAB(setArr, sizeArr, size, v.x, v.y, northVert, v.y);
+            unionAB(setArr, sizeArr, numCols, v.x, v.y, northVert, v.y);
             enqueue(&queue, newV);
         }
 
@@ -58,14 +58,14 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
         while(array[v.x][westVert] == 1)
         {
             array[v.x][westVert] = 2;
-            unionAB(setArr, sizeArr, size, v.x, oldVert, v.x, westVert);
+            unionAB(setArr, sizeArr, numCols, v.x, oldVert, v.x, westVert);
 
             //check south and add to queue
             if(array[southVert][westVert] == 1) {
                 array[southVert][westVert] = 2;
                 newV.y = westVert;
                 newV.x = southVert;
-                unionAB(setArr, sizeArr, size, v.x, westVert, southVert, westVert);
+                unionAB(setArr, sizeArr, numCols, v.x, westVert, southVert, westVert);
                 enqueue(&queue, newV);
             }
 
@@ -74,7 +74,7 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
                 array[northVert][westVert] = 2;
                 newV.y = westVert;
                 newV.x = northVert;
-                unionAB(setArr, sizeArr, size, v.x, westVert, northVert, westVert);
+                unionAB(setArr, sizeArr, numCols, v.x, westVert, northVert, westVert);
                 enqueue(&queue, newV);
             }
 
@@ -90,14 +90,14 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
         while(array[v.x][eastVert] == 1)
         {
             array[v.x][eastVert] = 2;
-            unionAB(setArr, sizeArr, size, v.x, oldVert, v.x, eastVert);
+            unionAB(setArr, sizeArr, numCols, v.x, oldVert, v.x, eastVert);
 
             //check south and add to queue
             if(array[southVert][eastVert] == 1) {
                 array[southVert][eastVert] = 2;
                 newV.y = eastVert;
                 newV.x = southVert;
-                unionAB(setArr, sizeArr, size, v.x, eastVert, southVert, eastVert);
+                unionAB(setArr, sizeArr, numCols, v.x, eastVert, southVert, eastVert);
                 enqueue(&queue, newV);
             }
             //check north and add to queue
@@ -105,7 +105,7 @@ void floodfillSiteThread(char** array, int size, QUEUE queue, int westLim, int e
                 array[northVert][eastVert] = 2;
                 newV.y = eastVert;
                 newV.x = northVert;
-                unionAB(setArr, sizeArr, size, v.x, eastVert, northVert, eastVert);
+                unionAB(setArr, sizeArr, numCols, v.x, eastVert, northVert, eastVert);
                 enqueue(&queue, newV);
             }
 
