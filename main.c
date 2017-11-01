@@ -6,8 +6,6 @@
 #define START_SIZE 16 //64
 #define MAX_LATTICE_SIZE 512 //131072 16384 8192 4096
 
-#define TERMINATE -1;
-
 
 FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int maxNumThreads)
 {
@@ -262,25 +260,6 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
     } while (size <= maxLatticeSize);
 }
 
-void sitePercSlave(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
-{
-
-    int value;
-    MPI_Status status;
-
-    int size;
-    int numNodes;
-    int numThreads;
-    int runs;
-
-    while(true) {
-        MPI_Recv(&value, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        if (status.MPI_TAG == TERMINATE) {
-            break;
-        }
-    }
-}
-
 void doBondTests(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
 {
 
@@ -400,6 +379,11 @@ int main(int argc, char *argv[])
     OPTIONS *options = createOptionsStruct();
     readOptions(argc, argv, options);
     // printOptions(options);
+
+    if(options->nodeNum > numProcs) {
+        fprintf(stderr, "Cannot execute with %d nodes. Increase the number of nodes specified in run.sh from %d to %d.", options->nodeNum, options->nodeNum, numProcs);
+        exit()
+    }
 
     //initialise all nodes with same seed
     unsigned int seed = 0;

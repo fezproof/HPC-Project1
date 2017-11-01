@@ -11,6 +11,8 @@ extern char** copyLatticeSite(char** src, int size);
 extern char** copyLatticeSiteThread(char** src, int size);
 extern BONDSITE** copyLatticeBond(BONDSITE** src, int size);
 extern BONDSITE** copyLatticeBondThread(BONDSITE** src, int size);
+extern char** createSubLatticeSite(int numRows, int numCols);
+extern BONDSITE** createSubLatticeBond(int numRows, int numCols);
 
 
 extern void printLatticeSite(char** lattice, int size);

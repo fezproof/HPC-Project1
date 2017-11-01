@@ -54,6 +54,30 @@ BONDSITE** createLatticeBond(int size, double chance)
     return rows;
 }
 
+char** createSubLatticeSite(int numRows, int numCols)
+{
+    char** array = malloc(numRows * sizeof(char*));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            char* values;
+            values = malloc(numCols * sizeof(char));
+            array[i] = values;
+        }
+    return array;
+}
+
+BONDSITE** createSubLatticeBond(int numRows, int numCols)
+{
+    BONDSITE** array = malloc(numRows * sizeof(BONDSITE*));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            BONDSITE* values;
+            values = malloc(numCols * sizeof(BONDSITE));
+            array[i] = values;
+        }
+    return array;
+}
+
 char** copyLatticeSite(char** src, int size)
 {
     char** rows = malloc(size * sizeof(char*));

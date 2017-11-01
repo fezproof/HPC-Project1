@@ -1,4 +1,4 @@
-#include "cluster.h"
+#include "clusterThread.h"
 
 //perform floodfill on each unseen vertice
     //0 - unoccupied
