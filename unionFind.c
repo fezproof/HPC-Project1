@@ -86,15 +86,13 @@ unsigned long long root(unsigned long long* setArr, unsigned long long A)
 
 unsigned long long findLargestCluster(unsigned long long* sizeArr, int latticeSize)
 {
-
-
     unsigned long long size = (unsigned long long) latticeSize;
     size = size * size;
 
 
     // for(unsigned long long i = 0; i < size; i++)
     // {
-    //     printf("%llu\n", sizeArr[i]);
+    //     printf("%llu\t%llu\n", sizeArr[i], i);
     // }
 
     unsigned long long largestClusterSize = 0;

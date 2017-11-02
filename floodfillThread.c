@@ -19,8 +19,16 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
     {
         v = dequeue(&queue);
 
-        northVert = (v.x - 1 + numRows) % numRows;
-        southVert = (v.x + 1 + numRows) % numRows;
+        if (v.x < numRows - 1) {
+            southVert = v.x + 1;
+        } else {
+            southVert = -1;
+        }
+        if (v.x > 0) {
+            northVert = v.x - 1;
+        } else{
+            northVert = -1;
+        }
 
         if (v.y < eastLim) {
             eastVert = v.y + 1;
@@ -34,6 +42,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
         }
 
         //check south of the dequeued site
+        if (southVert != -1)
         if(array[southVert][v.y] == 1) {
             array[southVert][v.y] = 2;
             newV.y = v.y;
@@ -43,6 +52,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
         }
 
         //check north of the dequeued site
+        if (northVert != -1)
         if(array[northVert][v.y] == 1) {
             array[northVert][v.y] = 2;
             newV.y = v.y;
@@ -61,6 +71,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
             unionAB(setArr, sizeArr, numCols, v.x, oldVert, v.x, westVert);
 
             //check south and add to queue
+            if (southVert != -1)
             if(array[southVert][westVert] == 1) {
                 array[southVert][westVert] = 2;
                 newV.y = westVert;
@@ -70,6 +81,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
             }
 
             //check north and add to queue
+            if (northVert != -1)
             if(array[northVert][westVert] == 1) {
                 array[northVert][westVert] = 2;
                 newV.y = westVert;
@@ -93,6 +105,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
             unionAB(setArr, sizeArr, numCols, v.x, oldVert, v.x, eastVert);
 
             //check south and add to queue
+            if (southVert != -1)
             if(array[southVert][eastVert] == 1) {
                 array[southVert][eastVert] = 2;
                 newV.y = eastVert;
@@ -101,6 +114,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
                 enqueue(&queue, newV);
             }
             //check north and add to queue
+            if (northVert != -1)
             if(array[northVert][eastVert] == 1) {
                 array[northVert][eastVert] = 2;
                 newV.y = eastVert;

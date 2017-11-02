@@ -8,18 +8,17 @@ double rand_01(void) {
 char** createLatticeSite(int size, double chance)
 {
     char** rows = malloc(size * sizeof(char*));
+    char* data = malloc(size * size * sizeof(char));
     #pragma omp parallel for
         for (int i = 0; i < size; i++) {
-            char* values;
-            values = malloc(size * sizeof(char));
+            rows[i] = &(data[size * i]);
             for (int j = 0; j < size; j++) {
                 if (chance >= rand_01()) {
-                    values[j] = 1; //occupied
+                    rows[i][j] = 1; //occupied
                 } else {
-                    values[j] = 0; //not occupied
+                    rows[i][j] = 0; //not occupied
                 }
             }
-            rows[i] = values;
         }
     return rows;
 }
@@ -57,14 +56,13 @@ BONDSITE** createLatticeBond(int size, double chance)
 char** createBlankLatticeSite(int numRows, int numCols)
 {
     char** array = malloc(numRows * sizeof(char*));
+    char* data = malloc(numRows * numCols * sizeof(char));
     #pragma omp parallel for
         for (int i = 0; i < numRows; i++) {
-            char* values;
-            values = malloc(numCols * sizeof(char));
+            array[i] = &(data[numCols * i]);
             for (int j = 0; j < numCols; j++) {
-                values[j] = 0;
+                array[i][j] = 0;
             }
-            array[i] = values;
         }
     return array;
 }
@@ -84,28 +82,13 @@ BONDSITE** createBlankLatticeBond(int numRows, int numCols)
 char** copyLatticeSite(char** src, int numRows, int numCols)
 {
     char** rows = malloc(numRows * sizeof(char*));
-    for (int i = 0; i < numRows; i++) {
-        char* values;
-        values = malloc(numCols * sizeof(char));
-        for (int j = 0; j < numCols; j++) {
-            values[j] = src[i][j];
-        }
-        rows[i] = values;
-    }
-    return rows;
-}
-
-char** copyLatticeSiteThread(char** src, int size)
-{
-    char** rows = malloc(size * sizeof(char*));
-    // #pragma omp parallel for
-        for (int i = 0; i < size; i++) {
-            char* values;
-            values = malloc(size * sizeof(char));
-            for (int j = 0; j < size; j++) {
-                values[j] = src[i][j];
+    char* data = malloc(numRows * numCols * sizeof(char));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            rows[i] = &(data[numCols * i]);
+            for (int j = 0; j < numCols; j++) {
+                rows[i][j] = src[i][j];
             }
-            rows[i] = values;
         }
     return rows;
 }
@@ -141,9 +124,7 @@ BONDSITE** copyLatticeBondThread(BONDSITE** src, int size)
 
 void destroyArraySite(char** arr, int size)
 {
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
+    free(arr[0]);
     free(arr);
 }
 

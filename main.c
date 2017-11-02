@@ -193,12 +193,13 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
         allocationTime = timeAllocateSite(&lattice, size, chance);
 
-        printLatticeSite(lattice, size, size);
+        // printLatticeSite(lattice, size, size);
 
         largestClusterSize = findLargestClusterSite(lattice, size);
         printf("Largest (Sequential): %llu\n\n", largestClusterSize);
 
-        for(int n = 1; n <= maxNumNodes; n++) {
+        int n = maxNumNodes;
+        // for(int n = 1; n <= maxNumNodes; n++) {
             printf("Number of nodes = %d\n", n);
 
             memset(percTimes, 0, sizeof percTimes);
@@ -239,11 +240,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     clusterSizes[j] += largestClusterSizeThreaded;
                 }
 
-                printf("got here 1\n");
 
             }
 
-            printf("got here 2\n");
 
             for(int i = 0; i < maxNumThreads; i++) {
                 totalTimes[i] = percTimes[i] + clusterTimes[i];
@@ -262,7 +261,6 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                 clusterSizes[i] /= (double) runs;
             }
 
-            printf("got here 3\n");
 
 
             printfCSVLine(maxNumThreads, size, n, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, numPercs, clusterSizes, fp);
@@ -271,10 +269,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
             largestClusterSizeThreaded = 0;
 
-            printf("got here 4\n");
 
 
-        }
+        // }
 
         destroyArraySite(lattice, size);
 
@@ -282,7 +279,6 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
         size = size * 2;
     } while (size <= maxLatticeSize);
 
-    printf("got here 5\n");
 }
 
 void doBondTests(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
@@ -435,15 +431,12 @@ int main(int argc, char *argv[])
         //     doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, rank, fp);
         // }
 
-        printf("got here 6\n");
 
 
         fclose(fp);
-        printf("got here 7\n");
 
         terminateSlaves(numProcs);
 
-        printf("got here 8\n");
 
     } else {
         // MPI_Status status;
