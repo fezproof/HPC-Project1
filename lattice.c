@@ -54,19 +54,22 @@ BONDSITE** createLatticeBond(int size, double chance)
     return rows;
 }
 
-char** createSubLatticeSite(int numRows, int numCols)
+char** createBlankLatticeSite(int numRows, int numCols)
 {
     char** array = malloc(numRows * sizeof(char*));
     #pragma omp parallel for
         for (int i = 0; i < numRows; i++) {
             char* values;
             values = malloc(numCols * sizeof(char));
+            for (int j = 0; j < numCols; j++) {
+                values[j] = 0;
+            }
             array[i] = values;
         }
     return array;
 }
 
-BONDSITE** createSubLatticeBond(int numRows, int numCols)
+BONDSITE** createBlankLatticeBond(int numRows, int numCols)
 {
     BONDSITE** array = malloc(numRows * sizeof(BONDSITE*));
     #pragma omp parallel for
@@ -160,9 +163,9 @@ void destroyArrayBond(BONDSITE** arr, int size)
     free(arr);
 }
 
-void printLatticeSite(char** lattice, int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
+void printLatticeSite(char** lattice, int numRows, int numCols) {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
             if (lattice[i][j] == 2) {
                 printf(" \u2588");
             }

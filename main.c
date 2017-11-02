@@ -193,8 +193,10 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
         allocationTime = timeAllocateSite(&lattice, size, chance);
 
+        printLatticeSite(lattice, size, size);
+
         largestClusterSize = findLargestClusterSite(lattice, size);
-        printf("Largest: %llu\n", largestClusterSize);
+        printf("Largest (Sequential): %llu\n\n", largestClusterSize);
 
         for(int n = 1; n <= maxNumNodes; n++) {
             printf("Number of nodes = %d\n", n);
@@ -226,7 +228,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                         printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
                     }
 
-                    printf("Largest thread: %llu\n", largestClusterSizeThreaded);
+                    printf("Largest (Threaded): %llu\n", largestClusterSizeThreaded);
 
 
                     if(percResult != percResultThreaded) {
@@ -236,8 +238,12 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     if(percResultThreaded == 1) numPercs[j]++;
                     clusterSizes[j] += largestClusterSizeThreaded;
                 }
-                destroyArraySite(lattice, size);
+
+                printf("got here 1\n");
+
             }
+
+            printf("got here 2\n");
 
             for(int i = 0; i < maxNumThreads; i++) {
                 totalTimes[i] = percTimes[i] + clusterTimes[i];
@@ -256,16 +262,27 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                 clusterSizes[i] /= (double) runs;
             }
 
+            printf("got here 3\n");
+
+
             printfCSVLine(maxNumThreads, size, n, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, numPercs, clusterSizes, fp);
 
             allocationTime = 0;
 
-            largestClusterSize = 0;
             largestClusterSizeThreaded = 0;
 
+            printf("got here 4\n");
+
+
         }
+
+        destroyArraySite(lattice, size);
+
+        largestClusterSize = 0;
         size = size * 2;
     } while (size <= maxLatticeSize);
+
+    printf("got here 5\n");
 }
 
 void doBondTests(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, int rank, FILE *fp)
@@ -365,7 +382,7 @@ void doBondTests(int size, double chance, int test, int runs, int maxLatticeSize
 
             allocationTime = 0;
 
-            largestClusterSize = 0;
+            // largestClusterSize = 0;
             largestClusterSizeThreaded = 0;
 
         }
@@ -393,16 +410,22 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    //initialise all nodes with same seed
-    unsigned int seed = 0;
-    if(rank == 0) {
-        seed = time(NULL);
-    }
-    MPI_Bcast( &seed, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    srand(seed);
+    srand(time(NULL));
 
     if(rank == 0) {
-        //Initialise a CSV file
+        // int x = 111;
+        // for(int n = 0; n < 5; n++) {
+        //     x += 100;
+        //     for(int i = 1; i < numProcs; i++) {
+        //         MPI_Send(&x, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        //     }
+        // }
+        //
+        // for(int i = 1; i < numProcs; i++) {
+        //     MPI_Send(NULL, 0, MPI_INT, i, 1, MPI_COMM_WORLD);
+        // }
+
+        // Initialise a CSV file
         FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
 
         if (options->type == 's') {
@@ -412,9 +435,28 @@ int main(int argc, char *argv[])
         //     doBondTests(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, rank, fp);
         // }
 
+        printf("got here 6\n");
+
+
         fclose(fp);
+        printf("got here 7\n");
+
         terminateSlaves(numProcs);
+
+        printf("got here 8\n");
+
     } else {
+        // MPI_Status status;
+        // int y = 0;
+        // while(1) {
+        //     MPI_Recv(&y, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        //     if(status.MPI_TAG == 1) {
+        //         printf("Slave %d is terminating\n", rank);
+        //         break;
+        //     }
+        //     printf("Slave %d received %d\n", rank, y);
+        // }
+
         if(options->type == 's') {
             clusterSiteSlave();
         }

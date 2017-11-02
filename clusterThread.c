@@ -10,7 +10,7 @@
 unsigned long long findLargestClusterSite(char** array, int size)
 {
     char** arrayCpy = NULL;
-    arrayCpy = copyLatticeSite(array, size);
+    arrayCpy = copyLatticeSite(array, size, size);
 
     unsigned long long largestSize = 0;
     unsigned long long currentSize = 0;
