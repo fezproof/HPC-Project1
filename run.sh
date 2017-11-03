@@ -3,4 +3,4 @@
 #PBS -M matthew.stagoll@gmail.com
 source /etc/bash.bashrc
 cd $PBS_O_WORKDIR
-mpirun main -l s -P 0.6 -p 2 -n 7 -t 6 -m 8192 -M 8192
+mpirun main -l s -P 0.6 -p 2 -n 28 -t 12 -m 32764 -M 32764

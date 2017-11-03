@@ -15,6 +15,8 @@
 #define TAG_ARRAY_COMPLETE 2
 #define TAG_SET_ARR 3
 #define TAG_SIZE_ARR 4
+#define TAG_INFO 5
+#define TAG_ARR 6
 
 void terminateSlaves(int numSlaves)
 {
@@ -41,31 +43,28 @@ void determineSizeOfMessages(int numRows, int numCols, int* normMsgSize, int* la
     }
 }
 
-void sendInfoToSlaves(int* info, int firstSlave, int lastSlave, int startRow, MPI_Request* req, int* actual)
+void sendInfoToSlaves(int* info, int firstSlave, int lastSlave, int startRow)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
-        (*actual)++;
         info[MASTER_ROW_POS_INDEX] = startRow + info[NUM_ROWS_INDEX] * (i - firstSlave);
-        MPI_Isend(info, INFO_SIZE, MPI_INT, i, TAG_GENERAL, MPI_COMM_WORLD, req);
+        // printf("Master row pos for slave %d: %d\n", i, info[MASTER_ROW_POS_INDEX]);
+        MPI_Send(info, INFO_SIZE, MPI_INT, i, TAG_INFO, MPI_COMM_WORLD);
     }
 }
 
-void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req, int* actual)
+void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
 
         for(int j = 0; j < numMsgs-1; j++) {
-            (*actual)++;
-            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_ARR, MPI_COMM_WORLD, req);
             (*rowOffset) += stdMsgSize / numCols;
         }
         if(lastMsgSize == 0) {
-            (*actual)++;
-            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_ARR, MPI_COMM_WORLD, req);
             (*rowOffset) += stdMsgSize / numCols;
         } else {
-            (*actual)++;
-            MPI_Isend(&(array[*rowOffset][0]), lastMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
+            MPI_Isend(&(array[*rowOffset][0]), lastMsgSize, MPI_CHAR, i, TAG_ARR, MPI_COMM_WORLD, req);
             (*rowOffset) += lastMsgSize / numCols;
         }
     }
@@ -91,37 +90,38 @@ void portionArray(int numRows, int numSlaves, int* stdRowsPerSlave, int* lastRow
 }
 
 void recieveArray1dUll(unsigned long long* arr, unsigned long long* offset,
-    int firstSlave, int lastSlave,
-    int numMsgs, int stdMsgSize, int lastMsgSize)
+    int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize,
+    int tag, MPI_Request* req, int* curMsgNum)
 {
-    MPI_Status status;
-
     for(int i = firstSlave; i < lastSlave; i++) {
         for(int j = 0; j < numMsgs - 1; j++) {
-            MPI_Recv(&(arr[*offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, i, TAG_SET_ARR, MPI_COMM_WORLD, &status);
+            MPI_Irecv(&(arr[*offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, i, tag, MPI_COMM_WORLD, &req[*curMsgNum]);
             (*offset) += stdMsgSize;
+            (*curMsgNum)++;
         }
         if(lastMsgSize == 0) {
-            MPI_Recv(&(arr[*offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, i, TAG_SET_ARR, MPI_COMM_WORLD, &status);
+            MPI_Irecv(&(arr[*offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, i, tag, MPI_COMM_WORLD, &req[*curMsgNum]);
             (*offset) += stdMsgSize;
+            (*curMsgNum)++;
         } else {
-            MPI_Recv(&(arr[*offset]), lastMsgSize, MPI_UNSIGNED_LONG_LONG, i, TAG_SET_ARR, MPI_COMM_WORLD, &status);
+            MPI_Irecv(&(arr[*offset]), lastMsgSize, MPI_UNSIGNED_LONG_LONG, i, tag, MPI_COMM_WORLD, &req[*curMsgNum]);
             (*offset) += lastMsgSize;
+            (*curMsgNum)++;
         }
     }
 }
 
-void sendArray1dUll(unsigned long long* arr, int numMsgs, int stdMsgSize, int lastMsgSize)
+void sendArray1dUll(unsigned long long* arr, int numMsgs, int stdMsgSize, int lastMsgSize, int tag)
 {
     unsigned long long offset = 0;
     for(int i = 0; i < numMsgs - 1; i++) {
-        MPI_Send(&(arr[offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, 0, TAG_SET_ARR, MPI_COMM_WORLD);
+        MPI_Send(&(arr[offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, 0, tag, MPI_COMM_WORLD);
         offset += stdMsgSize;
     }
     if(lastMsgSize == 0) {
-        MPI_Send(&(arr[offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, 0, TAG_SET_ARR, MPI_COMM_WORLD);
+        MPI_Send(&(arr[offset]), stdMsgSize, MPI_UNSIGNED_LONG_LONG, 0, tag, MPI_COMM_WORLD);
     } else {
-        MPI_Send(&(arr[offset]), lastMsgSize, MPI_UNSIGNED_LONG_LONG, 0, TAG_SET_ARR, MPI_COMM_WORLD);
+        MPI_Send(&(arr[offset]), lastMsgSize, MPI_UNSIGNED_LONG_LONG, 0, tag, MPI_COMM_WORLD);
     }
 }
 
@@ -132,7 +132,7 @@ char** receiveArrayPortion(int numMsgs, int stdMsgSize, int numRows, int numCols
     int rowOffset = 0;
 
     for(int i = 0; i < numMsgs; i++) {
-        MPI_Recv(&array[rowOffset][0], stdMsgSize, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        MPI_Recv(&array[rowOffset][0], stdMsgSize, MPI_CHAR, 0, TAG_ARR, MPI_COMM_WORLD, &status);
         rowOffset += stdMsgSize / numCols;
     }
 
@@ -147,7 +147,7 @@ void adjustSetArr(unsigned long long* setArr, int numRows, int numCols, int mast
     }
 }
 
-unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int numThreads)
+void clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, unsigned long long* largestClusterSize)
 {
     int numCols = size;
 
@@ -171,40 +171,25 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     info1[NUM_ROWS_INDEX] = stdRowsPerSlave;
     info2[NUM_ROWS_INDEX] = lastRowsPerSlave;
 
-    determineSizeOfMessages(stdRowsPerSlave, numCols, &info1[STD_MSG_SIZE_INDEX], &info1[LAST_MSG_SIZE_INDEX], &info1[NUM_MSGS_INDEX]);
-    determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
-
-    // MPI_Status status;
-    // int numInfoMsgs = numSlaves - 1;
-    // int numArrMsgs = (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves));
-    // int numMsgs = numInfoMsgs + numArrMsgs;
-    MPI_Request req;
-
-    int actualNumMsgs = 0;
-
     //------------------------- Standard procs ---------------------------------
 
+    MPI_Request sendReq;
     int rowOffet = stdRowsPerSlave;
 
-    sendInfoToSlaves(info1, 1, numStdSlaves, stdRowsPerSlave, &req, &actualNumMsgs);
-
-    sendArrToSlaves(array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &req, &actualNumMsgs);
+    determineSizeOfMessages(stdRowsPerSlave, numCols, &info1[STD_MSG_SIZE_INDEX], &info1[LAST_MSG_SIZE_INDEX], &info1[NUM_MSGS_INDEX]);
+    sendInfoToSlaves(info1, 1, numStdSlaves, stdRowsPerSlave);
+    sendArrToSlaves(array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
 
     //---------------------------- Final procs ----------------------------------
 
-    sendInfoToSlaves(info2, numStdSlaves, numSlaves, numStdSlaves*stdRowsPerSlave, &req, &actualNumMsgs);
+    determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
+    sendInfoToSlaves(info2, numStdSlaves, numSlaves, numStdSlaves*stdRowsPerSlave);
+    sendArrToSlaves(array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
 
-    sendArrToSlaves(array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &req, &actualNumMsgs);
-
-    // printf("Actual num messages: %d\n", actualNumMsgs);
-    // printf("Calculated num messages: %d\n", numMsgs);
-
-
-    // MPI_Waitall(1, &req, &status);
+    //--------------- Process the first segment of the array -------------------
 
     printf("--------- Master arr %dx%d--------------\n", stdRowsPerSlave, numCols);
     // printLatticeSite(array, stdRowsPerSlave, numCols);
-    //--------------- Process the first segment of the array -------------------
 
     unsigned long long* setArr = createSetArr(size, size);
     unsigned long long* sizeArr = createSizeArr(size, size);
@@ -213,17 +198,25 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
     findLargestClusterSiteThread(arrCpy, stdRowsPerSlave, numCols, setArr, sizeArr, numThreads);
 
-    // for(int i = 0; i < size*size; i++) {
-    //     printf("%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
-    // }
+    int numMsgsToReceive = 2 * ( (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves)) );
+    int curMsgNum = 0;
+
+    MPI_Status status;
+    MPI_Request* receiveReq = malloc(numMsgsToReceive * sizeof(MPI_Request*));
 
     unsigned long long setArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) numCols;
     unsigned long long sizeArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) numCols;
 
-    recieveArray1dUll(setArr, &setArrOffset, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX]);
-    recieveArray1dUll(sizeArr, &sizeArrOffset, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX]);
-    recieveArray1dUll(setArr, &setArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX]);
-    recieveArray1dUll(sizeArr, &sizeArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX]);
+    recieveArray1dUll(setArr, &setArrOffset, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], TAG_SET_ARR, receiveReq, &curMsgNum);
+    recieveArray1dUll(sizeArr, &sizeArrOffset, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], TAG_SIZE_ARR, receiveReq, &curMsgNum);
+    recieveArray1dUll(setArr, &setArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], TAG_SET_ARR, receiveReq, &curMsgNum);
+    recieveArray1dUll(sizeArr, &sizeArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], TAG_SIZE_ARR, receiveReq, &curMsgNum);
+
+    printf("Calculated num messages: %d\n", numMsgsToReceive);
+    printf("Actual num messages: %d\n", curMsgNum);
+
+    MPI_Waitall(numMsgsToReceive, receiveReq, &status);
+
 
     // unsigned long long start = (unsigned long long) size;
     // start = start * start;
@@ -232,6 +225,8 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     // for(unsigned long long i = start; i < max; i++) {
     //     printf("%llu\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
     // }
+
+    printf("got here\n");
 
     int boundLow = 0;
 
@@ -268,14 +263,29 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
         }
     }
 
-    //TODO stitch together subarrays with union find
 
-    int largestSize = findLargestSize(sizeArr, size);
+    printf("got here 1\n");
 
+    // for(int i = 0; i < size*size; i++) {
+    //     printf("%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
+    // }
+
+
+    *largestClusterSize = findLargestSize(sizeArr, size);
+
+    printf("got here 2\n");
+
+    destroyArraySite(arrCpy, size);
+    
     destroySetArr(setArr);
     destroySizeArr(sizeArr);
 
-    return largestSize;
+    printf("got here 3\n");
+
+    printf("Largest size: %llu\n", *largestClusterSize);
+    printf("Largest size: %p\n", (void *) largestClusterSize);
+
+
 }
 
 void clusterSiteSlave()
@@ -329,9 +339,8 @@ void clusterSiteSlave()
 
         adjustSetArr(setArr, numRows, numCols, masterRowPos);
 
-
-        sendArray1dUll(setArr, numMsgs, stdMsgSize, lastMsgSize);
-        sendArray1dUll(sizeArr, numMsgs, stdMsgSize, lastMsgSize);
+        sendArray1dUll(setArr, numMsgs, stdMsgSize, lastMsgSize, TAG_SET_ARR);
+        sendArray1dUll(sizeArr, numMsgs, stdMsgSize, lastMsgSize, TAG_SIZE_ARR);
 
         destroySetArr(setArr);
         destroySizeArr(sizeArr);

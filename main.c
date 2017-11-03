@@ -216,7 +216,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
             for(int i = 0; i < runs; i++)
             {
-                int j = maxNumThreads;
+                int j = maxNumThreads - 1;
                 // for(int j = 0; j < maxNumThreads; j++)
                 // {
                     int numThreads;
@@ -278,7 +278,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
 
         // }
-
+        printf("got here 4\n");
         destroyArraySite(lattice, size);
 
         largestClusterSize = 0;

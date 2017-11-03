@@ -44,12 +44,16 @@ double timeSitePerc(char** lattice, int size, int test, int *percResult, int num
 double timeSiteCluster(char** lattice, int size, double chance, unsigned long long *largestClusterSize, int numNodes, int numThreads)
 {
     double startTime;
-    double clusterTimeThreaded;
+    double clusterTimeThreaded = 0;
 
     startTime = omp_get_wtime();
     if(chance > 0) {
 
-        *largestClusterSize = clusterSiteMaster(lattice, size, numNodes, numThreads);
+        printf("largestClusterSize: %p\n", (void *) largestClusterSize);
+        
+        clusterSiteMaster(lattice, size, numNodes, numThreads, largestClusterSize);
+
+        printf("largestClusterSize: %p\n", (void *) largestClusterSize);
 
         if(*largestClusterSize > 0) {
             clusterTimeThreaded = omp_get_wtime() - startTime;
@@ -60,6 +64,7 @@ double timeSiteCluster(char** lattice, int size, double chance, unsigned long lo
             printf("Failed whilst finding the largest cluster (threaded)\n");
         }
     }
+    printf("got here 3.1\n");
 
     return clusterTimeThreaded;
 }
