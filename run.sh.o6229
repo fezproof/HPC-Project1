@@ -1,0 +1,18 @@
+
+------------------------------------------
+Lattice size: 4 x 4
+Largest (Sequential): 0
+
+Number of nodes = 2
+Actual num messages: 2
+Calculated num messages: 2
+--------- Master arr 2x4--------------
+
+ERROR: CLUSTER SIZE VARIANCE: 0, 4
+Largest (Threaded): 4
+--------- Slave 1's array: 2x4--------------
+terminating: 1
+terminating: 2
+terminating: 3
+terminating: 4
+terminating: 5

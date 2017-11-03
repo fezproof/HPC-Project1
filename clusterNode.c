@@ -41,27 +41,31 @@ void determineSizeOfMessages(int numRows, int numCols, int* normMsgSize, int* la
     }
 }
 
-void sendInfoToSlaves(int* info, int firstSlave, int lastSlave, int startRow)
+void sendInfoToSlaves(int* info, int firstSlave, int lastSlave, int startRow, MPI_Request* req, int* actual)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
+        (*actual)++;
         info[MASTER_ROW_POS_INDEX] = startRow + info[NUM_ROWS_INDEX] * (i - firstSlave);
-        MPI_Send(info, INFO_SIZE, MPI_INT, i, TAG_GENERAL, MPI_COMM_WORLD);
+        MPI_Isend(info, INFO_SIZE, MPI_INT, i, TAG_GENERAL, MPI_COMM_WORLD, req);
     }
 }
 
-void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols)
+void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req, int* actual)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
 
         for(int j = 0; j < numMsgs-1; j++) {
-            MPI_Send(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD);
+            (*actual)++;
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
             (*rowOffset) += stdMsgSize / numCols;
         }
         if(lastMsgSize == 0) {
-            MPI_Send(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD);
+            (*actual)++;
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
             (*rowOffset) += stdMsgSize / numCols;
         } else {
-            MPI_Send(&(array[*rowOffset][0]), lastMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD);
+            (*actual)++;
+            MPI_Isend(&(array[*rowOffset][0]), lastMsgSize, MPI_CHAR, i, TAG_GENERAL, MPI_COMM_WORLD, req);
             (*rowOffset) += lastMsgSize / numCols;
         }
     }
@@ -162,35 +166,43 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     int lastRowsPerSlave;
     int numStdSlaves;
 
-    int rowOffet = 0;
-
-
-
     portionArray(size, numSlaves, &stdRowsPerSlave, &lastRowsPerSlave, &numStdSlaves);
+
+    info1[NUM_ROWS_INDEX] = stdRowsPerSlave;
+    info2[NUM_ROWS_INDEX] = lastRowsPerSlave;
+
+    determineSizeOfMessages(stdRowsPerSlave, numCols, &info1[STD_MSG_SIZE_INDEX], &info1[LAST_MSG_SIZE_INDEX], &info1[NUM_MSGS_INDEX]);
+    determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
+
+    // MPI_Status status;
+    int numInfoMsgs = numSlaves - 1;
+    int numArrMsgs = (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves));
+    int numMsgs = numInfoMsgs + numArrMsgs;
+    MPI_Request req;
+
+    int actualNumMsgs = 0;
 
     //------------------------- Standard procs ---------------------------------
 
+    int rowOffet = stdRowsPerSlave;
 
-    info1[NUM_ROWS_INDEX] = stdRowsPerSlave;
+    sendInfoToSlaves(info1, 1, numStdSlaves, stdRowsPerSlave, &req, &actualNumMsgs);
 
-    determineSizeOfMessages(stdRowsPerSlave, numCols, &info1[STD_MSG_SIZE_INDEX], &info1[LAST_MSG_SIZE_INDEX], &info1[NUM_MSGS_INDEX]);
-
-
-    sendInfoToSlaves(info1, 1, numStdSlaves, stdRowsPerSlave);
-
-    sendArrToSlaves(array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols);
+    sendArrToSlaves(array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &req, &actualNumMsgs);
 
     //---------------------------- Final procs ----------------------------------
 
-    info2[NUM_ROWS_INDEX] = lastRowsPerSlave;
+    sendInfoToSlaves(info2, numStdSlaves, numSlaves, numStdSlaves*stdRowsPerSlave, &req, &actualNumMsgs);
 
-    determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
+    sendArrToSlaves(array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &req, &actualNumMsgs);
 
-    sendInfoToSlaves(info2, numStdSlaves, numSlaves, numStdSlaves*stdRowsPerSlave);
+    // printf("Actual num messages: %d\n", actualNumMsgs);
+    // printf("Calculated num messages: %d\n", numMsgs);
 
-    sendArrToSlaves(array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols);
 
-    printf("--------- Master (%d) arr %dx%d--------------\n", 0, stdRowsPerSlave, numCols);
+    // MPI_Waitall(1, &req, &status);
+
+    printf("--------- Master arr %dx%d--------------\n", stdRowsPerSlave, numCols);
     // printLatticeSite(array, stdRowsPerSlave, numCols);
     //--------------- Process the first segment of the array -------------------
 
@@ -212,7 +224,6 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     recieveArray1dUll(sizeArr, &sizeArrOffset, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX]);
     recieveArray1dUll(setArr, &setArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX]);
     recieveArray1dUll(sizeArr, &sizeArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX]);
-
 
     // unsigned long long start = (unsigned long long) size;
     // start = start * start;
@@ -268,6 +279,7 @@ void clusterSiteSlave()
         array = receiveArrayPortion(numMsgs, stdMsgSize, numRows, numCols);
 
         printf("--------- Slave %d's array: %dx%d--------------\n", rank, numRows, numCols);
+        // printLatticeSite(array, numRows, numCols);
 
         unsigned long long* setArr = createSetArr(numRows, numCols);
         unsigned long long* sizeArr = createSizeArr(numRows, numCols);
