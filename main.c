@@ -188,14 +188,19 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
     do {
 
         printf("\n------------------------------------------\n");
-        printf("Lattice size = %d x %d\n", size, size);
+        printf("Lattice size: %d x %d\n", size, size);
+
+
+
         initialiseCSVRound(size, maxNumThreads, fp);
+
 
         allocationTime = timeAllocateSite(&lattice, size, chance);
 
+
         // printLatticeSite(lattice, size, size);
 
-        largestClusterSize = findLargestClusterSite(lattice, size);
+        // largestClusterSize = findLargestClusterSite(lattice, size);
         printf("Largest (Sequential): %llu\n\n", largestClusterSize);
 
         int n = maxNumNodes;
@@ -211,8 +216,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
             for(int i = 0; i < runs; i++)
             {
-                for(int j = 0; j < maxNumThreads; j++)
-                {
+                int j = maxNumThreads;
+                // for(int j = 0; j < maxNumThreads; j++)
+                // {
                     int numThreads;
                     if(j+1 >= size) {
                         numThreads = size;
@@ -238,7 +244,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
                     if(percResultThreaded == 1) numPercs[j]++;
                     clusterSizes[j] += largestClusterSizeThreaded;
-                }
+                // }
 
 
             }
@@ -401,10 +407,10 @@ int main(int argc, char *argv[])
     readOptions(argc, argv, options);
     // printOptions(options);
 
-    if(options->nodeNum > numProcs) {
-        fprintf(stderr, "Cannot execute with %d nodes. Increase the number of nodes specified in run.sh from %d to %d.", options->nodeNum, options->nodeNum, numProcs);
-        exit(EXIT_FAILURE);
-    }
+    // if(options->nodeNum > numProcs) {
+    //     fprintf(stderr, "Cannot execute with %d nodes. Increase the number of nodes specified in run.sh from %d to %d.", options->nodeNum, options->nodeNum, numProcs);
+    //     exit(EXIT_FAILURE);
+    // }
 
     srand(time(NULL));
 
