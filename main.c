@@ -200,7 +200,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
         // printLatticeSite(lattice, size, size);
 
-        // largestClusterSize = findLargestClusterSite(lattice, size);
+        largestClusterSize = findLargestClusterSite(lattice, size);
         printf("Largest (Sequential): %llu\n\n", largestClusterSize);
 
         int n = maxNumNodes;

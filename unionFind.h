@@ -16,7 +16,7 @@ extern int find(unsigned long long* setArr, unsigned long long latticeSize,
     unsigned long long x1, unsigned long long y1,
     unsigned long long x2, unsigned long long y2);
 
-extern unsigned long long findLargestCluster(unsigned long long* sizeArr, int latticeSize);
+extern unsigned long long findLargestSize(unsigned long long* sizeArr, int latticeSize);
 
 extern void destroySetArr(unsigned long long* setArr);
 extern void destroySizeArr(unsigned long long* sizeArr);

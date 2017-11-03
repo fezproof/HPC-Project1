@@ -175,9 +175,9 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
 
     // MPI_Status status;
-    int numInfoMsgs = numSlaves - 1;
-    int numArrMsgs = (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves));
-    int numMsgs = numInfoMsgs + numArrMsgs;
+    // int numInfoMsgs = numSlaves - 1;
+    // int numArrMsgs = (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves));
+    // int numMsgs = numInfoMsgs + numArrMsgs;
     MPI_Request req;
 
     int actualNumMsgs = 0;
@@ -233,9 +233,44 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     //     printf("%llu\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
     // }
 
+    int boundLow = 0;
+
+    //combine boundaries
+    #pragma omp for schedule(static, 1) private(boundLow)
+        for(int i = 0; i < numSlaves - 1; i++) {
+            if(i < numStdSlaves) {
+                boundLow = i * stdRowsPerSlave + stdRowsPerSlave - 1;
+            } else {
+                boundLow = (numStdSlaves * stdRowsPerSlave) + ((i - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
+            }
+            for(int j = 0; j < size; j++) {
+                if(array[boundLow][j] && array[boundLow + 1][j]) {
+                    unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
+                }
+            }
+        }
+
+    if((numSlaves - 1) < numStdSlaves) {
+        boundLow = (numSlaves - 1) * stdRowsPerSlave + stdRowsPerSlave - 1;
+    } else {
+        boundLow = (numStdSlaves * stdRowsPerSlave) + (((numSlaves - 1) - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
+    }
+    for(int j = 0; j < size; j++) {
+        if(array[boundLow][j] && array[0][j]) {
+            // printf("hi\n");
+            unionAB(setArr, sizeArr, size, boundLow, j, 0, j);
+        }
+    }
+    for(int j = 0; j < size; j++) {
+        if(array[j][boundLow] && array[j][0]) {
+            // printf("hi\n");
+            unionAB(setArr, sizeArr, size, j, boundLow, j, 0);
+        }
+    }
+
     //TODO stitch together subarrays with union find
 
-    int largestSize = findLargestCluster(sizeArr, size);
+    int largestSize = findLargestSize(sizeArr, size);
 
     destroySetArr(setArr);
     destroySizeArr(sizeArr);

@@ -84,7 +84,7 @@ unsigned long long root(unsigned long long* setArr, unsigned long long A)
 //     }
 // }
 
-unsigned long long findLargestCluster(unsigned long long* sizeArr, int latticeSize)
+unsigned long long findLargestSize(unsigned long long* sizeArr, int latticeSize)
 {
     unsigned long long size = (unsigned long long) latticeSize;
     size = size * size;

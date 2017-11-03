@@ -131,25 +131,21 @@ void findLargestClusterSiteThread(char** array, int numRows, int numCols,
     // printLatticeSite(arrayCpy, size);
 
     int boundLow = 0;
-    int boundHigh = 0;
 
     //combine boundaries
-    #pragma omp for schedule(static, 1) private(boundLow, boundHigh)
-    for(int i = 0; i < numThreads; i++) {
-        if(i < numStdThreads) {
-            boundLow = i * stdThreadSize + stdThreadSize - 1;
-        } else {
-            boundLow = (numStdThreads * stdThreadSize) + ((i - numStdThreads) * lastThreadSize) + lastThreadSize - 1;
-        }
-        boundHigh = (boundLow + 1 + numCols) % numCols;
-        // printf("bound: %d\t bound2: %d\n", bound, (bound + 1 + size) % size);
-        for(int j = 0; j < numRows; j++) {
-            if(array[j][boundLow] && array[j][boundHigh]) {
-                // printf("hi\n");
-                unionAB(setArr, sizeArr, numCols, j, boundLow, j, boundHigh);
+    #pragma omp for schedule(static, 1) private(boundLow)
+        for(int i = 0; i < numThreads - 1; i++) {
+            if(i < numStdThreads) {
+                boundLow = i * stdThreadSize + stdThreadSize - 1;
+            } else {
+                boundLow = (numStdThreads * stdThreadSize) + ((i - numStdThreads) * lastThreadSize) + lastThreadSize - 1;
+            }
+            for(int j = 0; j < numRows; j++) {
+                if(array[j][boundLow] && array[j][boundLow + 1]) {
+                    unionAB(setArr, sizeArr, numCols, j, boundLow, j, boundLow + 1);
+                }
             }
         }
-    }
 
 }
 
@@ -316,7 +312,7 @@ unsigned long long findLargestClusterBondThread(BONDSITE** array, int size, int 
         }
     }
 
-    largestSize = findLargestCluster(sizeArr, size);
+    largestSize = findLargestSize(sizeArr, size);
 
     destroyArrayBond(arrayCpy, size);
     destroySetArr(setArr);
