@@ -212,9 +212,6 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     recieveArray1dUll(setArr, &setArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], TAG_SET_ARR, receiveReq, &curMsgNum);
     recieveArray1dUll(sizeArr, &sizeArrOffset, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], TAG_SIZE_ARR, receiveReq, &curMsgNum);
 
-    printf("Calculated num messages: %d\n", numMsgsToReceive);
-    printf("Actual num messages: %d\n", curMsgNum);
-
     MPI_Waitall(numMsgsToReceive, receiveReq, status);
 
     // for(int i = 0; i < size*size; i++) {
@@ -228,8 +225,6 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     // for(unsigned long long i = start; i < max; i++) {
     //     printf("%llu\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
     // }
-
-    printf("got here\n");
 
     int boundLow = 0;
 
@@ -266,20 +261,12 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
         }
     }
 
-    printf("got here 1\n");
-
     unsigned long long largestClusterSize = findLargestSize(sizeArr, size);
-
-    printf("got here 2\n");
 
     free(receiveReq);
     destroyArraySite(arrCpy, stdRowsPerSlave);
     destroySetArr(setArr);
     destroySizeArr(sizeArr);
-
-    printf("got here 3\n");
-
-    printf("Largest size: %llu\n", largestClusterSize);
 
     return largestClusterSize;
 
@@ -317,6 +304,8 @@ void clusterSiteSlave()
         numMsgs = info[NUM_MSGS_INDEX];
         numThreads = info[THREADS_INDEX];
         masterRowPos = info[MASTER_ROW_POS_INDEX];
+
+        omp_set_num_threads(numThreads);
 
         array = receiveArrayPortion(numMsgs, stdMsgSize, numRows, numCols);
 

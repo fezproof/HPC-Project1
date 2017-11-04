@@ -278,7 +278,6 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
 
 
         // }
-        printf("got here 4\n");
         destroyArraySite(lattice, size);
 
         largestClusterSize = 0;
