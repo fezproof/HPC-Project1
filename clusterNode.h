@@ -8,7 +8,7 @@
 #include "clusterThread.h"
 
 
-extern unsigned long long clusterSiteMaster(char** array, int size, int numNodes, int numThreads);
+extern unsigned long long clusterSiteMaster(char** array, int size, int numNodes, int numThreads, int* perc, int percType);
 
 extern void clusterSiteSlave();
 

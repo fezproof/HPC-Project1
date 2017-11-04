@@ -147,7 +147,86 @@ void adjustSetArr(unsigned long long* setArr, int numRows, int numCols, int mast
     }
 }
 
-unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int numThreads)
+void stitchNodesSite(char** array, unsigned long long* sizeArr, unsigned long long* setArr, int size, int numSlaves, int numStdSlaves, int stdRowsPerSlave, int lastRowsPerSlave) {
+    int boundLow;
+
+    #pragma omp for schedule(static, 1) private(boundLow)
+        for(int i = 0; i < numSlaves - 1; i++) {
+            if(i < numStdSlaves) {
+                boundLow = i * stdRowsPerSlave + stdRowsPerSlave - 1;
+            } else {
+                boundLow = (numStdSlaves * stdRowsPerSlave) + ((i - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
+            }
+            for(int j = 0; j < size; j++) {
+                if(array[boundLow][j] && array[boundLow + 1][j]) {
+                    unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
+                }
+            }
+        }
+}
+
+int checkPerculationSite(char** array, int size, unsigned long long* setArr, unsigned long long* sizeArr, int type) {
+    if (type == 0) {
+        // Up to Down perculation
+
+        unsigned long long* setArrUD = createSizeArr(size, size);
+        memcpy(setArrUD, setArr, (unsigned long long) size * (unsigned long long) size);
+        unsigned long long* sizeArrUD = createSizeArr(size, size);
+        memcpy(sizeArrUD, sizeArr, (unsigned long long) size * (unsigned long long) size);
+
+        for(int j = 0; j < size; j++) {
+            if(array[j][size - 1] && array[j][0]) {
+                unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (array[0][i] && array[size - 1][j] && find(setArrUD, size, 0, i, size - 1, j)) {
+                    free(setArrUD);
+                    free(sizeArrUD);
+                    return 1;
+                }
+            }
+        }
+        free(setArrUD);
+        free(sizeArrUD);
+    } else if (type == 1) {
+        // Left to Right perculation
+
+        unsigned long long* setArrLR = createSizeArr(size, size);
+        memcpy(setArrLR, setArr, (unsigned long long) size * (unsigned long long) size);
+        unsigned long long* sizeArrLR = createSizeArr(size, size);
+        memcpy(sizeArrLR, sizeArr, (unsigned long long) size * (unsigned long long) size);
+
+        for(int j = 0; j < size; j++) {
+            if(array[size - 1][j] && array[0][j]) {
+                unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (array[i][0] && array[j][size - 1] && find(setArrLR, size, i, 0, j, size - 1)) {
+                    free(setArrLR);
+                    free(sizeArrLR);
+                    return 1;
+                }
+            }
+        }
+        free(setArrLR);
+        free(sizeArrLR);
+    } else if (type == 2) {
+        // Left to Right and Up to Down perculation
+        return (checkPerculationSite(array, size, setArr, sizeArr, 0)
+            && checkPerculationSite(array, size, setArr, sizeArr, 1));
+    } else {
+        printf("Type argument is wrong\n");
+        return 0;
+    }
+
+    return 0;
+}
+
+unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, int* perc, int percType)
 {
     int numCols = size;
 
@@ -214,50 +293,24 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
     MPI_Waitall(numMsgsToReceive, receiveReq, status);
 
-    // for(int i = 0; i < size*size; i++) {
-    //     printf("%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
+    stitchNodesSite(array, sizeArr, setArr, size, numSlaves, numStdSlaves, stdRowsPerSlave, lastRowsPerSlave);
+
+    // if((numSlaves - 1) < numStdSlaves) {
+    //     boundLow = (numSlaves - 1) * stdRowsPerSlave + stdRowsPerSlave - 1;
+    // } else {
+    //     boundLow = (numStdSlaves * stdRowsPerSlave) + (((numSlaves - 1) - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
     // }
 
-    // unsigned long long start = (unsigned long long) size;
-    // start = start * start;
-    // unsigned long long max = start;
-    // start -= 10;
-    // for(unsigned long long i = start; i < max; i++) {
-    //     printf("%llu\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
-    // }
+    *perc = checkPerculationSite(array, size, setArr, sizeArr, 2);
 
-    int boundLow = 0;
-
-    //combine boundaries
-    #pragma omp for schedule(static, 1) private(boundLow)
-        for(int i = 0; i < numSlaves - 1; i++) {
-            if(i < numStdSlaves) {
-                boundLow = i * stdRowsPerSlave + stdRowsPerSlave - 1;
-            } else {
-                boundLow = (numStdSlaves * stdRowsPerSlave) + ((i - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
-            }
-            for(int j = 0; j < size; j++) {
-                if(array[boundLow][j] && array[boundLow + 1][j]) {
-                    unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
-                }
-            }
-        }
-
-    if((numSlaves - 1) < numStdSlaves) {
-        boundLow = (numSlaves - 1) * stdRowsPerSlave + stdRowsPerSlave - 1;
-    } else {
-        boundLow = (numStdSlaves * stdRowsPerSlave) + (((numSlaves - 1) - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
-    }
     for(int j = 0; j < size; j++) {
-        if(array[boundLow][j] && array[0][j]) {
-            // printf("hi\n");
-            unionAB(setArr, sizeArr, size, boundLow, j, 0, j);
+        if(array[size - 1][j] && array[0][j]) {
+            unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
         }
     }
     for(int j = 0; j < size; j++) {
-        if(array[j][boundLow] && array[j][0]) {
-            // printf("hi\n");
-            unionAB(setArr, sizeArr, size, j, boundLow, j, 0);
+        if(array[j][size - 1] && array[j][0]) {
+            unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
         }
     }
 

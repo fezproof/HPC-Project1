@@ -201,7 +201,9 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
         // printLatticeSite(lattice, size, size);
 
         largestClusterSize = findLargestClusterSite(lattice, size);
-        printf("Largest (Sequential): %llu\n\n", largestClusterSize);
+        printf("Largest (Sequential): %llu\n", largestClusterSize);
+        percResult = percolateSite(lattice, size, test);
+        printf("Percolated? (Sequential): %s\n\n", percResult == 1 ? "YES" : "NO");
 
         int n = maxNumNodes;
         // for(int n = 1; n <= maxNumNodes; n++) {
@@ -227,9 +229,7 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     }
                     omp_set_num_threads(numThreads);
 
-                    // percTimes[j] += timeSitePerc(lattice, size, test, &percResultThreaded, n, numThreads);
-                    percTimes[j] = 1;
-                    clusterTimes[j] += timeSiteCluster(lattice, size, chance, &largestClusterSizeThreaded, n, numThreads);
+                    clusterTimes[j] += timeSiteCluster(lattice, size, chance, &largestClusterSizeThreaded, &percResultThreaded, test, n, numThreads);
 
                     if(largestClusterSize != largestClusterSizeThreaded) {
                         printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
@@ -245,8 +245,6 @@ void doSiteTests(int size, double chance, int test, int runs, int maxLatticeSize
                     if(percResultThreaded == 1) numPercs[j]++;
                     clusterSizes[j] += largestClusterSizeThreaded;
                 // }
-
-
             }
 
 
