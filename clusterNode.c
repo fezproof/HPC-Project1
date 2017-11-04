@@ -147,7 +147,7 @@ void adjustSetArr(unsigned long long* setArr, int numRows, int numCols, int mast
     }
 }
 
-void clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, unsigned long long* largestClusterSize)
+unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int numThreads)
 {
     int numCols = size;
 
@@ -217,7 +217,6 @@ void clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, un
 
     MPI_Waitall(numMsgsToReceive, receiveReq, &status);
 
-
     // unsigned long long start = (unsigned long long) size;
     // start = start * start;
     // unsigned long long max = start;
@@ -271,20 +270,21 @@ void clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, un
     // }
 
 
-    *largestClusterSize = findLargestSize(sizeArr, size);
+    unsigned long long largestClusterSize = findLargestSize(sizeArr, size);
 
     printf("got here 2\n");
 
-    destroyArraySite(arrCpy, size);
-    
+    free(receiveReq);
+    destroyArraySite(arrCpy, stdRowsPerSlave);
     destroySetArr(setArr);
     destroySizeArr(sizeArr);
 
     printf("got here 3\n");
 
-    printf("Largest size: %llu\n", *largestClusterSize);
-    printf("Largest size: %p\n", (void *) largestClusterSize);
+    printf("Largest size: %llu\n", largestClusterSize);
+    printf("Largest size: %p\n", (void *) &largestClusterSize);
 
+    return largestClusterSize;
 
 }
 

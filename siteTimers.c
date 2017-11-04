@@ -50,8 +50,8 @@ double timeSiteCluster(char** lattice, int size, double chance, unsigned long lo
     if(chance > 0) {
 
         printf("largestClusterSize: %p\n", (void *) largestClusterSize);
-        
-        clusterSiteMaster(lattice, size, numNodes, numThreads, largestClusterSize);
+
+        *largestClusterSize = clusterSiteMaster(lattice, size, numNodes, numThreads);
 
         printf("largestClusterSize: %p\n", (void *) largestClusterSize);
 
