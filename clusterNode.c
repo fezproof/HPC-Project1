@@ -201,8 +201,8 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     int numMsgsToReceive = 2 * ( (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves)) );
     int curMsgNum = 0;
 
-    MPI_Status status;
-    MPI_Request* receiveReq = malloc(numMsgsToReceive * sizeof(MPI_Request*));
+    MPI_Status* status = malloc(numMsgsToReceive * sizeof(MPI_Status));
+    MPI_Request* receiveReq = malloc(numMsgsToReceive * sizeof(MPI_Request));
 
     unsigned long long setArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) numCols;
     unsigned long long sizeArrOffset = (unsigned long long) stdRowsPerSlave * (unsigned long long) numCols;
@@ -215,7 +215,11 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     printf("Calculated num messages: %d\n", numMsgsToReceive);
     printf("Actual num messages: %d\n", curMsgNum);
 
-    MPI_Waitall(numMsgsToReceive, receiveReq, &status);
+    MPI_Waitall(numMsgsToReceive, receiveReq, status);
+
+    // for(int i = 0; i < size*size; i++) {
+    //     printf("%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
+    // }
 
     // unsigned long long start = (unsigned long long) size;
     // start = start * start;
@@ -262,13 +266,7 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
         }
     }
 
-
     printf("got here 1\n");
-
-    // for(int i = 0; i < size*size; i++) {
-    //     printf("%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
-    // }
-
 
     unsigned long long largestClusterSize = findLargestSize(sizeArr, size);
 
@@ -282,7 +280,6 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
     printf("got here 3\n");
 
     printf("Largest size: %llu\n", largestClusterSize);
-    printf("Largest size: %p\n", (void *) &largestClusterSize);
 
     return largestClusterSize;
 
