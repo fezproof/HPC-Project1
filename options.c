@@ -1,7 +1,7 @@
 #include "options.h"
 
 #define NO_MORE_OPTIONS -1
-#define OPTLIST "l:P:p:r:t:n:m:M:"
+#define OPTLIST "l:P:p:r:t:T:n:N:s:S:"
 
 void printUsage(void)
 {
@@ -10,10 +10,12 @@ void printUsage(void)
             "\t-P <0-1 float> : chance of allocation\n"
             "\t-p <0, 1, OR 2> : whether percolation does UD, LR, or both\n"
             "\t-r <positive int> : how many runs per size for averaging\n"
-            "\t-t <positive int> : number of threads to use\n"
-            "\t-n <positive int> : number of node to use\n"
-            "\t-m <positive even int> : min lattice size\n"
-            "\t-M <positive even int> : max lattice size\n\n");
+            "\t-t <positive int> : min number of threads to use\n"
+            "\t-T <positive int> : max number of threads to use\n"
+            "\t-n <positive int> : min number of nodes to use\n"
+            "\t-N <positive int> : max number of nodes to use\n"
+            "\t-s <positive even int> : min lattice size\n"
+            "\t-S <positive even int> : max lattice size\n\n");
     exit(EXIT_FAILURE);
 }
 
@@ -49,23 +51,35 @@ int readOptions(int argc, char *argv[], OPTIONS *options)
                 } break;
             case 't' :
                 if (atoi(optarg) > 0) {
-                    options->threadNum = atoi(optarg);
+                    options->minThreadNum = atoi(optarg);
+                } else {
+                    argc = -1;
+                } break;
+            case 'T' :
+                if (atoi(optarg) > 0) {
+                    options->maxThreadNum = atoi(optarg);
                 } else {
                     argc = -1;
                 } break;
             case 'n' :
                 if (atoi(optarg) > 0) {
-                    options->nodeNum = atoi(optarg);
+                    options->minNodeNum = atoi(optarg);
                 } else {
                     argc = -1;
                 } break;
-            case 'm' :
+            case 'N' :
+                if (atoi(optarg) > 0) {
+                    options->maxNodeNum = atoi(optarg);
+                } else {
+                    argc = -1;
+                } break;
+            case 's' :
                 if (atoi(optarg) > 0 && atoi(optarg) % 2 == 0) {
                     options->minSize = atoi(optarg);
                 } else {
                     argc = -1;
                 } break;
-            case 'M' :
+            case 'S' :
                 if (atoi(optarg) >= options->minSize && atoi(optarg) % 2 == 0) {
                     options->maxSize = atoi(optarg);
                 } else {
@@ -89,8 +103,10 @@ void printOptions(OPTIONS *options)
     printf("P : %f\n", options->probability);
     printf("p : %d\n", options->perlocationType);
     printf("r : %d\n", options->runs);
-    printf("t : %d\n", options->threadNum);
-    printf("n : %d\n", options->nodeNum);
+    printf("t : %d\n", options->minThreadNum);
+    printf("T : %d\n", options->maxThreadNum);
+    printf("n : %d\n", options->minNodeNum);
+    printf("N : %d\n", options->maxNodeNum);
     printf("m : %d\n", options->minSize);
     printf("M : %d\n", options->maxSize);
 }
@@ -101,8 +117,10 @@ void initialiseOptionsStruct(OPTIONS *options)
     options->probability = 0.6;
     options->perlocationType = 2; //-1 indicates to search ALL subdirectories
     options->runs = 1;
-    options->threadNum = 4;
-    options->nodeNum = 1;
+    options->minThreadNum = 4;
+    options->maxThreadNum = 4;
+    options->minNodeNum = 1;
+    options->maxNodeNum = 1;
     options->minSize = 16;
     options->maxSize = 8192;
 }
