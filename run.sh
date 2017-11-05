@@ -1,4 +1,4 @@
-#PBS -l walltime=0:10:00,nodes=2:ppn=12
+#PBS -l walltime=0:10:00,nodes=1:ppn=12
 #PBS -m abe
 #PBS -M matthew.stagoll@gmail.com
 #PBS -e ./error.txt

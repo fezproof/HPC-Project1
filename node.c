@@ -197,7 +197,7 @@ void adjustSetArr(unsigned long long* setArr, int numRows, int numCols, int mast
 void stitchNodes(void** array, char latticeType, unsigned long long* sizeArr, unsigned long long* setArr, int size, int numSlaves, int numStdSlaves, int stdRowsPerSlave, int lastRowsPerSlave) {
     int boundLow;
 
-    #pragma omp for schedule(static, 1) private(boundLow)
+    #pragma omp parallel for private(boundLow)
         for(int i = 0; i < numSlaves - 1; i++) {
             if(i < numStdSlaves) {
                 boundLow = i * stdRowsPerSlave + stdRowsPerSlave - 1;
@@ -229,20 +229,30 @@ int checkPerculationSite(char** array, int size, unsigned long long* setArr, uns
         unsigned long long* sizeArrUD = createSizeArr(size, size);
         memcpy(sizeArrUD, sizeArr, (unsigned long long) size * (unsigned long long) size);
 
-        for(int j = 0; j < size; j++) {
-            if(array[j][size - 1] && array[j][0]) {
-                unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (array[0][i] && array[size - 1][j] && find(setArrUD, size, 0, i, size - 1, j)) {
-                    free(setArrUD);
-                    free(sizeArrUD);
-                    return 1;
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(array[j][size - 1] && array[j][0]) {
+                    unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
                 }
             }
+
+        int percolates = 0;
+
+        #pragma omp parallel for
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (!percolates && array[0][i] && array[size - 1][j] && find(setArrUD, size, 0, i, size - 1, j)) {
+                        percolates = 1;
+                    }
+                }
+            }
+
+        if(percolates) {
+            free(setArrUD);
+            free(sizeArrUD);
+            return 1;
         }
+
         free(setArrUD);
         free(sizeArrUD);
     } else if (type == 1) {
@@ -253,19 +263,27 @@ int checkPerculationSite(char** array, int size, unsigned long long* setArr, uns
         unsigned long long* sizeArrLR = createSizeArr(size, size);
         memcpy(sizeArrLR, sizeArr, (unsigned long long) size * (unsigned long long) size);
 
-        for(int j = 0; j < size; j++) {
-            if(array[size - 1][j] && array[0][j]) {
-                unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (array[i][0] && array[j][size - 1] && find(setArrLR, size, i, 0, j, size - 1)) {
-                    free(setArrLR);
-                    free(sizeArrLR);
-                    return 1;
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(array[size - 1][j] && array[0][j]) {
+                    unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
                 }
             }
+
+        int percolates = 0;
+
+        #pragma omp parallel for
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (!percolates && array[i][0] && array[j][size - 1] && find(setArrLR, size, i, 0, j, size - 1)) {
+                        percolates = 1;
+                    }
+                }
+            }
+        if(percolates) {
+            free(setArrLR);
+            free(sizeArrLR);
+            return 1;
         }
         free(setArrLR);
         free(sizeArrLR);
@@ -290,20 +308,30 @@ int checkPerculationBond(BONDSITE** array, int size, unsigned long long* setArr,
         unsigned long long* sizeArrUD = createSizeArr(size, size);
         memcpy(sizeArrUD, sizeArr, (unsigned long long) size * (unsigned long long) size);
 
-        for(int j = 0; j < size; j++) {
-            if(array[j][0].left) {
-                unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (array[0][i].up && find(setArrUD, size, 0, i, size - 1, j)) {
-                    free(setArrUD);
-                    free(sizeArrUD);
-                    return 1;
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(array[j][0].left) {
+                    unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
                 }
             }
+
+        int percolates = 0;
+
+        #pragma omp parallel for
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (!percolates && array[0][i].up && find(setArrUD, size, 0, i, size - 1, j)) {
+                        percolates = 1;
+                    }
+                }
+            }
+
+        if(percolates) {
+            free(setArrUD);
+            free(sizeArrUD);
+            return 1;
         }
+
         free(setArrUD);
         free(sizeArrUD);
     } else if (type == 1) {
@@ -314,20 +342,30 @@ int checkPerculationBond(BONDSITE** array, int size, unsigned long long* setArr,
         unsigned long long* sizeArrLR = createSizeArr(size, size);
         memcpy(sizeArrLR, sizeArr, (unsigned long long) size * (unsigned long long) size);
 
-        for(int j = 0; j < size; j++) {
-            if(array[0][j].up) {
-                unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (array[i][0].left && find(setArrLR, size, i, 0, j, size - 1)) {
-                    free(setArrLR);
-                    free(sizeArrLR);
-                    return 1;
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(array[0][j].up) {
+                    unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
                 }
             }
+
+        int percolates = 0;
+
+        #pragma omp parallel for
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (!percolates && array[i][0].left && find(setArrLR, size, i, 0, j, size - 1)) {
+                        percolates = 1;
+                    }
+                }
+            }
+
+        if(percolates) {
+            free(setArrLR);
+            free(sizeArrLR);
+            return 1;
         }
+
         free(setArrLR);
         free(sizeArrLR);
     } else if (type == 2) {
@@ -429,28 +467,32 @@ unsigned long long clusterMaster(void** array, char latticeType, int size, int n
 
     if(latticeType == 's') {
         *perc = checkPerculationSite((char**)array, size, setArr, sizeArr, 2);
-        for(int j = 0; j < size; j++) {
-            if(((char**)array)[size - 1][j] && ((char**)array)[0][j]) {
-                unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(((char**)array)[size - 1][j] && ((char**)array)[0][j]) {
+                    unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+                }
             }
-        }
-        for(int j = 0; j < size; j++) {
-            if(((char**)array)[j][size - 1] && ((char**)array)[j][0]) {
-                unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(((char**)array)[j][size - 1] && ((char**)array)[j][0]) {
+                    unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+                }
             }
-        }
     } else {
         *perc = checkPerculationBond((BONDSITE**)array, size, setArr, sizeArr, 2);
-        for(int j = 0; j < size; j++) {
-            if(((BONDSITE**)array)[size - 1][j].down) {
-                unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(((BONDSITE**)array)[size - 1][j].down) {
+                    unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+                }
             }
-        }
-        for(int j = 0; j < size; j++) {
-            if(((BONDSITE**)array)[j][size - 1].right) {
-                unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+        #pragma omp parallel for
+            for(int j = 0; j < size; j++) {
+                if(((BONDSITE**)array)[j][size - 1].right) {
+                    unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+                }
             }
-        }
     }
 
     unsigned long long largestClusterSize = findLargestSize(sizeArr, size);
