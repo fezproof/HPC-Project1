@@ -1,3 +1,5 @@
+#include <mpi.h>
+
 #ifndef BOND_H
 #define BOND_H
 

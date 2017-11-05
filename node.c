@@ -1,4 +1,4 @@
-#include "clusterNode.h"
+#include "node.h"
 
 #define INFO_SIZE 7
 
@@ -17,6 +17,8 @@
 #define TAG_SIZE_ARR 4
 #define TAG_INFO 5
 #define TAG_ARR 6
+
+MPI_Datatype MPI_BONDSITE; //declare custom MPI struct
 
 void terminateSlaves(int numSlaves)
 {
@@ -47,12 +49,11 @@ void sendInfoToSlaves(int* info, int firstSlave, int lastSlave, int startRow)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
         info[MASTER_ROW_POS_INDEX] = startRow + info[NUM_ROWS_INDEX] * (i - firstSlave);
-        // printf("Master row pos for slave %d: %d\n", i, info[MASTER_ROW_POS_INDEX]);
         MPI_Send(info, INFO_SIZE, MPI_INT, i, TAG_INFO, MPI_COMM_WORLD);
     }
 }
 
-void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req)
+void sendArrToSlavesSite(char** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req)
 {
     for(int i = firstSlave; i < lastSlave; i++) {
 
@@ -65,6 +66,27 @@ void sendArrToSlaves(char** array, int* rowOffset, int firstSlave, int lastSlave
             (*rowOffset) += stdMsgSize / numCols;
         } else {
             MPI_Isend(&(array[*rowOffset][0]), lastMsgSize, MPI_CHAR, i, TAG_ARR, MPI_COMM_WORLD, req);
+            (*rowOffset) += lastMsgSize / numCols;
+        }
+    }
+}
+
+void sendArrToSlavesBond(BONDSITE** array, int* rowOffset, int firstSlave, int lastSlave, int numMsgs, int stdMsgSize, int lastMsgSize, int numCols, MPI_Request* req)
+{
+    // MPI_Datatype mpi_bondsite;
+    // MPI_Type_contiguous(1, MPI_UNSIGNED, &mpi_bondsite);
+
+    for(int i = firstSlave; i < lastSlave; i++) {
+
+        for(int j = 0; j < numMsgs-1; j++) {
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_UNSIGNED, i, TAG_ARR, MPI_COMM_WORLD, req);
+            (*rowOffset) += stdMsgSize / numCols;
+        }
+        if(lastMsgSize == 0) {
+            MPI_Isend(&(array[*rowOffset][0]), stdMsgSize, MPI_UNSIGNED, i, TAG_ARR, MPI_COMM_WORLD, req);
+            (*rowOffset) += stdMsgSize / numCols;
+        } else {
+            MPI_Isend(&(array[*rowOffset][0]), lastMsgSize, MPI_UNSIGNED, i, TAG_ARR, MPI_COMM_WORLD, req);
             (*rowOffset) += lastMsgSize / numCols;
         }
     }
@@ -125,16 +147,41 @@ void sendArray1dUll(unsigned long long* arr, int numMsgs, int stdMsgSize, int la
     }
 }
 
-char** receiveArrayPortion(int numMsgs, int stdMsgSize, int numRows, int numCols)
+void** receiveArrayPortion(int numMsgs, int stdMsgSize, int numRows, int numCols, char type)
 {
-    char** array = createBlankLatticeSite(numRows, numCols);
-    MPI_Status status;
-    int rowOffset = 0;
+    void** array;
 
-    for(int i = 0; i < numMsgs; i++) {
-        MPI_Recv(&array[rowOffset][0], stdMsgSize, MPI_CHAR, 0, TAG_ARR, MPI_COMM_WORLD, &status);
-        rowOffset += stdMsgSize / numCols;
+    if(type == 's') {
+        array = (void**) createBlankLatticeSite(numRows, numCols);
+    } else {
+        array = (void**) createBlankLatticeBond(numRows, numCols);
     }
+
+    MPI_Status* status = malloc(numMsgs * sizeof(MPI_Status));
+    MPI_Request* req = malloc(numMsgs * sizeof(MPI_Request));
+
+    int rowOffset = 0;
+    int curMsgNum = 0;
+
+    if(type == 's') {
+        char** cArr = (char**) array;
+        for(int i = 0; i < numMsgs; i++) {
+            MPI_Irecv(&cArr[rowOffset][0], stdMsgSize, MPI_CHAR, 0, TAG_ARR, MPI_COMM_WORLD, &req[curMsgNum]);
+            rowOffset += stdMsgSize / numCols;
+            curMsgNum++;
+        }
+    } else {
+        BONDSITE** bArr = (BONDSITE**) array;
+        // MPI_Datatype mpi_bondsite;
+        // MPI_Type_contiguous(1, MPI_UNSIGNED, &mpi_bondsite);
+        for(int i = 0; i < numMsgs; i++) {
+            MPI_Irecv(&bArr[rowOffset][0], stdMsgSize, MPI_UNSIGNED, 0, TAG_ARR, MPI_COMM_WORLD, &req[curMsgNum]);
+            rowOffset += stdMsgSize / numCols;
+            curMsgNum++;
+        }
+    }
+
+    MPI_Waitall(numMsgs, req, status);
 
     return array;
 }
@@ -147,7 +194,7 @@ void adjustSetArr(unsigned long long* setArr, int numRows, int numCols, int mast
     }
 }
 
-void stitchNodesSite(char** array, unsigned long long* sizeArr, unsigned long long* setArr, int size, int numSlaves, int numStdSlaves, int stdRowsPerSlave, int lastRowsPerSlave) {
+void stitchNodes(void** array, char latticeType, unsigned long long* sizeArr, unsigned long long* setArr, int size, int numSlaves, int numStdSlaves, int stdRowsPerSlave, int lastRowsPerSlave) {
     int boundLow;
 
     #pragma omp for schedule(static, 1) private(boundLow)
@@ -157,9 +204,17 @@ void stitchNodesSite(char** array, unsigned long long* sizeArr, unsigned long lo
             } else {
                 boundLow = (numStdSlaves * stdRowsPerSlave) + ((i - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
             }
-            for(int j = 0; j < size; j++) {
-                if(array[boundLow][j] && array[boundLow + 1][j]) {
-                    unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
+            if(latticeType == 's') {
+                for(int j = 0; j < size; j++) {
+                    if(((char**)array)[boundLow][j] && ((char**)array)[boundLow + 1][j]) {
+                        unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
+                    }
+                }
+            } else {
+                for(int j = 0; j < size; j++) {
+                    if(((BONDSITE**)array)[boundLow][j].down) {
+                        unionAB(setArr, sizeArr, size, boundLow, j, boundLow + 1, j);
+                    }
                 }
             }
         }
@@ -226,7 +281,68 @@ int checkPerculationSite(char** array, int size, unsigned long long* setArr, uns
     return 0;
 }
 
-unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int numThreads, int* perc, int percType)
+int checkPerculationBond(BONDSITE** array, int size, unsigned long long* setArr, unsigned long long* sizeArr, int type) {
+    if (type == 0) {
+        // Up to Down perculation
+
+        unsigned long long* setArrUD = createSizeArr(size, size);
+        memcpy(setArrUD, setArr, (unsigned long long) size * (unsigned long long) size);
+        unsigned long long* sizeArrUD = createSizeArr(size, size);
+        memcpy(sizeArrUD, sizeArr, (unsigned long long) size * (unsigned long long) size);
+
+        for(int j = 0; j < size; j++) {
+            if(array[j][0].left) {
+                unionAB(setArrUD, sizeArrUD, size, j, size - 1, j, 0);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (array[0][i].up && find(setArrUD, size, 0, i, size - 1, j)) {
+                    free(setArrUD);
+                    free(sizeArrUD);
+                    return 1;
+                }
+            }
+        }
+        free(setArrUD);
+        free(sizeArrUD);
+    } else if (type == 1) {
+        // Left to Right perculation
+
+        unsigned long long* setArrLR = createSizeArr(size, size);
+        memcpy(setArrLR, setArr, (unsigned long long) size * (unsigned long long) size);
+        unsigned long long* sizeArrLR = createSizeArr(size, size);
+        memcpy(sizeArrLR, sizeArr, (unsigned long long) size * (unsigned long long) size);
+
+        for(int j = 0; j < size; j++) {
+            if(array[0][j].up) {
+                unionAB(setArrLR, sizeArrLR, size, size - 1, j, 0, j);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (array[i][0].left && find(setArrLR, size, i, 0, j, size - 1)) {
+                    free(setArrLR);
+                    free(sizeArrLR);
+                    return 1;
+                }
+            }
+        }
+        free(setArrLR);
+        free(sizeArrLR);
+    } else if (type == 2) {
+        // Left to Right and Up to Down perculation
+        return (checkPerculationBond(array, size, setArr, sizeArr, 0)
+            && checkPerculationBond(array, size, setArr, sizeArr, 1));
+    } else {
+        printf("Type argument is wrong\n");
+        return 0;
+    }
+
+    return 0;
+}
+
+unsigned long long clusterMaster(void** array, char latticeType, int size, int numSlaves, int numThreads, int* perc, int percType)
 {
     int numCols = size;
 
@@ -257,25 +373,41 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
     determineSizeOfMessages(stdRowsPerSlave, numCols, &info1[STD_MSG_SIZE_INDEX], &info1[LAST_MSG_SIZE_INDEX], &info1[NUM_MSGS_INDEX]);
     sendInfoToSlaves(info1, 1, numStdSlaves, stdRowsPerSlave);
-    sendArrToSlaves(array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
+    if(latticeType == 's') {
+        sendArrToSlavesSite((char**)array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
+    } else {
+        sendArrToSlavesBond((BONDSITE**)array, &rowOffet, 1, numStdSlaves, info1[NUM_MSGS_INDEX], info1[STD_MSG_SIZE_INDEX], info1[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
+    }
 
     //---------------------------- Final procs ----------------------------------
 
     determineSizeOfMessages(lastRowsPerSlave, numCols, &info2[STD_MSG_SIZE_INDEX], &info2[LAST_MSG_SIZE_INDEX], &info2[NUM_MSGS_INDEX]);
     sendInfoToSlaves(info2, numStdSlaves, numSlaves, numStdSlaves*stdRowsPerSlave);
-    sendArrToSlaves(array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
-
+    if(latticeType == 's') {
+        sendArrToSlavesSite((char**)array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
+    } else {
+        sendArrToSlavesBond((BONDSITE**)array, &rowOffet, numStdSlaves, numSlaves, info2[NUM_MSGS_INDEX], info2[STD_MSG_SIZE_INDEX], info2[LAST_MSG_SIZE_INDEX], numCols, &sendReq);
+    }
     //--------------- Process the first segment of the array -------------------
 
-    printf("--------- Master arr %dx%d--------------\n", stdRowsPerSlave, numCols);
-    // printLatticeSite(array, stdRowsPerSlave, numCols);
+    // printf("--------- Master arr %dx%d--------------\n", stdRowsPerSlave, numCols);
+    // if(latticeType == 's') printLatticeSite((char**)array, stdRowsPerSlave, numCols);
+    // else printLatticeBond((BONDSITE**)array, stdRowsPerSlave, numCols);
 
     unsigned long long* setArr = createSetArr(size, size);
     unsigned long long* sizeArr = createSizeArr(size, size);
 
-    char** arrCpy = copyLatticeSite(array, stdRowsPerSlave, numCols);
-
-    findLargestClusterSiteThread(arrCpy, stdRowsPerSlave, numCols, setArr, sizeArr, numThreads);
+    if(latticeType == 's') {
+        char** arrCpy;
+        arrCpy = copyLatticeSite((char**)array, stdRowsPerSlave, numCols);
+        findLargestClusterSiteThread(arrCpy, stdRowsPerSlave, numCols, setArr, sizeArr, numThreads);
+        destroyArray((void**)arrCpy, stdRowsPerSlave);
+    } else {
+        BONDSITE** arrCpy;
+        arrCpy = copyLatticeBond((BONDSITE**)array, stdRowsPerSlave, numCols);
+        findLargestClusterBondThread(arrCpy, stdRowsPerSlave, numCols, setArr, sizeArr, numThreads);
+        destroyArray((void**)arrCpy, stdRowsPerSlave);
+    }
 
     int numMsgsToReceive = 2 * ( (info1[NUM_MSGS_INDEX] * (numStdSlaves-1)) + (info2[NUM_MSGS_INDEX] * (numSlaves-numStdSlaves)) );
     int curMsgNum = 0;
@@ -293,31 +425,37 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
     MPI_Waitall(numMsgsToReceive, receiveReq, status);
 
-    stitchNodesSite(array, sizeArr, setArr, size, numSlaves, numStdSlaves, stdRowsPerSlave, lastRowsPerSlave);
+    stitchNodes(array, latticeType, sizeArr, setArr, size, numSlaves, numStdSlaves, stdRowsPerSlave, lastRowsPerSlave);
 
-    // if((numSlaves - 1) < numStdSlaves) {
-    //     boundLow = (numSlaves - 1) * stdRowsPerSlave + stdRowsPerSlave - 1;
-    // } else {
-    //     boundLow = (numStdSlaves * stdRowsPerSlave) + (((numSlaves - 1) - numStdSlaves) * lastRowsPerSlave) + lastRowsPerSlave - 1;
-    // }
-
-    *perc = checkPerculationSite(array, size, setArr, sizeArr, 2);
-
-    for(int j = 0; j < size; j++) {
-        if(array[size - 1][j] && array[0][j]) {
-            unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+    if(latticeType == 's') {
+        *perc = checkPerculationSite((char**)array, size, setArr, sizeArr, 2);
+        for(int j = 0; j < size; j++) {
+            if(((char**)array)[size - 1][j] && ((char**)array)[0][j]) {
+                unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+            }
         }
-    }
-    for(int j = 0; j < size; j++) {
-        if(array[j][size - 1] && array[j][0]) {
-            unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+        for(int j = 0; j < size; j++) {
+            if(((char**)array)[j][size - 1] && ((char**)array)[j][0]) {
+                unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+            }
+        }
+    } else {
+        *perc = checkPerculationBond((BONDSITE**)array, size, setArr, sizeArr, 2);
+        for(int j = 0; j < size; j++) {
+            if(((BONDSITE**)array)[size - 1][j].down) {
+                unionAB(setArr, sizeArr, size, size - 1, j, 0, j);
+            }
+        }
+        for(int j = 0; j < size; j++) {
+            if(((BONDSITE**)array)[j][size - 1].right) {
+                unionAB(setArr, sizeArr, size, j, size - 1, j, 0);
+            }
         }
     }
 
     unsigned long long largestClusterSize = findLargestSize(sizeArr, size);
 
     free(receiveReq);
-    destroyArraySite(arrCpy, stdRowsPerSlave);
     destroySetArr(setArr);
     destroySizeArr(sizeArr);
 
@@ -325,7 +463,7 @@ unsigned long long clusterSiteMaster(char** array, int size, int numSlaves, int 
 
 }
 
-void clusterSiteSlave()
+void clusterSlave(char latticeType)
 {
     MPI_Status status;
 
@@ -338,7 +476,7 @@ void clusterSiteSlave()
     int numThreads;
     int masterRowPos;
 
-    char** array;
+    void** array;
 
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -346,7 +484,7 @@ void clusterSiteSlave()
     while(1) {
         MPI_Recv(info, INFO_SIZE, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         if (status.MPI_TAG == TAG_TERMINATE) {
-            printf("terminating: %d\n", rank);
+            // printf("terminating: %d\n", rank);
             break;
         }
 
@@ -360,21 +498,22 @@ void clusterSiteSlave()
 
         omp_set_num_threads(numThreads);
 
-        array = receiveArrayPortion(numMsgs, stdMsgSize, numRows, numCols);
+        array = receiveArrayPortion(numMsgs, stdMsgSize, numRows, numCols, latticeType);
 
-        printf("--------- Slave %d's array: %dx%d--------------\n", rank, numRows, numCols);
-        // printLatticeSite(array, numRows, numCols);
+        // printf("--------- Slave %d's array: %dx%d--------------\n", rank, numRows, numCols);
+        // if(latticeType == 's') printLatticeSite((char**)array, numRows, numCols);
+        // else printLatticeBond((BONDSITE**)array, numRows, numCols);
 
         unsigned long long* setArr = createSetArr(numRows, numCols);
         unsigned long long* sizeArr = createSizeArr(numRows, numCols);
 
-        findLargestClusterSiteThread(array, numRows, numCols, setArr, sizeArr, numThreads);
-
-        // for(int i = 0; i < numRows * numCols; i++) {
-        //     // printf("Slave\t%d\t%llu\t%llu\n", i, setArr[i], sizeArr[i]);
-        //     setArr[i] = i;
-        //     sizeArr[i] = i;
-        // }
+        if(latticeType == 's') {
+            char** cArr = (char**) array;
+            findLargestClusterSiteThread(cArr, numRows, numCols, setArr, sizeArr, numThreads);
+        } else {
+            BONDSITE** bArr = (BONDSITE**) array;
+            findLargestClusterBondThread(bArr, numRows, numCols, setArr, sizeArr, numThreads);
+        }
 
         adjustSetArr(setArr, numRows, numCols, masterRowPos);
 
@@ -383,16 +522,11 @@ void clusterSiteSlave()
 
         destroySetArr(setArr);
         destroySizeArr(sizeArr);
-        destroyArraySite(array, numRows);
+        destroyArray(array, numRows);
     }
 }
 
-unsigned long long clusterBondMaster(BONDSITE** array, int size, int numSlaves, int numThreads)
+unsigned long long clusterBondMaster(BONDSITE** array, int size, int numSlaves, int numThreads, int*perc, int percType)
 {
     return 0;
-}
-
-void clusterBondSlave()
-{
-    printf("hey");
 }

@@ -3,8 +3,8 @@
 #include <time.h>
 #include <omp.h>
 #include <mpi.h>
-#include "siteTimers.h"
-#include "bondTimers.h"
+#include <limits.h>
+#include "timers.h"
 #include "options.h"
-#include "clusterNode.h"
-#include "clusterThread.h"
+#include "node.h"
+#include "thread.h"

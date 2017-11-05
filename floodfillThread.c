@@ -134,7 +134,7 @@ void floodfillSiteThread(char** array, int numRows, int numCols, QUEUE queue, in
 
 //returns the size of a cluster
 //first element in the queue is the start of the cluster
-void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int westLim, int eastLim, unsigned long long* setArr, unsigned long long* sizeArr)
+void floodfillBondThread(BONDSITE** array, int numRows, int numCols, QUEUE queue, int westLim, int eastLim, unsigned long long* setArr, unsigned long long* sizeArr)
 {
     QUEUE_VERT v;
 
@@ -151,8 +151,16 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int westLim, i
     {
         v = dequeue(&queue);
 
-        northVert = (v.x - 1 + size) % size;
-        southVert = (v.x + 1 + size) % size;
+        if (v.x < numRows - 1) {
+            southVert = v.x + 1;
+        } else {
+            southVert = -1;
+        }
+        if (v.x > 0) {
+            northVert = v.x - 1;
+        } else{
+            northVert = -1;
+        }
 
         if (v.y < eastLim) {
             eastVert = v.y + 1;
@@ -166,20 +174,22 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int westLim, i
         }
 
         //check south of the dequeued site
+        if (southVert != -1)
         if(array[v.x][v.y].down == 1 && array[southVert][v.y].seen == 0) {
             array[southVert][v.y].seen = 1;
             newV.y = v.y;
             newV.x = southVert;
-            unionAB(setArr, sizeArr, size, v.x, v.y, southVert, v.y);
+            unionAB(setArr, sizeArr, numCols, v.x, v.y, southVert, v.y);
             enqueue(&queue, newV);
         }
 
         // check north of the dequeued site
+        if (northVert != -1)
         if(array[v.x][v.y].up == 1 && array[northVert][v.y].seen == 0) {
             array[northVert][v.y].seen = 1;
             newV.y = v.y;
             newV.x = northVert;
-            unionAB(setArr, sizeArr, size, v.x, v.y, northVert, v.y);
+            unionAB(setArr, sizeArr, numCols, v.x, v.y, northVert, v.y);
             enqueue(&queue, newV);
         }
 
@@ -190,23 +200,25 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int westLim, i
         while(array[v.x][curVert].left == 1 && array[v.x][westVert].seen == 0)
         {
             array[v.x][westVert].seen = 1;
-            unionAB(setArr, sizeArr, size, v.x, curVert, v.x, westVert);
+            unionAB(setArr, sizeArr, numCols, v.x, curVert, v.x, westVert);
 
             //check south and add to queue
+            if (southVert != -1)
             if(array[v.x][westVert].down == 1 && array[southVert][westVert].seen == 0) {
                 array[southVert][westVert].seen = 1;
                 newV.y = westVert;
                 newV.x = southVert;
-                unionAB(setArr, sizeArr, size, v.x, westVert, southVert, westVert);
+                unionAB(setArr, sizeArr, numCols, v.x, westVert, southVert, westVert);
                 enqueue(&queue, newV);
             }
 
             //check north and add to queue
+            if (northVert != -1)
             if(array[v.x][westVert].up == 1 && array[northVert][westVert].seen == 0) {
                 array[northVert][westVert].seen = 1;
                 newV.y = westVert;
                 newV.x = northVert;
-                unionAB(setArr, sizeArr, size, v.x, westVert, northVert, westVert);
+                unionAB(setArr, sizeArr, numCols, v.x, westVert, northVert, westVert);
                 enqueue(&queue, newV);
             }
             curVert = westVert;
@@ -221,24 +233,28 @@ void floodfillBondThread(BONDSITE** array, int size, QUEUE queue, int westLim, i
         while(array[v.x][curVert].right == 1 && array[v.x][eastVert].seen == 0)
         {
             array[v.x][eastVert].seen = 1;
-            unionAB(setArr, sizeArr, size, v.x, curVert, v.x, eastVert);
+            unionAB(setArr, sizeArr, numCols, v.x, curVert, v.x, eastVert);
 
             //check south and add to queue
+            if (southVert != -1)
             if(array[v.x][eastVert].down == 1 && array[southVert][eastVert].seen == 0) {
                 array[southVert][eastVert].seen = 1;
                 newV.y = eastVert;
                 newV.x = southVert;
-                unionAB(setArr, sizeArr, size, v.x, eastVert, southVert, eastVert);
+                unionAB(setArr, sizeArr, numCols, v.x, eastVert, southVert, eastVert);
                 enqueue(&queue, newV);
             }
+
             //check north and add to queue
+            if (northVert != -1)
             if(array[v.x][eastVert].up == 1 && array[northVert][eastVert].seen == 0) {
                 array[northVert][eastVert].seen = 1;
                 newV.y = eastVert;
                 newV.x = northVert;
-                unionAB(setArr, sizeArr, size, v.x, eastVert, northVert, eastVert);
+                unionAB(setArr, sizeArr, numCols, v.x, eastVert, northVert, eastVert);
                 enqueue(&queue, newV);
             }
+
             curVert = eastVert;
             eastVert++;
             if(eastVert > eastLim) break;
