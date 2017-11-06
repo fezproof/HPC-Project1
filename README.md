@@ -38,10 +38,12 @@ So if the program was told to run from a lattice size of 64 to 128, with 50 runs
 | -P | 0-1 float | Chance of allocation |
 | -p | 0, 1, OR 2 | Whether to consider percolation that goes up-down, left-right, or both |
 | -r | positive int | How many runs per size for averaging |
-| -t | positive int | Number of threads per node to use |
-| -n | positive int | Number of nodes to use |
-| -m | positive even int | Minimum lattice size |
-| -M | positive even int | Maximum lattice size |
+| -t | positive int | Minimum number of threads per node to use |
+| -T | positive int | Maximum of threads per node to use |
+| -n | positive int | Minimum number of nodes to use |
+| -N | positive int | Maximum number of nodes to use |
+| -s | positive even int | Minimum lattice size |
+| -S | positive even int | Maximum lattice size |
 
 ## Outputs
 
