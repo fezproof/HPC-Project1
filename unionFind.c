@@ -32,6 +32,7 @@ unsigned long long* createSizeArr(int numRows, int numCols)
     return sizeArr;
 }
 
+
 void unionAB(unsigned long long* setArr, unsigned long long* sizeArr,
     unsigned long long numCols, unsigned long long x1, unsigned long long y1,
     unsigned long long x2, unsigned long long y2)
@@ -42,10 +43,7 @@ void unionAB(unsigned long long* setArr, unsigned long long* sizeArr,
     unsigned long long rootA = root(setArr, A);
     unsigned long long rootB = root(setArr, B);
 
-
     if(rootA == rootB) return;
-
-
 
     if(sizeArr[rootA] < sizeArr[rootB]) {
         setArr[rootA] = setArr[rootB];

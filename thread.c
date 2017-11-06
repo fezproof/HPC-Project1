@@ -130,7 +130,7 @@ void findLargestClusterSiteThread(char** array, int numRows, int numCols,
     int boundLow = 0;
 
     //combine boundaries
-    #pragma omp parallel for schedule(static, 1) private(boundLow)
+    // #pragma omp for schedule(static, 1) private(boundLow)
         for(int i = 0; i < numThreads - 1; i++) {
             if(i < numStdThreads) {
                 boundLow = i * stdThreadSize + stdThreadSize - 1;
@@ -223,7 +223,7 @@ void findLargestClusterBondThread(BONDSITE** array, int numRows, int numCols,
 
     int bound = 0;
     //combine boundaries
-    #pragma omp parallel for schedule(static, 1)
+    // #pragma omp for schedule(static, 1)
     for(int i = 0; i < numThreads - 1; i++) {
         if(i < numStdThreads) {
             bound = i * stdThreadSize + stdThreadSize - 1;
