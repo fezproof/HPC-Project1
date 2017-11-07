@@ -8,8 +8,10 @@ typedef struct {
     float   probability;
     short   perlocationType;
     int     runs;
-    int     threadNum;
-    int     nodeNum;
+    int     minThreadNum;
+    int     maxThreadNum;
+    int     minNodeNum;
+    int     maxNodeNum;
     int     minSize;
     int     maxSize;
 } OPTIONS;

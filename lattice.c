@@ -8,38 +8,36 @@ double rand_01(void) {
 char** createLatticeSite(int size, double chance)
 {
     char** rows = malloc(size * sizeof(char*));
+    char* data = malloc(size * size * sizeof(char));
     #pragma omp parallel for
         for (int i = 0; i < size; i++) {
-            char* values;
-            values = malloc(size * sizeof(char));
+            rows[i] = &(data[size * i]);
             for (int j = 0; j < size; j++) {
                 if (chance >= rand_01()) {
-                    values[j] = 1; //occupied
+                    rows[i][j] = 1; //occupied
                 } else {
-                    values[j] = 0; //not occupied
+                    rows[i][j] = 0; //not occupied
                 }
             }
-            rows[i] = values;
         }
     return rows;
 }
 
 BONDSITE** createLatticeBond(int size, double chance)
 {
-    BONDSITE* values;
     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+    BONDSITE* data = malloc(size * size * sizeof(BONDSITE));
     for (int i = 0; i < size; i++) {
-        values = calloc(size, sizeof(BONDSITE));
+        rows[i] = &(data[size * i]);
         for (int j = 0; j < size; j++) {
             if (chance >= rand_01()) {
-                values[j].left = 1; //occupied
-                values[(j - 1 + size) % size].right = 1;
+                rows[i][j].left = 1; //occupied
+                rows[i][(j - 1 + size) % size].right = 1;
             } else {
-                values[j].left = 0; //not occupied
+                rows[i][j].left = 0; //not occupied
             }
-            values[j].seen = 0;
+            rows[i][j].seen = 0;
         }
-        rows[i] = values;
     }
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -52,85 +50,123 @@ BONDSITE** createLatticeBond(int size, double chance)
         }
     }
     return rows;
+
+    // BONDSITE* values;
+    // BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+    // for (int i = 0; i < size; i++) {
+    //     values = calloc(size, sizeof(BONDSITE));
+    //     for (int j = 0; j < size; j++) {
+    //         if (chance >= rand_01()) {
+    //             values[j].left = 1; //occupied
+    //             values[(j - 1 + size) % size].right = 1;
+    //         } else {
+    //             values[j].left = 0; //not occupied
+    //         }
+    //         values[j].seen = 0;
+    //     }
+    //     rows[i] = values;
+    // }
+    // for (int i = 0; i < size; i++) {
+    //     for (int j = 0; j < size; j++) {
+    //         if (chance >= rand_01()) {
+    //             rows[i][j].up = 1; //occupied
+    //             rows[(i - 1 + size) % size][j].down = 1;
+    //         } else {
+    //             rows[i][j].up = 0; //not occupied
+    //         }
+    //     }
+    // }
+    // return rows;
 }
 
-char** copyLatticeSite(char** src, int size)
+char** createBlankLatticeSite(int numRows, int numCols)
 {
-    char** rows = malloc(size * sizeof(char*));
-    for (int i = 0; i < size; i++) {
-        char* values;
-        values = malloc(size * sizeof(char));
-        for (int j = 0; j < size; j++) {
-            values[j] = src[i][j];
+    char** array = malloc(numRows * sizeof(char*));
+    char* data = malloc(numRows * numCols * sizeof(char));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            array[i] = &(data[numCols * i]);
+            // for (int j = 0; j < numCols; j++) {
+            //     array[i][j] = 0;
+            // }
         }
-        rows[i] = values;
-    }
-    return rows;
+    return array;
 }
 
-char** copyLatticeSiteThread(char** src, int size)
+BONDSITE** createBlankLatticeBond(int numRows, int numCols)
 {
-    char** rows = malloc(size * sizeof(char*));
-    // #pragma omp parallel for
-        for (int i = 0; i < size; i++) {
-            char* values;
-            values = malloc(size * sizeof(char));
-            for (int j = 0; j < size; j++) {
-                values[j] = src[i][j];
+    BONDSITE** array = malloc(numRows * sizeof(BONDSITE*));
+    BONDSITE* data = malloc(numRows * numCols * sizeof(BONDSITE));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            array[i] = &(data[numCols * i]);
+        }
+    return array;
+}
+
+char** copyLatticeSite(char** src, int numRows, int numCols)
+{
+    char** rows = malloc(numRows * sizeof(char*));
+    char* data = malloc(numRows * numCols * sizeof(char));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            rows[i] = &(data[numCols * i]);
+            for (int j = 0; j < numCols; j++) {
+                rows[i][j] = src[i][j];
             }
-            rows[i] = values;
         }
     return rows;
 }
 
-BONDSITE** copyLatticeBond(BONDSITE** src, int size)
+BONDSITE** copyLatticeBond(BONDSITE** src, int numRows, int numCols)
 {
-    BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
-
-    for (int i = 0; i < size; i++) {
-        BONDSITE* values;
-        values = malloc(size * sizeof(BONDSITE));
-        memcpy(values, src[i], size * sizeof(BONDSITE));
-        rows[i] = values;
-    }
+    BONDSITE** rows = malloc(numRows * sizeof(BONDSITE*));
+    BONDSITE* data = malloc(numRows * numCols * sizeof(BONDSITE));
+    #pragma omp parallel for
+        for (int i = 0; i < numRows; i++) {
+            rows[i] = &(data[numCols * i]);
+            memcpy(rows[i], src[i], numCols * sizeof(BONDSITE));
+        }
     return rows;
 }
 
-BONDSITE** copyLatticeBondThread(BONDSITE** src, int size)
+// BONDSITE** copyLatticeBond(BONDSITE** src, int size)
+// {
+//     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+//
+//     for (int i = 0; i < size; i++) {
+//         BONDSITE* values;
+//         values = malloc(size * sizeof(BONDSITE));
+//         memcpy(values, src[i], size * sizeof(BONDSITE));
+//         rows[i] = values;
+//     }
+//     return rows;
+// }
+
+// BONDSITE** copyLatticeBondThread(BONDSITE** src, int size)
+// {
+//
+//     BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
+//
+//     // #pragma omp parallel
+//     for (int i = 0; i < size; i++) {
+//         BONDSITE* values;
+//         values = malloc(size * sizeof(BONDSITE));
+//         memcpy(values, src[i], size * sizeof(BONDSITE));
+//         rows[i] = values;
+//     }
+//     return rows;
+// }
+
+void destroyArray(void** arr, int size)
 {
-
-    BONDSITE** rows = malloc(size * sizeof(BONDSITE*));
-
-    // #pragma omp parallel
-    for (int i = 0; i < size; i++) {
-        BONDSITE* values;
-        values = malloc(size * sizeof(BONDSITE));
-        memcpy(values, src[i], size * sizeof(BONDSITE));
-        rows[i] = values;
-    }
-    return rows;
-}
-
-
-void destroyArraySite(char** arr, int size)
-{
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
+    free(arr[0]);
     free(arr);
 }
 
-void destroyArrayBond(BONDSITE** arr, int size)
-{
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
-    free(arr);
-}
-
-void printLatticeSite(char** lattice, int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
+void printLatticeSite(char** lattice, int numRows, int numCols) {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
             if (lattice[i][j] == 2) {
                 printf(" \u2588");
             }
@@ -146,10 +182,10 @@ void printLatticeSite(char** lattice, int size) {
     printf("~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-void printLatticeBond(BONDSITE** lattice, int size)
+void printLatticeBond(BONDSITE** lattice, int numRows, int numCols)
 {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
             if (lattice[i][j].up == 1) {
                 printf(" | ");
             } else {
@@ -157,7 +193,7 @@ void printLatticeBond(BONDSITE** lattice, int size)
             }
         }
         printf("\n");
-        for (int j = 0; j < size; j++) {
+        for (int j = 0; j < numCols; j++) {
             if (lattice[i][j].left == 1) {
                 printf("-");
             } else {

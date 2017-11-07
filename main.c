@@ -19,9 +19,6 @@ FILE* initialiseCSV(char latticeType, double chance, int test, int runs, int max
     fprintf(fp, "\nProbability,%f", chance);
     fprintf(fp, "\nPerc type,%d,", test);
     fprintf(fp, "\nRuns,%d", runs);
-
-    printf("Num threads: %d\n", maxNumThreads);
-
     fprintf(fp, "\n");
 
     return fp;
@@ -37,23 +34,13 @@ void moveRight(int x, FILE *fp)
 void initialiseCSVRound(int size, int maxNumThreads, FILE *fp)
 {
     fprintf(fp, "\n\nSize,%dx%d,,",size,size);
-
-    fprintf(fp,"Percolation times,");
-    moveRight(maxNumThreads, fp);
-    fprintf(fp,"Percolation speedup,");
-    moveRight(maxNumThreads+1, fp);
-    fprintf(fp,"Cluster times,");
-    moveRight(maxNumThreads, fp);
-    fprintf(fp,"Cluster speedup,");
-    moveRight(maxNumThreads+1, fp);
     fprintf(fp,"P+C times,");
     moveRight(maxNumThreads, fp);
     fprintf(fp,"P+C speedup,");
-    moveRight(maxNumThreads+2, fp);
+    moveRight(maxNumThreads+1, fp);
     fprintf(fp,"Times percolated (Validation),");
-    moveRight(maxNumThreads, fp);
+    moveRight(maxNumThreads+2, fp);
     fprintf(fp,"Avg cluster size (Validation),");
-
     fprintf(fp,"\nNodes,Allocation,,");
 
     for(int i = 1; i <= maxNumThreads; i++) {
@@ -67,35 +54,15 @@ void initialiseCSVRound(int size, int maxNumThreads, FILE *fp)
     }
 
     fprintf(fp,",");
-
-    for(int i = 1; i <= maxNumThreads; i++) {
-        fprintf(fp,"T%d,", i);
-    }
-
-    fprintf(fp,",T0,");
-
-    for(int i = 1; i <= maxNumThreads; i++) {
-        fprintf(fp,"T%d,", i);
-    }
-
+    fprintf(fp,"Seq");
     fprintf(fp,",");
 
     for(int i = 1; i <= maxNumThreads; i++) {
         fprintf(fp,"T%d,", i);
     }
 
-    fprintf(fp,",T0,");
-
-    for(int i = 1; i <= maxNumThreads; i++) {
-        fprintf(fp,"T%d,", i);
-    }
-
     fprintf(fp,",,");
-
-    for(int i = 1; i <= maxNumThreads; i++) {
-        fprintf(fp,"T%d,", i);
-    }
-
+    fprintf(fp,"Seq");
     fprintf(fp,",");
 
     for(int i = 1; i <= maxNumThreads; i++) {
@@ -107,54 +74,33 @@ void initialiseCSVRound(int size, int maxNumThreads, FILE *fp)
 
 void printfCSVLine(int maxNumThreads,
 int size, int numNodes, double allocationTime,
-double* percTimes, double* clusterTimes,
-double* percSpeedUp, double* clusterSpeedUp,
-double* totalTimes, double* totalSpeedUp,
-int* numPercs, unsigned long long* clusterSizes, FILE *fp)
+double* times, double* speedup, int percResultSeq,
+int* numPercs, unsigned long long clusterSizeSeq,
+unsigned long long* clusterSizes, FILE *fp)
 {
     fprintf(fp, "%d,%f,,",numNodes,allocationTime);
 
     for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", percTimes[i]);
+        fprintf(fp,"%f,", times[i]);
     }
 
     fprintf(fp,",0,");
 
     for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", percSpeedUp[i]);
+        fprintf(fp,"%f,", speedup[i]);
     }
 
     fprintf(fp,",");
 
-    for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", clusterTimes[i]);
-    }
-
-    fprintf(fp,",0,");
-
-    for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", clusterSpeedUp[i]);
-    }
-
-    fprintf(fp,",");
-
-    for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", totalTimes[i]);
-    }
-
-    fprintf(fp,",0,");
-
-    for(int i = 0; i < maxNumThreads; i++) {
-        fprintf(fp,"%f,", totalSpeedUp[i]);
-    }
-
-    fprintf(fp,",,");
+    fprintf(fp,"%d,", percResultSeq);
 
     for(int i = 0; i < maxNumThreads; i++) {
         fprintf(fp,"%d,", numPercs[i]);
     }
 
-    fprintf(fp,",");
+    fprintf(fp,",,");
+
+    fprintf(fp,"%llu,", clusterSizeSeq);
 
     for(int i = 0; i < maxNumThreads; i++) {
         fprintf(fp,"%llu,", clusterSizes[i]);
@@ -164,225 +110,123 @@ int* numPercs, unsigned long long* clusterSizes, FILE *fp)
 
 }
 
-void sitePerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, FILE *fp)
+void printFile(FILE* fp)
 {
-
-    char** lattice;
-
-    double allocationTime = 0;
-
-    int percResult = 0;
-    int percResultThreaded = 0;
-    unsigned long long largestClusterSize = 0;
-    unsigned long long largestClusterSizeThreaded = 0;
-
-    double percTimes[maxNumThreads];
-    double clusterTimes[maxNumThreads];
-    double percSpeedUp[maxNumThreads];
-    double clusterSpeedUp[maxNumThreads];
-    double totalTimes[maxNumThreads];
-    double totalSpeedUp[maxNumThreads];
-    int numPercs[maxNumThreads];
-    unsigned long long clusterSizes[maxNumThreads];
-
-    do {
-
-        printf("\n------------------------------------------\n");
-        printf("Lattice size = %d x %d\n", size, size);
-        initialiseCSVRound(size, maxNumThreads, fp);
-
-        for(int n = 1; n <= maxNumNodes; n++) {
-
-
-            memset(percTimes, 0, sizeof percTimes);
-            memset(clusterTimes, 0, sizeof clusterTimes);
-            memset(percSpeedUp, 0, sizeof percSpeedUp);
-            memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
-            memset(numPercs, 0, sizeof numPercs);
-            memset(clusterSizes, 0, sizeof clusterSizes);
-
-            for(int i = 0; i < runs; i++)
-            {
-                allocationTime += timeAllocateSite(&lattice, size, chance);
-                percTimes[0] += timePercSite(lattice, size, test, &percResult);
-                clusterTimes[0] += timeClusterSite(lattice, size, chance, &largestClusterSize);
-
-                if(percResult == 1) numPercs[0]++;
-                clusterSizes[0] += largestClusterSize;
-
-                for(int j = 1; j < maxNumThreads; j++)
-                {
-                    int numThreads;
-                    if(j + 1 > size) {
-                        numThreads = size;
-                    } else {
-                        numThreads = j + 1;
-                    }
-                    omp_set_num_threads(numThreads);
-
-                    percTimes[j] += timePercSiteThreaded(lattice, size, test, &percResultThreaded);
-                    clusterTimes[j] += timeClusterSiteThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
-
-                    if(largestClusterSize != largestClusterSizeThreaded) {
-                        printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
-                    }
-
-                    if(percResult != percResultThreaded) {
-                        printf("\nERROR: PERCOLATION VARIANCE");
-                    }
-
-                    if(percResultThreaded == 1) numPercs[j]++;
-                    clusterSizes[j] += largestClusterSizeThreaded;
-                }
-                destroyArraySite(lattice, size);
-            }
-
-
-            for(int i = 0; i < maxNumThreads; i++) {
-                totalTimes[i] = percTimes[i] + clusterTimes[i];
-            }
-
-            for(int i = 0; i < maxNumThreads; i++) {
-                percSpeedUp[i] = percTimes[0] / percTimes[i];
-                clusterSpeedUp[i] = clusterTimes[0] / clusterTimes[i];
-                totalSpeedUp[i] = totalTimes[0] / totalTimes[i];
-            }
-
-            allocationTime /= runs;
-
-            for(int i = 0; i < maxNumThreads; i++) {
-                percTimes[i] /= (double) runs;
-                clusterTimes[i] /= (double) runs;
-                totalTimes[i] /= (double) runs;
-                clusterSizes[i] /= (double) runs;
-            }
-
-            printfCSVLine(maxNumThreads, size, n, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, numPercs, clusterSizes, fp);
-
-            allocationTime = 0;
-
-            largestClusterSize = 0;
-            largestClusterSizeThreaded = 0;
-
-        }
-        size = size * 2;
-    } while (size <= maxLatticeSize);
+    printf("\n\n\n\n");
+    char line[BUFSIZ];
+    while(fgets(line, BUFSIZ, fp) != NULL) {
+        printf("%s", line);
+    }
+    printf("\n\n\n\n");
 }
 
-void bondPerc(int size, double chance, int test, int runs, int maxLatticeSize, int maxNumThreads, int maxNumNodes, FILE *fp)
+void doTests(char latticeType, int size, double chance, int test, int runs, int maxLatticeSize, int minNumThreads, int maxNumThreads, int minNumNodes, int maxNumNodes, int rank, FILE *fp)
 {
-
-
-    BONDSITE** lattice;
+    void** lattice;
 
     double allocationTime = 0;
 
-    int percResult = 0;
+    int percResultSeq = 0;
     int percResultThreaded = 0;
-    unsigned long long largestClusterSize = 0;
+    unsigned long long largestClusterSizeSeq = 0;
     unsigned long long largestClusterSizeThreaded = 0;
 
-    double percTimes[maxNumThreads];
-    double clusterTimes[maxNumThreads];
-    double percSpeedUp[maxNumThreads];
-    double clusterSpeedUp[maxNumThreads];
-    double totalTimes[maxNumThreads];
-    double totalSpeedUp[maxNumThreads];
+    double times[maxNumThreads];
+    double speedup[maxNumThreads];
     int numPercs[maxNumThreads];
     unsigned long long clusterSizes[maxNumThreads];
 
     do {
-
         printf("\n------------------------------------------\n");
-        printf("Lattice size = %d x %d\n", size, size);
+        printf("Lattice size: %d x %d\n", size, size);
+
         initialiseCSVRound(size, maxNumThreads, fp);
 
-        for(int n = 1; n <= maxNumNodes; n++) {
+        allocationTime = timeAllocation(&lattice, latticeType, size, chance);
 
-            memset(percTimes, 0, sizeof percTimes);
-            memset(clusterTimes, 0, sizeof clusterTimes);
-            memset(percSpeedUp, 0, sizeof percSpeedUp);
-            memset(clusterSpeedUp, 0, sizeof clusterSpeedUp);
+        // if(latticeType == 's') printLatticeSite((char**)lattice, size, size);
+        // else printLatticeBond((BONDSITE**)lattice, size, size);
+
+        for(int n = minNumNodes; n <= maxNumNodes; n++) {
+
+            if(latticeType == 's') {
+                largestClusterSizeSeq = findLargestClusterSite((char**)lattice, size);
+                percResultSeq = percolateSite((char**)lattice, size, test);
+            } else {
+                largestClusterSizeSeq = findLargestClusterBond((BONDSITE**)lattice, size);
+                percResultSeq = percolateBond((BONDSITE**)lattice, size, test);
+            }
+            printf("Largest (Sequential): %llu\n", largestClusterSizeSeq);
+            printf("Percolated? (Sequential): %s\n\n", percResultSeq == 1 ? "YES" : "NO");
+
+            printf("Number of nodes = %d\n", n);
+
+            memset(times, 0, sizeof times);
+            memset(speedup, 0, sizeof speedup);
             memset(numPercs, 0, sizeof numPercs);
             memset(clusterSizes, 0, sizeof clusterSizes);
 
             for(int i = 0; i < runs; i++)
             {
-                allocationTime += timeAllocateBond(&lattice, size, chance);
-                percTimes[0] += timePercBond(lattice, size, test, &percResult);
-                clusterTimes[0] += timeClusterBond(lattice, size, chance, &largestClusterSize);
-
-                if(percResult == 1) numPercs[0]++;
-                clusterSizes[0] += largestClusterSize;
-
-                for(int j = 1; j < maxNumThreads; j++)
+                for(int j = minNumThreads; j <= maxNumThreads; j++)
                 {
                     int numThreads;
-                    if(j+1 > size) {
+                    if(j >= size) {
                         numThreads = size;
                     } else {
-                        numThreads = j + 1;
+                        numThreads = j;
                     }
                     omp_set_num_threads(numThreads);
 
-                    percTimes[j] += timePercBondThreaded(lattice, size, test, &percResultThreaded);
-                    clusterTimes[j] += timeClusterBondThreaded(lattice, size, chance, &largestClusterSizeThreaded, numThreads);
+                    times[j-1] += timeCluster(lattice, latticeType, size, chance, &largestClusterSizeThreaded, &percResultThreaded, test, n, numThreads);
 
-                    if(largestClusterSize != largestClusterSizeThreaded) {
-                        printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSize, largestClusterSizeThreaded);
+                    if(largestClusterSizeSeq != largestClusterSizeThreaded) {
+                        printf("\nERROR: CLUSTER SIZE VARIANCE: %llu, %llu\n", largestClusterSizeSeq, largestClusterSizeThreaded);
                     }
 
-                    if(percResult != percResultThreaded) {
-                        printf("\nERROR: PERCOLATION VARIANCE");
+                    if(percResultSeq != percResultThreaded) {
+                        printf("\nERROR: PERCOLATION VARIANCE: (S) %d, (T) %d\n", percResultSeq, percResultThreaded);
                     }
 
-                    if(percResultThreaded == 1) numPercs[j]++;
-                    clusterSizes[j] += largestClusterSizeThreaded;
-
+                    if(percResultThreaded == 1) numPercs[j-1]++;
+                    clusterSizes[j-1] += largestClusterSizeThreaded;
                 }
-                destroyArrayBond(lattice, size);
-            }
-
-
-            for(int i = 0; i < maxNumThreads; i++) {
-                totalTimes[i] = percTimes[i] + clusterTimes[i];
             }
 
             for(int i = 0; i < maxNumThreads; i++) {
-                percSpeedUp[i] = percTimes[0] / percTimes[i];
-                clusterSpeedUp[i] = clusterTimes[0] / clusterTimes[i];
-                totalSpeedUp[i] = totalTimes[0] / totalTimes[i];
+                speedup[i] = times[0] / times[i];
             }
 
-            allocationTime /= runs;
-
             for(int i = 0; i < maxNumThreads; i++) {
-                percTimes[i] /= (double) runs;
-                clusterTimes[i] /= (double) runs;
-                totalTimes[i] /= (double) runs;
+                times[i] /= (double) runs;
                 clusterSizes[i] /= (double) runs;
             }
 
-            printfCSVLine(maxNumThreads, size, n, allocationTime, percTimes, clusterTimes, percSpeedUp, clusterSpeedUp, totalTimes, totalSpeedUp, numPercs, clusterSizes, fp);
+            int numPercsSeq = percResultSeq * runs;
+            unsigned long long clusterSizeSeq = largestClusterSizeSeq;
 
-            allocationTime = 0;
+            printfCSVLine(maxNumThreads, size, n, allocationTime, times, speedup, numPercsSeq, numPercs, clusterSizeSeq, clusterSizes, fp);
 
-            largestClusterSize = 0;
             largestClusterSizeThreaded = 0;
 
         }
+        destroyArray((void**)lattice, size);
+
+        allocationTime = 0;
+        largestClusterSizeSeq = 0;
         size = size * 2;
     } while (size <= maxLatticeSize);
+
 }
 
 int main(int argc, char *argv[])
 {
 
-    //initialise MPI
-    // int numProcs, rank;
-    // MPI_Init(&argc, &argv);
-    // MPI_Comm_size(MPI_COMM_WORLD, &size);
-    // MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+    // initialise MPI
+    int numProcs, rank;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
     //Prevents the system from changing the number of threads
     omp_set_dynamic(0);
@@ -390,21 +234,25 @@ int main(int argc, char *argv[])
     OPTIONS *options = createOptionsStruct();
     readOptions(argc, argv, options);
 
-    printOptions(options);
+    // srand(time(NULL));
+    srand(0);
 
-    srand(time(NULL));
+    if(rank == 0) {
 
-    //Initialise a CSV file
-    FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->threadNum);
+        FILE *fp = initialiseCSV(options->type, options->probability, options->perlocationType, options->runs, options->maxThreadNum);
 
-    if (options->type == 's') {
-        sitePerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, fp);
+        doTests(options->type, options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->minThreadNum, options->maxThreadNum, options->minNodeNum, options->maxNodeNum, rank, fp);
+
+        terminateSlaves(numProcs);
+
+        rewind(fp);
+        printFile(fp);
+        fclose(fp);
+
+    } else {
+        clusterSlave(options->type);
     }
-    else if (options->type == 'b') {
-        bondPerc(options->minSize, options->probability, options->perlocationType, options->runs, options->maxSize, options->threadNum, options->nodeNum, fp);
-    }
 
-    fclose(fp);
 
-    // MPI_Finalize();
+    MPI_Finalize();
 }
