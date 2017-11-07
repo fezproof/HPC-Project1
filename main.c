@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
     OPTIONS *options = createOptionsStruct();
     readOptions(argc, argv, options);
 
-    // srand(time(NULL));
+    srand(time(NULL));
     srand(0);
 
     if(rank == 0) {
