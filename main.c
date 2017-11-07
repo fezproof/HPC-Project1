@@ -34,14 +34,14 @@ void moveRight(int x, FILE *fp)
 void initialiseCSVRound(int size, int maxNumThreads, FILE *fp)
 {
     fprintf(fp, "\n\nSize,%dx%d,,",size,size);
-    fprintf(fp,"P+C times,");
+    fprintf(fp,"Execution times,");
     moveRight(maxNumThreads, fp);
-    fprintf(fp,"P+C speedup,");
+    fprintf(fp,"Speedup,");
     moveRight(maxNumThreads+1, fp);
     fprintf(fp,"Times percolated (Validation),");
     moveRight(maxNumThreads+2, fp);
     fprintf(fp,"Avg cluster size (Validation),");
-    fprintf(fp,"\nNodes,Allocation,,");
+    fprintf(fp,"\nProcessors,Allocation,,");
 
     for(int i = 1; i <= maxNumThreads; i++) {
         fprintf(fp,"T%d,", i);
